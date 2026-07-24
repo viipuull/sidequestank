@@ -22,15 +22,16 @@ export const Route = createFileRoute("/tutorial")({
 
 function Tutorial() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { data: profile } = useProfile(user?.id);
   const { data: slotsLeft } = usePioneerSlots();
   const [step, setStep] = useState(0);
   const total = 5; // welcome + 4 tutorials
 
   useEffect(() => {
-    if (user === null) navigate({ to: "/auth" });
-  }, [user, navigate]);
+    if (authLoading) return;
+    if (!user) navigate({ to: "/auth" });
+  }, [authLoading, user, navigate]);
 
   const next = () => (step < total - 1 ? setStep(step + 1) : navigate({ to: "/starter" }));
   const back = () => setStep((v) => Math.max(0, v - 1));
