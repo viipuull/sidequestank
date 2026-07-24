@@ -9,12 +9,72 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WelcomeRouteImport } from './routes/welcome'
+import { Route as TutorialRouteImport } from './routes/tutorial'
+import { Route as StarterRouteImport } from './routes/starter'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as RulesRouteImport } from './routes/rules'
+import { Route as ProfileSetupRouteImport } from './routes/profile-setup'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as HomeRouteImport } from './routes/home'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 
+const WelcomeRoute = WelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TutorialRoute = TutorialRouteImport.update({
+  id: '/tutorial',
+  path: '/tutorial',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StarterRoute = StarterRouteImport.update({
+  id: '/starter',
+  path: '/starter',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RulesRoute = RulesRouteImport.update({
+  id: '/rules',
+  path: '/rules',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileSetupRoute = ProfileSetupRouteImport.update({
+  id: '/profile-setup',
+  path: '/profile-setup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HomeRoute = HomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -25,37 +85,184 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/home': typeof HomeRoute
+  '/onboarding': typeof OnboardingRoute
+  '/profile': typeof ProfileRoute
+  '/profile-setup': typeof ProfileSetupRoute
+  '/rules': typeof RulesRoute
+  '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/starter': typeof StarterRoute
+  '/tutorial': typeof TutorialRoute
+  '/welcome': typeof WelcomeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/home': typeof HomeRoute
+  '/onboarding': typeof OnboardingRoute
+  '/profile': typeof ProfileRoute
+  '/profile-setup': typeof ProfileSetupRoute
+  '/rules': typeof RulesRoute
+  '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/starter': typeof StarterRoute
+  '/tutorial': typeof TutorialRoute
+  '/welcome': typeof WelcomeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/home': typeof HomeRoute
+  '/onboarding': typeof OnboardingRoute
+  '/profile': typeof ProfileRoute
+  '/profile-setup': typeof ProfileSetupRoute
+  '/rules': typeof RulesRoute
+  '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/starter': typeof StarterRoute
+  '/tutorial': typeof TutorialRoute
+  '/welcome': typeof WelcomeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sitemap.xml'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/home'
+    | '/onboarding'
+    | '/profile'
+    | '/profile-setup'
+    | '/rules'
+    | '/settings'
+    | '/sitemap.xml'
+    | '/starter'
+    | '/tutorial'
+    | '/welcome'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sitemap.xml'
-  id: '__root__' | '/' | '/sitemap.xml'
+  to:
+    | '/'
+    | '/auth'
+    | '/home'
+    | '/onboarding'
+    | '/profile'
+    | '/profile-setup'
+    | '/rules'
+    | '/settings'
+    | '/sitemap.xml'
+    | '/starter'
+    | '/tutorial'
+    | '/welcome'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/home'
+    | '/onboarding'
+    | '/profile'
+    | '/profile-setup'
+    | '/rules'
+    | '/settings'
+    | '/sitemap.xml'
+    | '/starter'
+    | '/tutorial'
+    | '/welcome'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
+  HomeRoute: typeof HomeRoute
+  OnboardingRoute: typeof OnboardingRoute
+  ProfileRoute: typeof ProfileRoute
+  ProfileSetupRoute: typeof ProfileSetupRoute
+  RulesRoute: typeof RulesRoute
+  SettingsRoute: typeof SettingsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  StarterRoute: typeof StarterRoute
+  TutorialRoute: typeof TutorialRoute
+  WelcomeRoute: typeof WelcomeRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/welcome': {
+      id: '/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tutorial': {
+      id: '/tutorial'
+      path: '/tutorial'
+      fullPath: '/tutorial'
+      preLoaderRoute: typeof TutorialRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/starter': {
+      id: '/starter'
+      path: '/starter'
+      fullPath: '/starter'
+      preLoaderRoute: typeof StarterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rules': {
+      id: '/rules'
+      path: '/rules'
+      fullPath: '/rules'
+      preLoaderRoute: typeof RulesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile-setup': {
+      id: '/profile-setup'
+      path: '/profile-setup'
+      fullPath: '/profile-setup'
+      preLoaderRoute: typeof ProfileSetupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -70,7 +277,17 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
+  HomeRoute: HomeRoute,
+  OnboardingRoute: OnboardingRoute,
+  ProfileRoute: ProfileRoute,
+  ProfileSetupRoute: ProfileSetupRoute,
+  RulesRoute: RulesRoute,
+  SettingsRoute: SettingsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  StarterRoute: StarterRoute,
+  TutorialRoute: TutorialRoute,
+  WelcomeRoute: WelcomeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

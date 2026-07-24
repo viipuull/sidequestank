@@ -12,10 +12,10 @@ export function AuthGate({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (loading) return;
-    if (!onboarding.isOnboarded()) return navigate({ to: "/welcome" });
-    if (!user) return navigate({ to: "/auth" });
+    if (!onboarding.isOnboarded()) { navigate({ to: "/welcome" }); return; }
+    if (!user) { navigate({ to: "/auth" }); return; }
     if (profileLoading) return;
-    if (!profile) return navigate({ to: "/profile-setup" });
+    if (!profile) { navigate({ to: "/profile-setup" }); return; }
   }, [loading, profileLoading, user, profile, navigate]);
 
   if (loading || !user || profileLoading || !profile) {
