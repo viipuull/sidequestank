@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useProfile } from "@/lib/hooks/useProfile";
@@ -27,6 +28,7 @@ const USERNAME_RE = /^[a-zA-Z0-9_]{3,20}$/;
 
 function ProfileSetup() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { user, loading: authLoading } = useAuth();
   const { data: existing, isLoading: profileLoading } = useProfile(user?.id);
   const [username, setUsername] = useState("");
@@ -101,6 +103,7 @@ function ProfileSetup() {
         avatar_url,
       });
       if (insErr) throw insErr;
+      await queryClient.invalidateQueries({ queryKey: ["profile", user.id] });
       navigate({ to: "/tutorial" });
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not create profile");
