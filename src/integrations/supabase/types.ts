@@ -14,13 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          city: string
+          created_at: string
+          display_name: string
+          id: string
+          is_pioneer: boolean
+          level: number
+          updated_at: string
+          username: string
+          xp: number
+        }
+        Insert: {
+          avatar_url?: string | null
+          city?: string
+          created_at?: string
+          display_name: string
+          id: string
+          is_pioneer?: boolean
+          level?: number
+          updated_at?: string
+          username: string
+          xp?: number
+        }
+        Update: {
+          avatar_url?: string | null
+          city?: string
+          created_at?: string
+          display_name?: string
+          id?: string
+          is_pioneer?: boolean
+          level?: number
+          updated_at?: string
+          username?: string
+          xp?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      pioneer_slots_remaining: { Args: never; Returns: number }
     }
     Enums: {
       [_ in never]: never
