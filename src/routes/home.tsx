@@ -22,9 +22,21 @@ export const Route = createFileRoute("/home")({
 function HomeInner() {
   const { user } = useAuth();
   const { data: profile } = useProfile(user?.id);
-  const p = profile!;
-  const initials = p.display_name.split(/\s+/).slice(0, 2).map((s) => s[0]?.toUpperCase()).join("");
+  // Home must render even if some optional profile fields are missing.
+  const displayName = profile?.display_name?.trim() || user?.email?.split("@")[0] || "Explorer";
+  const city = profile?.city || "Ankleshwar";
+  const level = profile?.level ?? 1;
+  const xp = profile?.xp ?? 0;
+  const avatarUrl = profile?.avatar_url ?? null;
+  const initials =
+    displayName
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((s) => s[0]?.toUpperCase() ?? "")
+      .join("") || "SQ";
   const xpToNext = 200;
+  const xpPct = Math.max(0, Math.min(100, (xp / xpToNext) * 100));
+  const p = { display_name: displayName, city, level, xp, avatar_url: avatarUrl };
 
   return (
     <AppShell>
@@ -56,7 +68,7 @@ function HomeInner() {
           <p className="text-sm opacity-90">{p.xp} / {xpToNext} XP</p>
         </div>
         <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-white/20">
-          <motion.div initial={{ width: 0 }} animate={{ width: `${(p.xp / xpToNext) * 100}%` }} transition={{ duration: 0.8 }} className="h-full bg-white/90" />
+          <motion.div initial={{ width: 0 }} animate={{ width: `${xpPct}%` }} transition={{ duration: 0.8 }} className="h-full bg-white/90" />
         </div>
       </motion.section>
 
