@@ -1,0 +1,15 @@
+{
+  "name": "SideQuest — Your City. Your Adventure.",
+  "short_name": "SideQuest",
+  "description": "Explore your city, complete real-world quests, earn XP and unlock badges.",
+  "start_url": "/",
+  "id": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1a1524",
+  "theme_color": "#7c3aed",
+  "icons": [
+    { "src": "/favicon.ico", "sizes": "64x64 32x32 24x24 16x16", "type": "image/x-icon" }
+  ]
+}
