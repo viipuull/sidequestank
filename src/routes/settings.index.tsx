@@ -8,7 +8,7 @@ import { onboarding } from "@/lib/hooks/useOnboarding";
 
 const APP_VERSION = "0.2.0";
 
-export const Route = createFileRoute("/settings")({
+export const Route = createFileRoute("/settings/")({
   head: () => ({
     meta: [
       { title: "Settings — SideQuest" },
