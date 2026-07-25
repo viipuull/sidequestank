@@ -442,6 +442,28 @@ function ObjectiveConfigEditor({
         <div className="text-[10px] font-semibold uppercase tracking-widest text-primary">Photo</div>
         <Input placeholder="Prompt (what to capture)" value={String(config.prompt ?? "")}
           onChange={(e) => onChange({ prompt: e.target.value })} />
+        <div className="space-y-1">
+          <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Photo source</Label>
+          <Select
+            value={String(config.photo_source ?? "both")}
+            onValueChange={(v) => onChange({ photo_source: v })}
+          >
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="camera">Camera only</SelectItem>
+              <SelectItem value="gallery">Gallery only</SelectItem>
+              <SelectItem value="both">Camera + Gallery</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <Input type="number" min={1} max={10} placeholder="Max photos" value={String(config.max_photos ?? 1)}
+            onChange={(e) => onChange({ max_photos: Number(e.target.value) || 1 })} />
+          <Input type="number" min={0} max={10} placeholder="Retry limit" value={String(config.retry_limit ?? 3)}
+            onChange={(e) => onChange({ retry_limit: Number(e.target.value) || 3 })} />
+        </div>
+        <Input placeholder="Hint (optional)" value={String(config.hint ?? "")}
+          onChange={(e) => onChange({ hint: e.target.value })} />
       </div>
     );
   }
