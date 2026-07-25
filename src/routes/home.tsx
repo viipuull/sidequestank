@@ -13,6 +13,8 @@ import { XpBar } from "@/components/progression/XpBar";
 import { Link } from "@tanstack/react-router";
 import { useEquippedTitle } from "@/lib/hooks/useTitles";
 import { TitleBadge } from "@/components/titles/TitleBadge";
+import { useMyAchievements } from "@/lib/hooks/useAchievements";
+import { RARITY_STYLES } from "@/lib/hooks/useTitles";
 
 export const Route = createFileRoute("/home")({
   head: () => ({
@@ -32,6 +34,12 @@ function HomeInner() {
   const { data: progress } = useMyProgress(!!user);
   const { data: recentXp } = useMyXpHistory(5, !!user);
   const { data: equipped } = useEquippedTitle(!!user);
+  const { data: myAch } = useMyAchievements(!!user);
+  const unlockedAch = (myAch ?? []).filter((r) => r.completed);
+  const featured = unlockedAch.filter((r) => r.featured).sort((a, b) => b.featured_order - a.featured_order);
+  const showcase = (featured.length > 0 ? featured : unlockedAch).slice(0, 4);
+  const badgeCount = unlockedAch.length;
+  const latestBadge = unlockedAch[0];
   // Home must render even if some optional profile fields are missing.
   const displayName = profile?.display_name?.trim() || user?.email?.split("@")[0] || "Explorer";
   const username = profile?.username || (user?.email?.split("@")[0] ?? "explorer");
@@ -117,7 +125,44 @@ function HomeInner() {
         <StatCard icon={<Sparkles className="h-5 w-5 text-primary" />} label="Level" value={String(p.level)} />
         <StatCard icon={<Star className="h-5 w-5 text-accent" />} label="XP" value={String(lifetimeXp)} />
         <StatCard icon={<Compass className="h-5 w-5 text-primary" />} label="Quests" value={String(questsDone)} />
-        <StatCard icon={<Award className="h-5 w-5 text-accent" />} label="Badges" value="1" />
+        <Link to="/achievements" className="block">
+          <StatCard icon={<Award className="h-5 w-5 text-accent" />} label="Badges" value={String(badgeCount)} />
+        </Link>
+      </section>
+
+      <section className="mt-6">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Badge showcase</h2>
+          <Link to="/achievements" className="text-xs font-semibold text-primary">View all</Link>
+        </div>
+        {showcase.length === 0 ? (
+          <Link to="/achievements" className="block rounded-2xl border border-dashed border-border bg-card/40 p-4 text-center text-xs text-muted-foreground backdrop-blur">
+            Complete your first quest to earn a badge.
+          </Link>
+        ) : (
+          <div className="grid grid-cols-4 gap-2">
+            {showcase.map((row) => {
+              const s = RARITY_STYLES[row.achievements.rarity] ?? RARITY_STYLES.common;
+              return (
+                <Link
+                  key={row.id}
+                  to="/achievements/$slug"
+                  params={{ slug: row.achievements.slug }}
+                  className={`grid aspect-square place-items-center rounded-2xl border text-3xl backdrop-blur active:scale-95 ${s.ring}`}
+                  style={{ background: s.bg, boxShadow: s.glow }}
+                  aria-label={row.achievements.name}
+                >
+                  {row.achievements.icon}
+                </Link>
+              );
+            })}
+          </div>
+        )}
+        {latestBadge && (
+          <p className="mt-2 text-[11px] text-muted-foreground">
+            Latest: <span className="text-foreground">{latestBadge.achievements.name}</span>
+          </p>
+        )}
       </section>
 
       {recentXp && recentXp.length > 0 && (
