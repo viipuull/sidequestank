@@ -26,6 +26,12 @@ export const Route = createFileRoute("/profile-setup")({
 });
 
 const USERNAME_RE = /^[a-zA-Z0-9_]{3,20}$/;
+const FOUNDER_EMAIL = "ankleshwarweb@gmail.com";
+
+function isReservedUsername(raw: string): boolean {
+  const normalized = raw.toLowerCase().replace(/[\s_.\-]/g, "");
+  return normalized.includes("sidequest");
+}
 
 function ProfileSetup() {
   const navigate = useNavigate();
@@ -57,6 +63,11 @@ function ProfileSetup() {
   useEffect(() => {
     if (!username) return setUsernameStatus("idle");
     if (!USERNAME_RE.test(username)) return setUsernameStatus("invalid");
+    const isFounder = (user?.email ?? "").toLowerCase() === FOUNDER_EMAIL;
+    if (!isFounder && isReservedUsername(username)) {
+      setUsernameStatus("taken");
+      return;
+    }
     setUsernameStatus("checking");
     const t = setTimeout(async () => {
       const { data } = await supabase
@@ -67,7 +78,7 @@ function ProfileSetup() {
       setUsernameStatus(data ? "taken" : "available");
     }, 350);
     return () => clearTimeout(t);
-  }, [username]);
+  }, [username, user]);
 
   const initials = useMemo(() => {
     const source = displayName.trim() || username || "SQ";
@@ -133,7 +144,13 @@ function ProfileSetup() {
       case "checking":
         return { text: "Checking availability…", tone: "text-muted-foreground" };
       case "taken":
-        return { text: "That username is taken.", tone: "text-destructive" };
+        return {
+          text:
+            isReservedUsername(username)
+              ? "This username is reserved."
+              : "That username is taken.",
+          tone: "text-destructive",
+        };
       case "available":
         return { text: "Available — this is permanent.", tone: "text-[color:var(--success)]" };
       default:
