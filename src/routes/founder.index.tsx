@@ -100,6 +100,21 @@ function FounderPage() {
           <>
             <section className="mt-6 grid grid-cols-2 gap-3">
               <Link
+                to="/studio"
+                className="col-span-2 flex items-center justify-between rounded-2xl border border-primary/50 bg-gradient-to-r from-primary/20 via-fuchsia-500/10 to-purple-600/20 p-4 shadow-md transition active:scale-[0.99]"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/25 text-primary">
+                    <Sparkles className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-primary">SideQuest Studio Pro</p>
+                    <p className="text-sm font-semibold text-foreground">Open the full management platform</p>
+                  </div>
+                </div>
+                <span className="text-lg text-primary">→</span>
+              </Link>
+              <Link
                 to="/founder/quests"
                 className="col-span-2 flex items-center justify-between rounded-2xl border border-primary/40 bg-primary/10 p-4 shadow-md transition active:scale-[0.99]"
               >

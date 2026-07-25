@@ -13,6 +13,7 @@ import { Route as XpHistoryRouteImport } from './routes/xp-history'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as TutorialRouteImport } from './routes/tutorial'
 import { Route as TitlesRouteImport } from './routes/titles'
+import { Route as StudioRouteImport } from './routes/studio'
 import { Route as StarterRouteImport } from './routes/starter'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -31,8 +32,17 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ActivityRouteImport } from './routes/activity'
 import { Route as AchievementsRouteImport } from './routes/achievements'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StudioIndexRouteImport } from './routes/studio.index'
 import { Route as QuestsIndexRouteImport } from './routes/quests.index'
 import { Route as FounderIndexRouteImport } from './routes/founder.index'
+import { Route as StudioSettingsRouteImport } from './routes/studio.settings'
+import { Route as StudioRewardsRouteImport } from './routes/studio.rewards'
+import { Route as StudioPlayersRouteImport } from './routes/studio.players'
+import { Route as StudioModerationRouteImport } from './routes/studio.moderation'
+import { Route as StudioMediaRouteImport } from './routes/studio.media'
+import { Route as StudioContentRouteImport } from './routes/studio.content'
+import { Route as StudioAuditRouteImport } from './routes/studio.audit'
+import { Route as StudioAnalyticsRouteImport } from './routes/studio.analytics'
 import { Route as SettingsSocialRouteImport } from './routes/settings.social'
 import { Route as QuestsSlugRouteImport } from './routes/quests.$slug'
 import { Route as PlayersUsernameRouteImport } from './routes/players.$username'
@@ -70,6 +80,11 @@ const TutorialRoute = TutorialRouteImport.update({
 const TitlesRoute = TitlesRouteImport.update({
   id: '/titles',
   path: '/titles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudioRoute = StudioRouteImport.update({
+  id: '/studio',
+  path: '/studio',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StarterRoute = StarterRouteImport.update({
@@ -162,6 +177,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StudioIndexRoute = StudioIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StudioRoute,
+} as any)
 const QuestsIndexRoute = QuestsIndexRouteImport.update({
   id: '/quests/',
   path: '/quests/',
@@ -171,6 +191,46 @@ const FounderIndexRoute = FounderIndexRouteImport.update({
   id: '/founder/',
   path: '/founder/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const StudioSettingsRoute = StudioSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => StudioRoute,
+} as any)
+const StudioRewardsRoute = StudioRewardsRouteImport.update({
+  id: '/rewards',
+  path: '/rewards',
+  getParentRoute: () => StudioRoute,
+} as any)
+const StudioPlayersRoute = StudioPlayersRouteImport.update({
+  id: '/players',
+  path: '/players',
+  getParentRoute: () => StudioRoute,
+} as any)
+const StudioModerationRoute = StudioModerationRouteImport.update({
+  id: '/moderation',
+  path: '/moderation',
+  getParentRoute: () => StudioRoute,
+} as any)
+const StudioMediaRoute = StudioMediaRouteImport.update({
+  id: '/media',
+  path: '/media',
+  getParentRoute: () => StudioRoute,
+} as any)
+const StudioContentRoute = StudioContentRouteImport.update({
+  id: '/content',
+  path: '/content',
+  getParentRoute: () => StudioRoute,
+} as any)
+const StudioAuditRoute = StudioAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => StudioRoute,
+} as any)
+const StudioAnalyticsRoute = StudioAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => StudioRoute,
 } as any)
 const SettingsSocialRoute = SettingsSocialRouteImport.update({
   id: '/social',
@@ -283,6 +343,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
+  '/studio': typeof StudioRouteWithChildren
   '/titles': typeof TitlesRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
@@ -298,8 +359,17 @@ export interface FileRoutesByFullPath {
   '/players/$username': typeof PlayersUsernameRouteWithChildren
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/settings/social': typeof SettingsSocialRoute
+  '/studio/analytics': typeof StudioAnalyticsRoute
+  '/studio/audit': typeof StudioAuditRoute
+  '/studio/content': typeof StudioContentRoute
+  '/studio/media': typeof StudioMediaRoute
+  '/studio/moderation': typeof StudioModerationRoute
+  '/studio/players': typeof StudioPlayersRoute
+  '/studio/rewards': typeof StudioRewardsRoute
+  '/studio/settings': typeof StudioSettingsRoute
   '/founder/': typeof FounderIndexRoute
   '/quests/': typeof QuestsIndexRoute
+  '/studio/': typeof StudioIndexRoute
   '/founder/collections/$id': typeof FounderCollectionsIdRoute
   '/founder/quests/$id': typeof FounderQuestsIdRoute
   '/founder/quests/new': typeof FounderQuestsNewRoute
@@ -342,8 +412,17 @@ export interface FileRoutesByTo {
   '/players/$username': typeof PlayersUsernameRouteWithChildren
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/settings/social': typeof SettingsSocialRoute
+  '/studio/analytics': typeof StudioAnalyticsRoute
+  '/studio/audit': typeof StudioAuditRoute
+  '/studio/content': typeof StudioContentRoute
+  '/studio/media': typeof StudioMediaRoute
+  '/studio/moderation': typeof StudioModerationRoute
+  '/studio/players': typeof StudioPlayersRoute
+  '/studio/rewards': typeof StudioRewardsRoute
+  '/studio/settings': typeof StudioSettingsRoute
   '/founder': typeof FounderIndexRoute
   '/quests': typeof QuestsIndexRoute
+  '/studio': typeof StudioIndexRoute
   '/founder/collections/$id': typeof FounderCollectionsIdRoute
   '/founder/quests/$id': typeof FounderQuestsIdRoute
   '/founder/quests/new': typeof FounderQuestsNewRoute
@@ -372,6 +451,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
+  '/studio': typeof StudioRouteWithChildren
   '/titles': typeof TitlesRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
@@ -387,8 +467,17 @@ export interface FileRoutesById {
   '/players/$username': typeof PlayersUsernameRouteWithChildren
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/settings/social': typeof SettingsSocialRoute
+  '/studio/analytics': typeof StudioAnalyticsRoute
+  '/studio/audit': typeof StudioAuditRoute
+  '/studio/content': typeof StudioContentRoute
+  '/studio/media': typeof StudioMediaRoute
+  '/studio/moderation': typeof StudioModerationRoute
+  '/studio/players': typeof StudioPlayersRoute
+  '/studio/rewards': typeof StudioRewardsRoute
+  '/studio/settings': typeof StudioSettingsRoute
   '/founder/': typeof FounderIndexRoute
   '/quests/': typeof QuestsIndexRoute
+  '/studio/': typeof StudioIndexRoute
   '/founder/collections/$id': typeof FounderCollectionsIdRoute
   '/founder/quests/$id': typeof FounderQuestsIdRoute
   '/founder/quests/new': typeof FounderQuestsNewRoute
@@ -418,6 +507,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sitemap.xml'
     | '/starter'
+    | '/studio'
     | '/titles'
     | '/tutorial'
     | '/welcome'
@@ -433,8 +523,17 @@ export interface FileRouteTypes {
     | '/players/$username'
     | '/quests/$slug'
     | '/settings/social'
+    | '/studio/analytics'
+    | '/studio/audit'
+    | '/studio/content'
+    | '/studio/media'
+    | '/studio/moderation'
+    | '/studio/players'
+    | '/studio/rewards'
+    | '/studio/settings'
     | '/founder/'
     | '/quests/'
+    | '/studio/'
     | '/founder/collections/$id'
     | '/founder/quests/$id'
     | '/founder/quests/new'
@@ -477,8 +576,17 @@ export interface FileRouteTypes {
     | '/players/$username'
     | '/quests/$slug'
     | '/settings/social'
+    | '/studio/analytics'
+    | '/studio/audit'
+    | '/studio/content'
+    | '/studio/media'
+    | '/studio/moderation'
+    | '/studio/players'
+    | '/studio/rewards'
+    | '/studio/settings'
     | '/founder'
     | '/quests'
+    | '/studio'
     | '/founder/collections/$id'
     | '/founder/quests/$id'
     | '/founder/quests/new'
@@ -506,6 +614,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sitemap.xml'
     | '/starter'
+    | '/studio'
     | '/titles'
     | '/tutorial'
     | '/welcome'
@@ -521,8 +630,17 @@ export interface FileRouteTypes {
     | '/players/$username'
     | '/quests/$slug'
     | '/settings/social'
+    | '/studio/analytics'
+    | '/studio/audit'
+    | '/studio/content'
+    | '/studio/media'
+    | '/studio/moderation'
+    | '/studio/players'
+    | '/studio/rewards'
+    | '/studio/settings'
     | '/founder/'
     | '/quests/'
+    | '/studio/'
     | '/founder/collections/$id'
     | '/founder/quests/$id'
     | '/founder/quests/new'
@@ -551,6 +669,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StarterRoute: typeof StarterRoute
+  StudioRoute: typeof StudioRouteWithChildren
   TitlesRoute: typeof TitlesRoute
   TutorialRoute: typeof TutorialRoute
   WelcomeRoute: typeof WelcomeRoute
@@ -597,6 +716,13 @@ declare module '@tanstack/react-router' {
       path: '/titles'
       fullPath: '/titles'
       preLoaderRoute: typeof TitlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/studio': {
+      id: '/studio'
+      path: '/studio'
+      fullPath: '/studio'
+      preLoaderRoute: typeof StudioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/starter': {
@@ -725,6 +851,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/studio/': {
+      id: '/studio/'
+      path: '/'
+      fullPath: '/studio/'
+      preLoaderRoute: typeof StudioIndexRouteImport
+      parentRoute: typeof StudioRoute
+    }
     '/quests/': {
       id: '/quests/'
       path: '/quests'
@@ -738,6 +871,62 @@ declare module '@tanstack/react-router' {
       fullPath: '/founder/'
       preLoaderRoute: typeof FounderIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/studio/settings': {
+      id: '/studio/settings'
+      path: '/settings'
+      fullPath: '/studio/settings'
+      preLoaderRoute: typeof StudioSettingsRouteImport
+      parentRoute: typeof StudioRoute
+    }
+    '/studio/rewards': {
+      id: '/studio/rewards'
+      path: '/rewards'
+      fullPath: '/studio/rewards'
+      preLoaderRoute: typeof StudioRewardsRouteImport
+      parentRoute: typeof StudioRoute
+    }
+    '/studio/players': {
+      id: '/studio/players'
+      path: '/players'
+      fullPath: '/studio/players'
+      preLoaderRoute: typeof StudioPlayersRouteImport
+      parentRoute: typeof StudioRoute
+    }
+    '/studio/moderation': {
+      id: '/studio/moderation'
+      path: '/moderation'
+      fullPath: '/studio/moderation'
+      preLoaderRoute: typeof StudioModerationRouteImport
+      parentRoute: typeof StudioRoute
+    }
+    '/studio/media': {
+      id: '/studio/media'
+      path: '/media'
+      fullPath: '/studio/media'
+      preLoaderRoute: typeof StudioMediaRouteImport
+      parentRoute: typeof StudioRoute
+    }
+    '/studio/content': {
+      id: '/studio/content'
+      path: '/content'
+      fullPath: '/studio/content'
+      preLoaderRoute: typeof StudioContentRouteImport
+      parentRoute: typeof StudioRoute
+    }
+    '/studio/audit': {
+      id: '/studio/audit'
+      path: '/audit'
+      fullPath: '/studio/audit'
+      preLoaderRoute: typeof StudioAuditRouteImport
+      parentRoute: typeof StudioRoute
+    }
+    '/studio/analytics': {
+      id: '/studio/analytics'
+      path: '/analytics'
+      fullPath: '/studio/analytics'
+      preLoaderRoute: typeof StudioAnalyticsRouteImport
+      parentRoute: typeof StudioRoute
     }
     '/settings/social': {
       id: '/settings/social'
@@ -938,6 +1127,33 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
   SettingsRouteChildren,
 )
 
+interface StudioRouteChildren {
+  StudioAnalyticsRoute: typeof StudioAnalyticsRoute
+  StudioAuditRoute: typeof StudioAuditRoute
+  StudioContentRoute: typeof StudioContentRoute
+  StudioMediaRoute: typeof StudioMediaRoute
+  StudioModerationRoute: typeof StudioModerationRoute
+  StudioPlayersRoute: typeof StudioPlayersRoute
+  StudioRewardsRoute: typeof StudioRewardsRoute
+  StudioSettingsRoute: typeof StudioSettingsRoute
+  StudioIndexRoute: typeof StudioIndexRoute
+}
+
+const StudioRouteChildren: StudioRouteChildren = {
+  StudioAnalyticsRoute: StudioAnalyticsRoute,
+  StudioAuditRoute: StudioAuditRoute,
+  StudioContentRoute: StudioContentRoute,
+  StudioMediaRoute: StudioMediaRoute,
+  StudioModerationRoute: StudioModerationRoute,
+  StudioPlayersRoute: StudioPlayersRoute,
+  StudioRewardsRoute: StudioRewardsRoute,
+  StudioSettingsRoute: StudioSettingsRoute,
+  StudioIndexRoute: StudioIndexRoute,
+}
+
+const StudioRouteWithChildren =
+  StudioRoute._addFileChildren(StudioRouteChildren)
+
 interface FounderCollectionsRouteChildren {
   FounderCollectionsIdRoute: typeof FounderCollectionsIdRoute
 }
@@ -980,6 +1196,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StarterRoute: StarterRoute,
+  StudioRoute: StudioRouteWithChildren,
   TitlesRoute: TitlesRoute,
   TutorialRoute: TutorialRoute,
   WelcomeRoute: WelcomeRoute,
