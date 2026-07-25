@@ -34,8 +34,9 @@ function AchievementsPage() {
   const [category, setCategory] = useState<string>("all");
 
   const mineMap = useMemo(() => {
-    const m = new Map<string, (typeof data)["mine"][number]>();
-    (data?.mine ?? []).forEach((r) => m.set(r.achievement_id, r));
+    const rows = data?.mine ?? [];
+    const m = new Map<string, (typeof rows)[number]>();
+    rows.forEach((r) => m.set(r.achievement_id, r));
     return m;
   }, [data]);
 
