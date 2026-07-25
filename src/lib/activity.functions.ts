@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
-import type { Database } from "@/integrations/supabase/types";
+import type { Database, Json } from "@/integrations/supabase/types";
 
 const sel = (s: string): string => s;
 
@@ -25,7 +25,7 @@ export type FeedItem = {
   user_id: string;
   kind: Database["public"]["Enums"]["activity_kind"];
   ref_id: string | null;
-  payload: Record<string, unknown>;
+  payload: Json;
   created_at: string;
   profile: { username: string; display_name: string; avatar_url: string | null; city: string } | null;
 };
