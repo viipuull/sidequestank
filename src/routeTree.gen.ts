@@ -32,6 +32,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ActivityRouteImport } from './routes/activity'
 import { Route as AchievementsRouteImport } from './routes/achievements'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StudioIndexRouteImport } from './routes/studio.index'
 import { Route as QuestsIndexRouteImport } from './routes/quests.index'
 import { Route as FounderIndexRouteImport } from './routes/founder.index'
 import { Route as SettingsSocialRouteImport } from './routes/settings.social'
@@ -168,6 +169,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StudioIndexRoute = StudioIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StudioRoute,
+} as any)
 const QuestsIndexRoute = QuestsIndexRouteImport.update({
   id: '/quests/',
   path: '/quests/',
@@ -289,7 +295,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
-  '/studio': typeof StudioRoute
+  '/studio': typeof StudioRouteWithChildren
   '/titles': typeof TitlesRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
@@ -307,6 +313,7 @@ export interface FileRoutesByFullPath {
   '/settings/social': typeof SettingsSocialRoute
   '/founder/': typeof FounderIndexRoute
   '/quests/': typeof QuestsIndexRoute
+  '/studio/': typeof StudioIndexRoute
   '/founder/collections/$id': typeof FounderCollectionsIdRoute
   '/founder/quests/$id': typeof FounderQuestsIdRoute
   '/founder/quests/new': typeof FounderQuestsNewRoute
@@ -334,7 +341,6 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
-  '/studio': typeof StudioRoute
   '/titles': typeof TitlesRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
@@ -352,6 +358,7 @@ export interface FileRoutesByTo {
   '/settings/social': typeof SettingsSocialRoute
   '/founder': typeof FounderIndexRoute
   '/quests': typeof QuestsIndexRoute
+  '/studio': typeof StudioIndexRoute
   '/founder/collections/$id': typeof FounderCollectionsIdRoute
   '/founder/quests/$id': typeof FounderQuestsIdRoute
   '/founder/quests/new': typeof FounderQuestsNewRoute
@@ -380,7 +387,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
-  '/studio': typeof StudioRoute
+  '/studio': typeof StudioRouteWithChildren
   '/titles': typeof TitlesRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
@@ -398,6 +405,7 @@ export interface FileRoutesById {
   '/settings/social': typeof SettingsSocialRoute
   '/founder/': typeof FounderIndexRoute
   '/quests/': typeof QuestsIndexRoute
+  '/studio/': typeof StudioIndexRoute
   '/founder/collections/$id': typeof FounderCollectionsIdRoute
   '/founder/quests/$id': typeof FounderQuestsIdRoute
   '/founder/quests/new': typeof FounderQuestsNewRoute
@@ -445,6 +453,7 @@ export interface FileRouteTypes {
     | '/settings/social'
     | '/founder/'
     | '/quests/'
+    | '/studio/'
     | '/founder/collections/$id'
     | '/founder/quests/$id'
     | '/founder/quests/new'
@@ -472,7 +481,6 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sitemap.xml'
     | '/starter'
-    | '/studio'
     | '/titles'
     | '/tutorial'
     | '/welcome'
@@ -490,6 +498,7 @@ export interface FileRouteTypes {
     | '/settings/social'
     | '/founder'
     | '/quests'
+    | '/studio'
     | '/founder/collections/$id'
     | '/founder/quests/$id'
     | '/founder/quests/new'
@@ -535,6 +544,7 @@ export interface FileRouteTypes {
     | '/settings/social'
     | '/founder/'
     | '/quests/'
+    | '/studio/'
     | '/founder/collections/$id'
     | '/founder/quests/$id'
     | '/founder/quests/new'
@@ -563,7 +573,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StarterRoute: typeof StarterRoute
-  StudioRoute: typeof StudioRoute
+  StudioRoute: typeof StudioRouteWithChildren
   TitlesRoute: typeof TitlesRoute
   TutorialRoute: typeof TutorialRoute
   WelcomeRoute: typeof WelcomeRoute
@@ -744,6 +754,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/studio/': {
+      id: '/studio/'
+      path: '/'
+      fullPath: '/studio/'
+      preLoaderRoute: typeof StudioIndexRouteImport
+      parentRoute: typeof StudioRoute
     }
     '/quests/': {
       id: '/quests/'
@@ -958,6 +975,17 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
   SettingsRouteChildren,
 )
 
+interface StudioRouteChildren {
+  StudioIndexRoute: typeof StudioIndexRoute
+}
+
+const StudioRouteChildren: StudioRouteChildren = {
+  StudioIndexRoute: StudioIndexRoute,
+}
+
+const StudioRouteWithChildren =
+  StudioRoute._addFileChildren(StudioRouteChildren)
+
 interface FounderCollectionsRouteChildren {
   FounderCollectionsIdRoute: typeof FounderCollectionsIdRoute
 }
@@ -1000,7 +1028,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StarterRoute: StarterRoute,
-  StudioRoute: StudioRoute,
+  StudioRoute: StudioRouteWithChildren,
   TitlesRoute: TitlesRoute,
   TutorialRoute: TutorialRoute,
   WelcomeRoute: WelcomeRoute,
