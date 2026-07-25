@@ -13,6 +13,7 @@ import { Route as XpHistoryRouteImport } from './routes/xp-history'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as TutorialRouteImport } from './routes/tutorial'
 import { Route as TitlesRouteImport } from './routes/titles'
+import { Route as StudioRouteImport } from './routes/studio'
 import { Route as StarterRouteImport } from './routes/starter'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -70,6 +71,11 @@ const TutorialRoute = TutorialRouteImport.update({
 const TitlesRoute = TitlesRouteImport.update({
   id: '/titles',
   path: '/titles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudioRoute = StudioRouteImport.update({
+  id: '/studio',
+  path: '/studio',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StarterRoute = StarterRouteImport.update({
@@ -283,6 +289,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
+  '/studio': typeof StudioRoute
   '/titles': typeof TitlesRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
@@ -327,6 +334,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
+  '/studio': typeof StudioRoute
   '/titles': typeof TitlesRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
@@ -372,6 +380,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
+  '/studio': typeof StudioRoute
   '/titles': typeof TitlesRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
@@ -418,6 +427,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sitemap.xml'
     | '/starter'
+    | '/studio'
     | '/titles'
     | '/tutorial'
     | '/welcome'
@@ -462,6 +472,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sitemap.xml'
     | '/starter'
+    | '/studio'
     | '/titles'
     | '/tutorial'
     | '/welcome'
@@ -506,6 +517,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sitemap.xml'
     | '/starter'
+    | '/studio'
     | '/titles'
     | '/tutorial'
     | '/welcome'
@@ -551,6 +563,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StarterRoute: typeof StarterRoute
+  StudioRoute: typeof StudioRoute
   TitlesRoute: typeof TitlesRoute
   TutorialRoute: typeof TutorialRoute
   WelcomeRoute: typeof WelcomeRoute
@@ -597,6 +610,13 @@ declare module '@tanstack/react-router' {
       path: '/titles'
       fullPath: '/titles'
       preLoaderRoute: typeof TitlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/studio': {
+      id: '/studio'
+      path: '/studio'
+      fullPath: '/studio'
+      preLoaderRoute: typeof StudioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/starter': {
@@ -980,6 +1000,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StarterRoute: StarterRoute,
+  StudioRoute: StudioRoute,
   TitlesRoute: TitlesRoute,
   TutorialRoute: TutorialRoute,
   WelcomeRoute: WelcomeRoute,
