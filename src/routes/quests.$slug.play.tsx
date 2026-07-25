@@ -83,9 +83,7 @@ function PlayPage() {
   } | null>(null);
   const [unlockedTitles, setUnlockedTitles] = useState<UnlockedTitle[]>([]);
   const [unlockedAchievements, setUnlockedAchievements] = useState<UnlockedAchievement[]>([]);
-  const [completedCollections, setCompletedCollections] = useState<
-    import("@/components/collections/CollectionCompletionOverlay").CompletedCollectionData[]
-  >([]);
+  const [completedCollections, setCompletedCollections] = useState<CompletedCollectionData[]>([]);
   const firedRef = useRef(false);
   const autoOpenedRef = useRef(false);
 
