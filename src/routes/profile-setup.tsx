@@ -27,10 +27,11 @@ export const Route = createFileRoute("/profile-setup")({
 
 const USERNAME_RE = /^[a-zA-Z0-9_]{3,20}$/;
 const FOUNDER_EMAIL = "ankleshwarweb@gmail.com";
+const CYBERSHIKARI_EMAIL = "vipulgarg874@gmail.com";
 
 function isReservedUsername(raw: string): boolean {
   const normalized = raw.toLowerCase().replace(/[\s_.\-]/g, "");
-  return normalized.includes("sidequest");
+  return normalized.includes("sidequest") || normalized === "cybershikari";
 }
 
 function ProfileSetup() {
@@ -63,8 +64,12 @@ function ProfileSetup() {
   useEffect(() => {
     if (!username) return setUsernameStatus("idle");
     if (!USERNAME_RE.test(username)) return setUsernameStatus("invalid");
-    const isFounder = (user?.email ?? "").toLowerCase() === FOUNDER_EMAIL;
-    if (!isFounder && isReservedUsername(username)) {
+    const email = (user?.email ?? "").toLowerCase();
+    const normalized = username.toLowerCase().replace(/[\s_.\-]/g, "");
+    const ownsReserved =
+      (email === FOUNDER_EMAIL && normalized.includes("sidequest")) ||
+      (email === CYBERSHIKARI_EMAIL && normalized === "cybershikari");
+    if (!ownsReserved && isReservedUsername(username)) {
       setUsernameStatus("taken");
       return;
     }
@@ -147,7 +152,7 @@ function ProfileSetup() {
         return {
           text:
             isReservedUsername(username)
-              ? "This username is reserved."
+              ? "This username is already taken."
               : "That username is taken.",
           tone: "text-destructive",
         };

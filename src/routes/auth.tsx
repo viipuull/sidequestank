@@ -12,10 +12,15 @@ import { onboarding } from "@/lib/hooks/useOnboarding";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import logoAsset from "@/assets/sidequest-logo.png.asset.json";
+import cyberShikariAvatar from "@/assets/cybershikari-avatar.png.asset.json";
 
 const FOUNDER_EMAIL = "ankleshwarweb@gmail.com";
 const FOUNDER_USERNAME = "sidequest";
 const FOUNDER_DISPLAY_NAME = "SideQuest";
+
+const CYBERSHIKARI_EMAIL = "vipulgarg874@gmail.com";
+const CYBERSHIKARI_USERNAME = "cybershikari";
+const CYBERSHIKARI_DISPLAY_NAME = "CyberShikari";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -69,6 +74,28 @@ function AuthPage() {
         );
         if (insErr) {
           console.error("[founder-auto-profile] failed:", insErr);
+          navigate({ to: "/profile-setup" });
+          return;
+        }
+        onboarding.setTutorialDone();
+        await queryClient.invalidateQueries({ queryKey: ["profile", user.id] });
+        navigate({ to: "/home" });
+      })();
+    } else if (email === CYBERSHIKARI_EMAIL) {
+      // Auto-provision the CyberShikari personal player account with the reserved
+      // username and default "CG" initials avatar; behaves like a normal player.
+      (async () => {
+        const { error: insErr } = await supabase.from("profiles").upsert(
+          {
+            id: user.id,
+            username: CYBERSHIKARI_USERNAME,
+            display_name: CYBERSHIKARI_DISPLAY_NAME,
+            avatar_url: cyberShikariAvatar.url,
+          },
+          { onConflict: "id" },
+        );
+        if (insErr) {
+          console.error("[cybershikari-auto-profile] failed:", insErr);
           navigate({ to: "/profile-setup" });
           return;
         }
