@@ -37,7 +37,7 @@ function FounderCollectionsPage() {
 
   const q = useQuery({
     queryKey: ["founder-collections"],
-    queryFn: () => listFn(),
+    queryFn: () => listFn({}),
     enabled: !!user,
   });
 
