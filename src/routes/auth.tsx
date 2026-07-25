@@ -72,7 +72,7 @@ function AuthPage() {
           navigate({ to: "/profile-setup" });
           return;
         }
-        onboarding.markTutorialDone();
+        onboarding.setTutorialDone();
         await queryClient.invalidateQueries({ queryKey: ["profile", user.id] });
         navigate({ to: "/home" });
       })();
