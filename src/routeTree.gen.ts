@@ -38,6 +38,7 @@ import { Route as FounderTitlesRouteImport } from './routes/founder.titles'
 import { Route as FounderSocialRouteImport } from './routes/founder.social'
 import { Route as FounderCollectionsRouteImport } from './routes/founder.collections'
 import { Route as FounderAchievementsRouteImport } from './routes/founder.achievements'
+import { Route as EventsSlugRouteImport } from './routes/events.$slug'
 import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
 import { Route as AchievementsSlugRouteImport } from './routes/achievements.$slug'
 import { Route as FounderQuestsIndexRouteImport } from './routes/founder.quests.index'
@@ -193,6 +194,11 @@ const FounderAchievementsRoute = FounderAchievementsRouteImport.update({
   path: '/founder/achievements',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsSlugRoute = EventsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => EventsRoute,
+} as any)
 const CollectionsSlugRoute = CollectionsSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -246,7 +252,7 @@ export interface FileRoutesByFullPath {
   '/activity': typeof ActivityRoute
   '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRouteWithChildren
-  '/events': typeof EventsRoute
+  '/events': typeof EventsRouteWithChildren
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
@@ -263,6 +269,7 @@ export interface FileRoutesByFullPath {
   '/xp-history': typeof XpHistoryRoute
   '/achievements/$slug': typeof AchievementsSlugRoute
   '/collections/$slug': typeof CollectionsSlugRoute
+  '/events/$slug': typeof EventsSlugRoute
   '/founder/achievements': typeof FounderAchievementsRoute
   '/founder/collections': typeof FounderCollectionsRouteWithChildren
   '/founder/social': typeof FounderSocialRoute
@@ -286,7 +293,7 @@ export interface FileRoutesByTo {
   '/activity': typeof ActivityRoute
   '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRouteWithChildren
-  '/events': typeof EventsRoute
+  '/events': typeof EventsRouteWithChildren
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
@@ -303,6 +310,7 @@ export interface FileRoutesByTo {
   '/xp-history': typeof XpHistoryRoute
   '/achievements/$slug': typeof AchievementsSlugRoute
   '/collections/$slug': typeof CollectionsSlugRoute
+  '/events/$slug': typeof EventsSlugRoute
   '/founder/achievements': typeof FounderAchievementsRoute
   '/founder/collections': typeof FounderCollectionsRouteWithChildren
   '/founder/social': typeof FounderSocialRoute
@@ -327,7 +335,7 @@ export interface FileRoutesById {
   '/activity': typeof ActivityRoute
   '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRouteWithChildren
-  '/events': typeof EventsRoute
+  '/events': typeof EventsRouteWithChildren
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
@@ -344,6 +352,7 @@ export interface FileRoutesById {
   '/xp-history': typeof XpHistoryRoute
   '/achievements/$slug': typeof AchievementsSlugRoute
   '/collections/$slug': typeof CollectionsSlugRoute
+  '/events/$slug': typeof EventsSlugRoute
   '/founder/achievements': typeof FounderAchievementsRoute
   '/founder/collections': typeof FounderCollectionsRouteWithChildren
   '/founder/social': typeof FounderSocialRoute
@@ -386,6 +395,7 @@ export interface FileRouteTypes {
     | '/xp-history'
     | '/achievements/$slug'
     | '/collections/$slug'
+    | '/events/$slug'
     | '/founder/achievements'
     | '/founder/collections'
     | '/founder/social'
@@ -426,6 +436,7 @@ export interface FileRouteTypes {
     | '/xp-history'
     | '/achievements/$slug'
     | '/collections/$slug'
+    | '/events/$slug'
     | '/founder/achievements'
     | '/founder/collections'
     | '/founder/social'
@@ -466,6 +477,7 @@ export interface FileRouteTypes {
     | '/xp-history'
     | '/achievements/$slug'
     | '/collections/$slug'
+    | '/events/$slug'
     | '/founder/achievements'
     | '/founder/collections'
     | '/founder/social'
@@ -490,7 +502,7 @@ export interface RootRouteChildren {
   ActivityRoute: typeof ActivityRoute
   AuthRoute: typeof AuthRoute
   CollectionsRoute: typeof CollectionsRouteWithChildren
-  EventsRoute: typeof EventsRoute
+  EventsRoute: typeof EventsRouteWithChildren
   HomeRoute: typeof HomeRoute
   LeaderboardRoute: typeof LeaderboardRoute
   OnboardingRoute: typeof OnboardingRoute
@@ -723,6 +735,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FounderAchievementsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/events/$slug': {
+      id: '/events/$slug'
+      path: '/$slug'
+      fullPath: '/events/$slug'
+      preLoaderRoute: typeof EventsSlugRouteImport
+      parentRoute: typeof EventsRoute
+    }
     '/collections/$slug': {
       id: '/collections/$slug'
       path: '/$slug'
@@ -813,6 +832,17 @@ const CollectionsRouteWithChildren = CollectionsRoute._addFileChildren(
   CollectionsRouteChildren,
 )
 
+interface EventsRouteChildren {
+  EventsSlugRoute: typeof EventsSlugRoute
+}
+
+const EventsRouteChildren: EventsRouteChildren = {
+  EventsSlugRoute: EventsSlugRoute,
+}
+
+const EventsRouteWithChildren =
+  EventsRoute._addFileChildren(EventsRouteChildren)
+
 interface PlayersUsernameRouteChildren {
   PlayersUsernameCompareRoute: typeof PlayersUsernameCompareRoute
 }
@@ -877,7 +907,7 @@ const rootRouteChildren: RootRouteChildren = {
   ActivityRoute: ActivityRoute,
   AuthRoute: AuthRoute,
   CollectionsRoute: CollectionsRouteWithChildren,
-  EventsRoute: EventsRoute,
+  EventsRoute: EventsRouteWithChildren,
   HomeRoute: HomeRoute,
   LeaderboardRoute: LeaderboardRoute,
   OnboardingRoute: OnboardingRoute,
