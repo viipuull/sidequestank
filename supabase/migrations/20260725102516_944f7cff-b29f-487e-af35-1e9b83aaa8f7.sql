@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.tg_profiles_assign_pioneer() FROM PUBLIC, anon, authenticated;
