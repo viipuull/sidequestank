@@ -116,6 +116,158 @@ export type Database = {
         }
         Relationships: []
       }
+      announcement_reads: {
+        Row: {
+          announcement_id: string
+          id: string
+          read_at: string
+          user_id: string
+        }
+        Insert: {
+          announcement_id: string
+          id?: string
+          read_at?: string
+          user_id: string
+        }
+        Update: {
+          announcement_id?: string
+          id?: string
+          read_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_reads_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      announcements: {
+        Row: {
+          banner_url: string | null
+          body: string
+          created_at: string
+          created_by: string | null
+          deep_link: string | null
+          ends_at: string | null
+          icon: string
+          id: string
+          priority: Database["public"]["Enums"]["announcement_priority"]
+          starts_at: string
+          title: string
+          updated_at: string
+          visibility: Database["public"]["Enums"]["event_visibility"]
+        }
+        Insert: {
+          banner_url?: string | null
+          body?: string
+          created_at?: string
+          created_by?: string | null
+          deep_link?: string | null
+          ends_at?: string | null
+          icon?: string
+          id?: string
+          priority?: Database["public"]["Enums"]["announcement_priority"]
+          starts_at?: string
+          title: string
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["event_visibility"]
+        }
+        Update: {
+          banner_url?: string | null
+          body?: string
+          created_at?: string
+          created_by?: string | null
+          deep_link?: string | null
+          ends_at?: string | null
+          icon?: string
+          id?: string
+          priority?: Database["public"]["Enums"]["announcement_priority"]
+          starts_at?: string
+          title?: string
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["event_visibility"]
+        }
+        Relationships: []
+      }
+      challenges: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string | null
+          description: string
+          display_order: number
+          icon: string
+          id: string
+          metric: Database["public"]["Enums"]["challenge_metric"]
+          name: string
+          reset_frequency: Database["public"]["Enums"]["challenge_reset"]
+          reward_achievement_id: string | null
+          reward_title_id: string | null
+          reward_xp: number
+          slug: string
+          target: number
+          updated_at: string
+          visibility: Database["public"]["Enums"]["event_visibility"]
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          display_order?: number
+          icon?: string
+          id?: string
+          metric: Database["public"]["Enums"]["challenge_metric"]
+          name: string
+          reset_frequency?: Database["public"]["Enums"]["challenge_reset"]
+          reward_achievement_id?: string | null
+          reward_title_id?: string | null
+          reward_xp?: number
+          slug: string
+          target: number
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["event_visibility"]
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          display_order?: number
+          icon?: string
+          id?: string
+          metric?: Database["public"]["Enums"]["challenge_metric"]
+          name?: string
+          reset_frequency?: Database["public"]["Enums"]["challenge_reset"]
+          reward_achievement_id?: string | null
+          reward_title_id?: string | null
+          reward_xp?: number
+          slug?: string
+          target?: number
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["event_visibility"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenges_reward_achievement_id_fkey"
+            columns: ["reward_achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "challenges_reward_title_id_fkey"
+            columns: ["reward_title_id"]
+            isOneToOne: false
+            referencedRelation: "titles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       collection_items: {
         Row: {
           collection_id: string
@@ -278,6 +430,239 @@ export type Database = {
           },
         ]
       }
+      event_challenges: {
+        Row: {
+          challenge_id: string
+          display_order: number
+          event_id: string
+          id: string
+        }
+        Insert: {
+          challenge_id: string
+          display_order?: number
+          event_id: string
+          id?: string
+        }
+        Update: {
+          challenge_id?: string
+          display_order?: number
+          event_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_challenges_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_challenges_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_quests: {
+        Row: {
+          created_at: string
+          display_order: number
+          event_id: string
+          featured: boolean
+          id: string
+          quest_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          event_id: string
+          featured?: boolean
+          id?: string
+          quest_id: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          event_id?: string
+          featured?: boolean
+          id?: string
+          quest_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_quests_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_quests_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_rewards: {
+        Row: {
+          achievement_id: string | null
+          badge_image_url: string | null
+          collection_id: string | null
+          created_at: string
+          display_order: number
+          event_id: string
+          id: string
+          kind: Database["public"]["Enums"]["reward_kind"]
+          label: string
+          title_id: string | null
+          xp_amount: number
+        }
+        Insert: {
+          achievement_id?: string | null
+          badge_image_url?: string | null
+          collection_id?: string | null
+          created_at?: string
+          display_order?: number
+          event_id: string
+          id?: string
+          kind: Database["public"]["Enums"]["reward_kind"]
+          label?: string
+          title_id?: string | null
+          xp_amount?: number
+        }
+        Update: {
+          achievement_id?: string | null
+          badge_image_url?: string | null
+          collection_id?: string | null
+          created_at?: string
+          display_order?: number
+          event_id?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["reward_kind"]
+          label?: string
+          title_id?: string | null
+          xp_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_rewards_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_rewards_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_rewards_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_rewards_title_id_fkey"
+            columns: ["title_id"]
+            isOneToOne: false
+            referencedRelation: "titles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          archived_at: string | null
+          banner_url: string | null
+          community_goal: number
+          community_progress: number
+          config: Json
+          cover_url: string | null
+          created_at: string
+          created_by: string | null
+          description: string
+          ends_at: string | null
+          event_type: Database["public"]["Enums"]["event_type"]
+          featured: boolean
+          icon: string
+          id: string
+          max_participants: number | null
+          name: string
+          priority: number
+          published_at: string | null
+          repeatable: boolean
+          slug: string
+          starts_at: string
+          status: Database["public"]["Enums"]["event_status"]
+          timezone: string
+          updated_at: string
+          visibility: Database["public"]["Enums"]["event_visibility"]
+        }
+        Insert: {
+          archived_at?: string | null
+          banner_url?: string | null
+          community_goal?: number
+          community_progress?: number
+          config?: Json
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          ends_at?: string | null
+          event_type: Database["public"]["Enums"]["event_type"]
+          featured?: boolean
+          icon?: string
+          id?: string
+          max_participants?: number | null
+          name: string
+          priority?: number
+          published_at?: string | null
+          repeatable?: boolean
+          slug: string
+          starts_at?: string
+          status?: Database["public"]["Enums"]["event_status"]
+          timezone?: string
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["event_visibility"]
+        }
+        Update: {
+          archived_at?: string | null
+          banner_url?: string | null
+          community_goal?: number
+          community_progress?: number
+          config?: Json
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          ends_at?: string | null
+          event_type?: Database["public"]["Enums"]["event_type"]
+          featured?: boolean
+          icon?: string
+          id?: string
+          max_participants?: number | null
+          name?: string
+          priority?: number
+          published_at?: string | null
+          repeatable?: boolean
+          slug?: string
+          starts_at?: string
+          status?: Database["public"]["Enums"]["event_status"]
+          timezone?: string
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["event_visibility"]
+        }
+        Relationships: []
+      }
       featured_players: {
         Row: {
           active: boolean
@@ -310,6 +695,50 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      featured_quests: {
+        Row: {
+          boost: boolean
+          created_at: string
+          created_by: string | null
+          ends_at: string | null
+          id: string
+          note: string | null
+          priority: number
+          quest_id: string
+          starts_at: string
+        }
+        Insert: {
+          boost?: boolean
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string | null
+          id?: string
+          note?: string | null
+          priority?: number
+          quest_id: string
+          starts_at?: string
+        }
+        Update: {
+          boost?: boolean
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string | null
+          id?: string
+          note?: string | null
+          priority?: number
+          quest_id?: string
+          starts_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "featured_quests_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       leaderboard_seasons: {
         Row: {
@@ -408,6 +837,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notifications: {
+        Row: {
+          body: string
+          created_at: string
+          deep_link: string | null
+          icon: string | null
+          id: string
+          kind: Database["public"]["Enums"]["notification_kind"]
+          metadata: Json
+          priority: number
+          read_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          deep_link?: string | null
+          icon?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["notification_kind"]
+          metadata?: Json
+          priority?: number
+          read_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          deep_link?: string | null
+          icon?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["notification_kind"]
+          metadata?: Json
+          priority?: number
+          read_at?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       objective_progress: {
         Row: {
@@ -519,6 +990,56 @@ export type Database = {
           },
         ]
       }
+      player_challenges: {
+        Row: {
+          challenge_id: string
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          id: string
+          period_start: string
+          progress: number
+          reward_granted: boolean
+          target: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          challenge_id: string
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          period_start: string
+          progress?: number
+          reward_granted?: boolean
+          target: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          challenge_id?: string
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          period_start?: string
+          progress?: number
+          reward_granted?: boolean
+          target?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_challenges_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       player_collections: {
         Row: {
           collection_id: string
@@ -574,6 +1095,62 @@ export type Database = {
             columns: ["collection_id"]
             isOneToOne: false
             referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      player_events: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          contribution: number
+          event_id: string
+          id: string
+          joined: boolean
+          joined_at: string
+          percent: number
+          progress: number
+          reward_granted: boolean
+          target: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          contribution?: number
+          event_id: string
+          id?: string
+          joined?: boolean
+          joined_at?: string
+          percent?: number
+          progress?: number
+          reward_granted?: boolean
+          target?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          contribution?: number
+          event_id?: string
+          id?: string
+          joined?: boolean
+          joined_at?: string
+          percent?: number
+          progress?: number
+          reward_granted?: boolean
+          target?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_events_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
             referencedColumns: ["id"]
           },
         ]
@@ -1111,6 +1688,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _grant_challenge_reward: { Args: { _pc_id: string }; Returns: undefined }
+      _grant_event_rewards: {
+        Args: { _event_id: string; _user_id: string }
+        Returns: undefined
+      }
       _grant_title: {
         Args: {
           _source: Database["public"]["Enums"]["title_source"]
@@ -1136,6 +1718,10 @@ export type Database = {
           _season_id?: string
         }
         Returns: number
+      }
+      current_period_start: {
+        Args: { _freq: Database["public"]["Enums"]["challenge_reset"] }
+        Returns: string
       }
       equip_highest_owned_title: {
         Args: { _user_id: string }
@@ -1171,8 +1757,30 @@ export type Database = {
         Returns: boolean
       }
       is_founder: { Args: never; Returns: boolean }
+      join_event: { Args: { _event_id: string }; Returns: Json }
       level_from_total_xp: { Args: { _xp: number }; Returns: number }
+      notify_user: {
+        Args: {
+          _body: string
+          _deep_link?: string
+          _icon?: string
+          _kind: Database["public"]["Enums"]["notification_kind"]
+          _metadata?: Json
+          _priority?: number
+          _title: string
+          _user_id: string
+        }
+        Returns: string
+      }
       pioneer_slots_remaining: { Args: never; Returns: number }
+      progress_challenges_for_user: {
+        Args: { _delta: Json; _user_id: string }
+        Returns: undefined
+      }
+      progress_events_for_user: {
+        Args: { _delta: number; _user_id: string }
+        Returns: undefined
+      }
       recompute_default_leaderboards: { Args: never; Returns: undefined }
       recompute_player_stats: { Args: { _user_id: string }; Returns: undefined }
       record_activity_event: {
@@ -1188,6 +1796,7 @@ export type Database = {
         Args: { _title_id: string; _user_id: string }
         Returns: boolean
       }
+      tick_liveops: { Args: never; Returns: Json }
       unequip_all_titles: { Args: never; Returns: boolean }
       update_collection_progress_for_user: {
         Args: { _quest_id: string; _user_id: string }
@@ -1219,10 +1828,35 @@ export type Database = {
         | "achievement_unlocked"
         | "collection_completed"
       activity_visibility: "public" | "friends" | "guild" | "private"
+      announcement_priority: "info" | "normal" | "high" | "critical"
       app_role: "player" | "founder"
+      challenge_metric:
+        | "quests_completed"
+        | "xp_earned"
+        | "locations_visited"
+        | "qr_scans"
+        | "photos_submitted"
+        | "collections_completed"
+        | "achievements_unlocked"
+        | "level_reached"
+        | "trivia_correct"
+      challenge_reset: "none" | "daily" | "weekly" | "monthly"
       collection_difficulty: "easy" | "medium" | "hard" | "expert"
       collection_status: "draft" | "published" | "archived"
       collection_visibility: "public" | "unlisted" | "private"
+      event_status: "draft" | "scheduled" | "live" | "ended" | "archived"
+      event_type:
+        | "daily_quest_set"
+        | "weekly_challenge"
+        | "monthly_challenge"
+        | "seasonal"
+        | "holiday"
+        | "limited_time"
+        | "founder"
+        | "community"
+        | "beta"
+        | "sponsored"
+      event_visibility: "public" | "unlisted" | "private"
       leaderboard_period: "all_time" | "weekly" | "monthly" | "seasonal"
       leaderboard_scope:
         | "global"
@@ -1232,6 +1866,23 @@ export type Database = {
         | "event"
         | "friends"
         | "team"
+      notification_kind:
+        | "quest_completed"
+        | "xp_earned"
+        | "level_up"
+        | "achievement_unlocked"
+        | "title_unlocked"
+        | "collection_completed"
+        | "event_started"
+        | "event_ending"
+        | "event_reward"
+        | "challenge_reward"
+        | "daily_reset"
+        | "weekly_reset"
+        | "monthly_reset"
+        | "announcement"
+        | "leaderboard"
+        | "system"
       objective_progress_status: "pending" | "completed" | "failed" | "skipped"
       objective_type:
         | "visit_location"
@@ -1264,6 +1915,7 @@ export type Database = {
         | "event"
         | "limited_time"
       quest_visibility: "public" | "unlisted" | "private"
+      reward_kind: "xp" | "title" | "achievement" | "collection" | "badge_image"
       session_status: "active" | "paused" | "completed" | "abandoned"
       title_category:
         | "explorer"
@@ -1434,10 +2086,37 @@ export const Constants = {
         "collection_completed",
       ],
       activity_visibility: ["public", "friends", "guild", "private"],
+      announcement_priority: ["info", "normal", "high", "critical"],
       app_role: ["player", "founder"],
+      challenge_metric: [
+        "quests_completed",
+        "xp_earned",
+        "locations_visited",
+        "qr_scans",
+        "photos_submitted",
+        "collections_completed",
+        "achievements_unlocked",
+        "level_reached",
+        "trivia_correct",
+      ],
+      challenge_reset: ["none", "daily", "weekly", "monthly"],
       collection_difficulty: ["easy", "medium", "hard", "expert"],
       collection_status: ["draft", "published", "archived"],
       collection_visibility: ["public", "unlisted", "private"],
+      event_status: ["draft", "scheduled", "live", "ended", "archived"],
+      event_type: [
+        "daily_quest_set",
+        "weekly_challenge",
+        "monthly_challenge",
+        "seasonal",
+        "holiday",
+        "limited_time",
+        "founder",
+        "community",
+        "beta",
+        "sponsored",
+      ],
+      event_visibility: ["public", "unlisted", "private"],
       leaderboard_period: ["all_time", "weekly", "monthly", "seasonal"],
       leaderboard_scope: [
         "global",
@@ -1447,6 +2126,24 @@ export const Constants = {
         "event",
         "friends",
         "team",
+      ],
+      notification_kind: [
+        "quest_completed",
+        "xp_earned",
+        "level_up",
+        "achievement_unlocked",
+        "title_unlocked",
+        "collection_completed",
+        "event_started",
+        "event_ending",
+        "event_reward",
+        "challenge_reward",
+        "daily_reset",
+        "weekly_reset",
+        "monthly_reset",
+        "announcement",
+        "leaderboard",
+        "system",
       ],
       objective_progress_status: ["pending", "completed", "failed", "skipped"],
       objective_type: [
@@ -1483,6 +2180,7 @@ export const Constants = {
         "limited_time",
       ],
       quest_visibility: ["public", "unlisted", "private"],
+      reward_kind: ["xp", "title", "achievement", "collection", "badge_image"],
       session_status: ["active", "paused", "completed", "abandoned"],
       title_category: [
         "explorer",
