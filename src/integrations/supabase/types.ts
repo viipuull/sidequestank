@@ -86,6 +86,36 @@ export type Database = {
         }
         Relationships: []
       }
+      activity_events: {
+        Row: {
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["activity_kind"]
+          payload: Json
+          ref_id: string | null
+          user_id: string
+          visibility: Database["public"]["Enums"]["activity_visibility"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: Database["public"]["Enums"]["activity_kind"]
+          payload?: Json
+          ref_id?: string | null
+          user_id: string
+          visibility?: Database["public"]["Enums"]["activity_visibility"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["activity_kind"]
+          payload?: Json
+          ref_id?: string | null
+          user_id?: string
+          visibility?: Database["public"]["Enums"]["activity_visibility"]
+        }
+        Relationships: []
+      }
       collection_items: {
         Row: {
           collection_id: string
@@ -244,6 +274,137 @@ export type Database = {
             columns: ["reward_title_id"]
             isOneToOne: false
             referencedRelation: "titles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      featured_players: {
+        Row: {
+          active: boolean
+          blurb: string
+          created_at: string
+          created_by: string | null
+          id: string
+          priority: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          blurb?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          priority?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          blurb?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          priority?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      leaderboard_seasons: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string | null
+          ends_at: string | null
+          id: string
+          name: string
+          slug: string
+          starts_at: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string | null
+          id?: string
+          name: string
+          slug: string
+          starts_at?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          starts_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      leaderboard_snapshots: {
+        Row: {
+          achievements_earned: number
+          collections_completed: number
+          computed_at: string
+          id: string
+          level: number
+          period: Database["public"]["Enums"]["leaderboard_period"]
+          period_key: string
+          quests_completed: number
+          rank: number
+          scope: Database["public"]["Enums"]["leaderboard_scope"]
+          scope_key: string
+          season_id: string | null
+          titles_earned: number
+          user_id: string
+          xp: number
+        }
+        Insert: {
+          achievements_earned?: number
+          collections_completed?: number
+          computed_at?: string
+          id?: string
+          level?: number
+          period: Database["public"]["Enums"]["leaderboard_period"]
+          period_key?: string
+          quests_completed?: number
+          rank: number
+          scope: Database["public"]["Enums"]["leaderboard_scope"]
+          scope_key?: string
+          season_id?: string | null
+          titles_earned?: number
+          user_id: string
+          xp?: number
+        }
+        Update: {
+          achievements_earned?: number
+          collections_completed?: number
+          computed_at?: string
+          id?: string
+          level?: number
+          period?: Database["public"]["Enums"]["leaderboard_period"]
+          period_key?: string
+          quests_completed?: number
+          rank?: number
+          scope?: Database["public"]["Enums"]["leaderboard_scope"]
+          scope_key?: string
+          season_id?: string | null
+          titles_earned?: number
+          user_id?: string
+          xp?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leaderboard_snapshots_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "leaderboard_seasons"
             referencedColumns: ["id"]
           },
         ]
@@ -450,6 +611,108 @@ export type Database = {
           updated_at?: string
           user_id?: string
           xp_for_next_level?: number
+        }
+        Relationships: []
+      }
+      player_social_settings: {
+        Row: {
+          allow_followers: boolean
+          allow_friend_requests: boolean
+          appear_on_leaderboard: boolean
+          banner_url: string | null
+          bio: string | null
+          created_at: string
+          moderation_hidden: boolean
+          public_profile: boolean
+          show_achievements: boolean
+          show_collections: boolean
+          show_level: boolean
+          show_stats: boolean
+          show_titles: boolean
+          show_xp: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          allow_followers?: boolean
+          allow_friend_requests?: boolean
+          appear_on_leaderboard?: boolean
+          banner_url?: string | null
+          bio?: string | null
+          created_at?: string
+          moderation_hidden?: boolean
+          public_profile?: boolean
+          show_achievements?: boolean
+          show_collections?: boolean
+          show_level?: boolean
+          show_stats?: boolean
+          show_titles?: boolean
+          show_xp?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          allow_followers?: boolean
+          allow_friend_requests?: boolean
+          appear_on_leaderboard?: boolean
+          banner_url?: string | null
+          bio?: string | null
+          created_at?: string
+          moderation_hidden?: boolean
+          public_profile?: boolean
+          show_achievements?: boolean
+          show_collections?: boolean
+          show_level?: boolean
+          show_stats?: boolean
+          show_titles?: boolean
+          show_xp?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      player_stats: {
+        Row: {
+          achievements_earned: number
+          cities_explored: number
+          collections_completed: number
+          created_at: string
+          join_date: string
+          last_active_at: string | null
+          level: number
+          quests_completed: number
+          titles_earned: number
+          total_xp: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          achievements_earned?: number
+          cities_explored?: number
+          collections_completed?: number
+          created_at?: string
+          join_date?: string
+          last_active_at?: string | null
+          level?: number
+          quests_completed?: number
+          titles_earned?: number
+          total_xp?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          achievements_earned?: number
+          cities_explored?: number
+          collections_completed?: number
+          created_at?: string
+          join_date?: string
+          last_active_at?: string | null
+          level?: number
+          quests_completed?: number
+          titles_earned?: number
+          total_xp?: number
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -864,6 +1127,16 @@ export type Database = {
         Args: { _session_id: string }
         Returns: Json
       }
+      compute_leaderboard: {
+        Args: {
+          _period: Database["public"]["Enums"]["leaderboard_period"]
+          _period_key: string
+          _scope: Database["public"]["Enums"]["leaderboard_scope"]
+          _scope_key: string
+          _season_id?: string
+        }
+        Returns: number
+      }
       equip_highest_owned_title: {
         Args: { _user_id: string }
         Returns: undefined
@@ -900,6 +1173,17 @@ export type Database = {
       is_founder: { Args: never; Returns: boolean }
       level_from_total_xp: { Args: { _xp: number }; Returns: number }
       pioneer_slots_remaining: { Args: never; Returns: number }
+      recompute_default_leaderboards: { Args: never; Returns: undefined }
+      recompute_player_stats: { Args: { _user_id: string }; Returns: undefined }
+      record_activity_event: {
+        Args: {
+          _kind: Database["public"]["Enums"]["activity_kind"]
+          _payload: Json
+          _ref_id: string
+          _user_id: string
+        }
+        Returns: string
+      }
       remove_title: {
         Args: { _title_id: string; _user_id: string }
         Returns: boolean
@@ -928,10 +1212,26 @@ export type Database = {
         | "epic"
         | "legendary"
         | "mythic"
+      activity_kind:
+        | "quest_completed"
+        | "level_up"
+        | "title_unlocked"
+        | "achievement_unlocked"
+        | "collection_completed"
+      activity_visibility: "public" | "friends" | "guild" | "private"
       app_role: "player" | "founder"
       collection_difficulty: "easy" | "medium" | "hard" | "expert"
       collection_status: "draft" | "published" | "archived"
       collection_visibility: "public" | "unlisted" | "private"
+      leaderboard_period: "all_time" | "weekly" | "monthly" | "seasonal"
+      leaderboard_scope:
+        | "global"
+        | "country"
+        | "state"
+        | "city"
+        | "event"
+        | "friends"
+        | "team"
       objective_progress_status: "pending" | "completed" | "failed" | "skipped"
       objective_type:
         | "visit_location"
@@ -1126,10 +1426,28 @@ export const Constants = {
         "legendary",
         "mythic",
       ],
+      activity_kind: [
+        "quest_completed",
+        "level_up",
+        "title_unlocked",
+        "achievement_unlocked",
+        "collection_completed",
+      ],
+      activity_visibility: ["public", "friends", "guild", "private"],
       app_role: ["player", "founder"],
       collection_difficulty: ["easy", "medium", "hard", "expert"],
       collection_status: ["draft", "published", "archived"],
       collection_visibility: ["public", "unlisted", "private"],
+      leaderboard_period: ["all_time", "weekly", "monthly", "seasonal"],
+      leaderboard_scope: [
+        "global",
+        "country",
+        "state",
+        "city",
+        "event",
+        "friends",
+        "team",
+      ],
       objective_progress_status: ["pending", "completed", "failed", "skipped"],
       objective_type: [
         "visit_location",
