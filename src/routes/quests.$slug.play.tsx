@@ -24,6 +24,7 @@ import { OBJECTIVE_TYPES } from "@/lib/quests.types";
 import { XpBar } from "@/components/progression/XpBar";
 import { TitleUnlockOverlay, type UnlockedTitle } from "@/components/titles/TitleUnlockOverlay";
 import { AchievementUnlockOverlay } from "@/components/achievements/AchievementUnlockOverlay";
+import { CollectionCompletionOverlay, type CompletedCollectionData } from "@/components/collections/CollectionCompletionOverlay";
 import type { UnlockedAchievement } from "@/lib/achievements.functions";
 
 export const Route = createFileRoute("/quests/$slug/play")({
@@ -314,7 +315,7 @@ type ObjectiveLike = {
 };
 
 function VerificationSheet({
-  sessionId, objective, onClose, onSuccess, onUnlockedTitles, onUnlockedAchievements,
+  sessionId, objective, onClose, onSuccess, onUnlockedTitles, onUnlockedAchievements, onCompletedCollections,
 }: {
   sessionId: string;
   objective: ObjectiveLike;
@@ -325,6 +326,7 @@ function VerificationSheet({
   } | null) => void;
   onUnlockedTitles?: (titles: UnlockedTitle[]) => void;
   onUnlockedAchievements?: (achievements: UnlockedAchievement[]) => void;
+  onCompletedCollections?: (collections: CompletedCollectionData[]) => void;
 }) {
   const submit = useServerFn(submitObjective);
   const mutation = useMutation({
@@ -339,6 +341,9 @@ function VerificationSheet({
         }
         if (r.unlockedAchievements && r.unlockedAchievements.length > 0) {
           onUnlockedAchievements?.(r.unlockedAchievements as UnlockedAchievement[]);
+        }
+        if ((r as { completedCollections?: CompletedCollectionData[] }).completedCollections?.length) {
+          onCompletedCollections?.((r as { completedCollections: CompletedCollectionData[] }).completedCollections);
         }
       } else {
         toast.error(r.reason || "Verification failed");
