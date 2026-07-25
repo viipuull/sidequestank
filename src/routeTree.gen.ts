@@ -44,6 +44,7 @@ import { Route as StudioContentRouteImport } from './routes/studio.content'
 import { Route as StudioAuditRouteImport } from './routes/studio.audit'
 import { Route as StudioAnalyticsRouteImport } from './routes/studio.analytics'
 import { Route as SettingsSocialRouteImport } from './routes/settings.social'
+import { Route as SettingsProfileRouteImport } from './routes/settings.profile'
 import { Route as QuestsSlugRouteImport } from './routes/quests.$slug'
 import { Route as PlayersUsernameRouteImport } from './routes/players.$username'
 import { Route as FounderTitlesRouteImport } from './routes/founder.titles'
@@ -233,8 +234,13 @@ const StudioAnalyticsRoute = StudioAnalyticsRouteImport.update({
   getParentRoute: () => StudioRoute,
 } as any)
 const SettingsSocialRoute = SettingsSocialRouteImport.update({
-  id: '/settings/social',
-  path: '/settings/social',
+  id: '/social',
+  path: '/social',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsProfileRoute = SettingsProfileRouteImport.update({
+  id: '/settings/profile',
+  path: '/settings/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QuestsSlugRoute = QuestsSlugRouteImport.update({
@@ -356,6 +362,7 @@ export interface FileRoutesByFullPath {
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
+  '/settings/profile': typeof SettingsProfileRoute
   '/settings/social': typeof SettingsSocialRoute
   '/studio/analytics': typeof StudioAnalyticsRoute
   '/studio/audit': typeof StudioAuditRoute
@@ -409,6 +416,7 @@ export interface FileRoutesByTo {
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
+  '/settings/profile': typeof SettingsProfileRoute
   '/settings/social': typeof SettingsSocialRoute
   '/studio/analytics': typeof StudioAnalyticsRoute
   '/studio/audit': typeof StudioAuditRoute
@@ -464,6 +472,7 @@ export interface FileRoutesById {
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
+  '/settings/profile': typeof SettingsProfileRoute
   '/settings/social': typeof SettingsSocialRoute
   '/studio/analytics': typeof StudioAnalyticsRoute
   '/studio/audit': typeof StudioAuditRoute
@@ -520,6 +529,7 @@ export interface FileRouteTypes {
     | '/founder/titles'
     | '/players/$username'
     | '/quests/$slug'
+    | '/settings/profile'
     | '/settings/social'
     | '/studio/analytics'
     | '/studio/audit'
@@ -573,6 +583,7 @@ export interface FileRouteTypes {
     | '/founder/titles'
     | '/players/$username'
     | '/quests/$slug'
+    | '/settings/profile'
     | '/settings/social'
     | '/studio/analytics'
     | '/studio/audit'
@@ -627,6 +638,7 @@ export interface FileRouteTypes {
     | '/founder/titles'
     | '/players/$username'
     | '/quests/$slug'
+    | '/settings/profile'
     | '/settings/social'
     | '/studio/analytics'
     | '/studio/audit'
@@ -679,7 +691,7 @@ export interface RootRouteChildren {
   FounderTitlesRoute: typeof FounderTitlesRoute
   PlayersUsernameRoute: typeof PlayersUsernameRouteWithChildren
   QuestsSlugRoute: typeof QuestsSlugRouteWithChildren
-  SettingsSocialRoute: typeof SettingsSocialRoute
+  SettingsProfileRoute: typeof SettingsProfileRoute
   FounderIndexRoute: typeof FounderIndexRoute
   PlayersIndexRoute: typeof PlayersIndexRoute
   QuestsIndexRoute: typeof QuestsIndexRoute
@@ -932,9 +944,16 @@ declare module '@tanstack/react-router' {
     }
     '/settings/social': {
       id: '/settings/social'
-      path: '/settings/social'
+      path: '/social'
       fullPath: '/settings/social'
       preLoaderRoute: typeof SettingsSocialRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/profile': {
+      id: '/settings/profile'
+      path: '/settings/profile'
+      fullPath: '/settings/profile'
+      preLoaderRoute: typeof SettingsProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/quests/$slug': {
@@ -1185,7 +1204,7 @@ const rootRouteChildren: RootRouteChildren = {
   FounderTitlesRoute: FounderTitlesRoute,
   PlayersUsernameRoute: PlayersUsernameRouteWithChildren,
   QuestsSlugRoute: QuestsSlugRouteWithChildren,
-  SettingsSocialRoute: SettingsSocialRoute,
+  SettingsProfileRoute: SettingsProfileRoute,
   FounderIndexRoute: FounderIndexRoute,
   PlayersIndexRoute: PlayersIndexRoute,
   QuestsIndexRoute: QuestsIndexRoute,
@@ -1198,3 +1217,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
