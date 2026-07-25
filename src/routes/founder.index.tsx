@@ -129,6 +129,21 @@ function FounderPage() {
                 </div>
                 <span className="text-lg text-amber-300">→</span>
               </Link>
+              <Link
+                to="/founder/achievements"
+                className="col-span-2 flex items-center justify-between rounded-2xl border border-fuchsia-400/40 bg-fuchsia-500/10 p-4 shadow-md transition active:scale-[0.99]"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-fuchsia-500/20 text-fuchsia-300">
+                    <Sparkles className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-fuchsia-300">Achievements Manager</p>
+                    <p className="text-sm font-semibold text-foreground">Design, edit & assign badges</p>
+                  </div>
+                </div>
+                <span className="text-lg text-fuchsia-300">→</span>
+              </Link>
               <StatCard
                 icon={<Users className="h-5 w-5 text-primary" />}
                 label="Total users"
