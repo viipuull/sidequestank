@@ -35,6 +35,14 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as StudioIndexRouteImport } from './routes/studio.index'
 import { Route as QuestsIndexRouteImport } from './routes/quests.index'
 import { Route as FounderIndexRouteImport } from './routes/founder.index'
+import { Route as StudioSettingsRouteImport } from './routes/studio.settings'
+import { Route as StudioRewardsRouteImport } from './routes/studio.rewards'
+import { Route as StudioPlayersRouteImport } from './routes/studio.players'
+import { Route as StudioModerationRouteImport } from './routes/studio.moderation'
+import { Route as StudioMediaRouteImport } from './routes/studio.media'
+import { Route as StudioContentRouteImport } from './routes/studio.content'
+import { Route as StudioAuditRouteImport } from './routes/studio.audit'
+import { Route as StudioAnalyticsRouteImport } from './routes/studio.analytics'
 import { Route as SettingsSocialRouteImport } from './routes/settings.social'
 import { Route as QuestsSlugRouteImport } from './routes/quests.$slug'
 import { Route as PlayersUsernameRouteImport } from './routes/players.$username'
@@ -184,6 +192,46 @@ const FounderIndexRoute = FounderIndexRouteImport.update({
   path: '/founder/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StudioSettingsRoute = StudioSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => StudioRoute,
+} as any)
+const StudioRewardsRoute = StudioRewardsRouteImport.update({
+  id: '/rewards',
+  path: '/rewards',
+  getParentRoute: () => StudioRoute,
+} as any)
+const StudioPlayersRoute = StudioPlayersRouteImport.update({
+  id: '/players',
+  path: '/players',
+  getParentRoute: () => StudioRoute,
+} as any)
+const StudioModerationRoute = StudioModerationRouteImport.update({
+  id: '/moderation',
+  path: '/moderation',
+  getParentRoute: () => StudioRoute,
+} as any)
+const StudioMediaRoute = StudioMediaRouteImport.update({
+  id: '/media',
+  path: '/media',
+  getParentRoute: () => StudioRoute,
+} as any)
+const StudioContentRoute = StudioContentRouteImport.update({
+  id: '/content',
+  path: '/content',
+  getParentRoute: () => StudioRoute,
+} as any)
+const StudioAuditRoute = StudioAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => StudioRoute,
+} as any)
+const StudioAnalyticsRoute = StudioAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => StudioRoute,
+} as any)
 const SettingsSocialRoute = SettingsSocialRouteImport.update({
   id: '/social',
   path: '/social',
@@ -311,6 +359,14 @@ export interface FileRoutesByFullPath {
   '/players/$username': typeof PlayersUsernameRouteWithChildren
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/settings/social': typeof SettingsSocialRoute
+  '/studio/analytics': typeof StudioAnalyticsRoute
+  '/studio/audit': typeof StudioAuditRoute
+  '/studio/content': typeof StudioContentRoute
+  '/studio/media': typeof StudioMediaRoute
+  '/studio/moderation': typeof StudioModerationRoute
+  '/studio/players': typeof StudioPlayersRoute
+  '/studio/rewards': typeof StudioRewardsRoute
+  '/studio/settings': typeof StudioSettingsRoute
   '/founder/': typeof FounderIndexRoute
   '/quests/': typeof QuestsIndexRoute
   '/studio/': typeof StudioIndexRoute
@@ -356,6 +412,14 @@ export interface FileRoutesByTo {
   '/players/$username': typeof PlayersUsernameRouteWithChildren
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/settings/social': typeof SettingsSocialRoute
+  '/studio/analytics': typeof StudioAnalyticsRoute
+  '/studio/audit': typeof StudioAuditRoute
+  '/studio/content': typeof StudioContentRoute
+  '/studio/media': typeof StudioMediaRoute
+  '/studio/moderation': typeof StudioModerationRoute
+  '/studio/players': typeof StudioPlayersRoute
+  '/studio/rewards': typeof StudioRewardsRoute
+  '/studio/settings': typeof StudioSettingsRoute
   '/founder': typeof FounderIndexRoute
   '/quests': typeof QuestsIndexRoute
   '/studio': typeof StudioIndexRoute
@@ -403,6 +467,14 @@ export interface FileRoutesById {
   '/players/$username': typeof PlayersUsernameRouteWithChildren
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/settings/social': typeof SettingsSocialRoute
+  '/studio/analytics': typeof StudioAnalyticsRoute
+  '/studio/audit': typeof StudioAuditRoute
+  '/studio/content': typeof StudioContentRoute
+  '/studio/media': typeof StudioMediaRoute
+  '/studio/moderation': typeof StudioModerationRoute
+  '/studio/players': typeof StudioPlayersRoute
+  '/studio/rewards': typeof StudioRewardsRoute
+  '/studio/settings': typeof StudioSettingsRoute
   '/founder/': typeof FounderIndexRoute
   '/quests/': typeof QuestsIndexRoute
   '/studio/': typeof StudioIndexRoute
@@ -451,6 +523,14 @@ export interface FileRouteTypes {
     | '/players/$username'
     | '/quests/$slug'
     | '/settings/social'
+    | '/studio/analytics'
+    | '/studio/audit'
+    | '/studio/content'
+    | '/studio/media'
+    | '/studio/moderation'
+    | '/studio/players'
+    | '/studio/rewards'
+    | '/studio/settings'
     | '/founder/'
     | '/quests/'
     | '/studio/'
@@ -496,6 +576,14 @@ export interface FileRouteTypes {
     | '/players/$username'
     | '/quests/$slug'
     | '/settings/social'
+    | '/studio/analytics'
+    | '/studio/audit'
+    | '/studio/content'
+    | '/studio/media'
+    | '/studio/moderation'
+    | '/studio/players'
+    | '/studio/rewards'
+    | '/studio/settings'
     | '/founder'
     | '/quests'
     | '/studio'
@@ -542,6 +630,14 @@ export interface FileRouteTypes {
     | '/players/$username'
     | '/quests/$slug'
     | '/settings/social'
+    | '/studio/analytics'
+    | '/studio/audit'
+    | '/studio/content'
+    | '/studio/media'
+    | '/studio/moderation'
+    | '/studio/players'
+    | '/studio/rewards'
+    | '/studio/settings'
     | '/founder/'
     | '/quests/'
     | '/studio/'
@@ -776,6 +872,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FounderIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/studio/settings': {
+      id: '/studio/settings'
+      path: '/settings'
+      fullPath: '/studio/settings'
+      preLoaderRoute: typeof StudioSettingsRouteImport
+      parentRoute: typeof StudioRoute
+    }
+    '/studio/rewards': {
+      id: '/studio/rewards'
+      path: '/rewards'
+      fullPath: '/studio/rewards'
+      preLoaderRoute: typeof StudioRewardsRouteImport
+      parentRoute: typeof StudioRoute
+    }
+    '/studio/players': {
+      id: '/studio/players'
+      path: '/players'
+      fullPath: '/studio/players'
+      preLoaderRoute: typeof StudioPlayersRouteImport
+      parentRoute: typeof StudioRoute
+    }
+    '/studio/moderation': {
+      id: '/studio/moderation'
+      path: '/moderation'
+      fullPath: '/studio/moderation'
+      preLoaderRoute: typeof StudioModerationRouteImport
+      parentRoute: typeof StudioRoute
+    }
+    '/studio/media': {
+      id: '/studio/media'
+      path: '/media'
+      fullPath: '/studio/media'
+      preLoaderRoute: typeof StudioMediaRouteImport
+      parentRoute: typeof StudioRoute
+    }
+    '/studio/content': {
+      id: '/studio/content'
+      path: '/content'
+      fullPath: '/studio/content'
+      preLoaderRoute: typeof StudioContentRouteImport
+      parentRoute: typeof StudioRoute
+    }
+    '/studio/audit': {
+      id: '/studio/audit'
+      path: '/audit'
+      fullPath: '/studio/audit'
+      preLoaderRoute: typeof StudioAuditRouteImport
+      parentRoute: typeof StudioRoute
+    }
+    '/studio/analytics': {
+      id: '/studio/analytics'
+      path: '/analytics'
+      fullPath: '/studio/analytics'
+      preLoaderRoute: typeof StudioAnalyticsRouteImport
+      parentRoute: typeof StudioRoute
+    }
     '/settings/social': {
       id: '/settings/social'
       path: '/social'
@@ -976,10 +1128,26 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
 )
 
 interface StudioRouteChildren {
+  StudioAnalyticsRoute: typeof StudioAnalyticsRoute
+  StudioAuditRoute: typeof StudioAuditRoute
+  StudioContentRoute: typeof StudioContentRoute
+  StudioMediaRoute: typeof StudioMediaRoute
+  StudioModerationRoute: typeof StudioModerationRoute
+  StudioPlayersRoute: typeof StudioPlayersRoute
+  StudioRewardsRoute: typeof StudioRewardsRoute
+  StudioSettingsRoute: typeof StudioSettingsRoute
   StudioIndexRoute: typeof StudioIndexRoute
 }
 
 const StudioRouteChildren: StudioRouteChildren = {
+  StudioAnalyticsRoute: StudioAnalyticsRoute,
+  StudioAuditRoute: StudioAuditRoute,
+  StudioContentRoute: StudioContentRoute,
+  StudioMediaRoute: StudioMediaRoute,
+  StudioModerationRoute: StudioModerationRoute,
+  StudioPlayersRoute: StudioPlayersRoute,
+  StudioRewardsRoute: StudioRewardsRoute,
+  StudioSettingsRoute: StudioSettingsRoute,
   StudioIndexRoute: StudioIndexRoute,
 }
 
