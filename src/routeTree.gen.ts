@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as XpHistoryRouteImport } from './routes/xp-history'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as TutorialRouteImport } from './routes/tutorial'
+import { Route as TitlesRouteImport } from './routes/titles'
 import { Route as StarterRouteImport } from './routes/starter'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -27,6 +28,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as QuestsIndexRouteImport } from './routes/quests.index'
 import { Route as FounderIndexRouteImport } from './routes/founder.index'
 import { Route as QuestsSlugRouteImport } from './routes/quests.$slug'
+import { Route as FounderTitlesRouteImport } from './routes/founder.titles'
 import { Route as FounderQuestsIndexRouteImport } from './routes/founder.quests.index'
 import { Route as QuestsSlugPlayRouteImport } from './routes/quests.$slug.play'
 import { Route as FounderQuestsNewRouteImport } from './routes/founder.quests.new'
@@ -45,6 +47,11 @@ const WelcomeRoute = WelcomeRouteImport.update({
 const TutorialRoute = TutorialRouteImport.update({
   id: '/tutorial',
   path: '/tutorial',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TitlesRoute = TitlesRouteImport.update({
+  id: '/titles',
+  path: '/titles',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StarterRoute = StarterRouteImport.update({
@@ -122,6 +129,11 @@ const QuestsSlugRoute = QuestsSlugRouteImport.update({
   path: '/quests/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FounderTitlesRoute = FounderTitlesRouteImport.update({
+  id: '/founder/titles',
+  path: '/founder/titles',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FounderQuestsIndexRoute = FounderQuestsIndexRouteImport.update({
   id: '/founder/quests/',
   path: '/founder/quests/',
@@ -156,9 +168,11 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
+  '/titles': typeof TitlesRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
   '/xp-history': typeof XpHistoryRoute
+  '/founder/titles': typeof FounderTitlesRoute
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/founder/': typeof FounderIndexRoute
   '/quests/': typeof QuestsIndexRoute
@@ -180,9 +194,11 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
+  '/titles': typeof TitlesRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
   '/xp-history': typeof XpHistoryRoute
+  '/founder/titles': typeof FounderTitlesRoute
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/founder': typeof FounderIndexRoute
   '/quests': typeof QuestsIndexRoute
@@ -205,9 +221,11 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
+  '/titles': typeof TitlesRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
   '/xp-history': typeof XpHistoryRoute
+  '/founder/titles': typeof FounderTitlesRoute
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/founder/': typeof FounderIndexRoute
   '/quests/': typeof QuestsIndexRoute
@@ -231,9 +249,11 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sitemap.xml'
     | '/starter'
+    | '/titles'
     | '/tutorial'
     | '/welcome'
     | '/xp-history'
+    | '/founder/titles'
     | '/quests/$slug'
     | '/founder/'
     | '/quests/'
@@ -255,9 +275,11 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sitemap.xml'
     | '/starter'
+    | '/titles'
     | '/tutorial'
     | '/welcome'
     | '/xp-history'
+    | '/founder/titles'
     | '/quests/$slug'
     | '/founder'
     | '/quests'
@@ -279,9 +301,11 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sitemap.xml'
     | '/starter'
+    | '/titles'
     | '/tutorial'
     | '/welcome'
     | '/xp-history'
+    | '/founder/titles'
     | '/quests/$slug'
     | '/founder/'
     | '/quests/'
@@ -304,9 +328,11 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StarterRoute: typeof StarterRoute
+  TitlesRoute: typeof TitlesRoute
   TutorialRoute: typeof TutorialRoute
   WelcomeRoute: typeof WelcomeRoute
   XpHistoryRoute: typeof XpHistoryRoute
+  FounderTitlesRoute: typeof FounderTitlesRoute
   QuestsSlugRoute: typeof QuestsSlugRouteWithChildren
   FounderIndexRoute: typeof FounderIndexRoute
   QuestsIndexRoute: typeof QuestsIndexRoute
@@ -336,6 +362,13 @@ declare module '@tanstack/react-router' {
       path: '/tutorial'
       fullPath: '/tutorial'
       preLoaderRoute: typeof TutorialRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/titles': {
+      id: '/titles'
+      path: '/titles'
+      fullPath: '/titles'
+      preLoaderRoute: typeof TitlesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/starter': {
@@ -443,6 +476,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuestsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/founder/titles': {
+      id: '/founder/titles'
+      path: '/founder/titles'
+      fullPath: '/founder/titles'
+      preLoaderRoute: typeof FounderTitlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/founder/quests/': {
       id: '/founder/quests/'
       path: '/founder/quests'
@@ -499,9 +539,11 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StarterRoute: StarterRoute,
+  TitlesRoute: TitlesRoute,
   TutorialRoute: TutorialRoute,
   WelcomeRoute: WelcomeRoute,
   XpHistoryRoute: XpHistoryRoute,
+  FounderTitlesRoute: FounderTitlesRoute,
   QuestsSlugRoute: QuestsSlugRouteWithChildren,
   FounderIndexRoute: FounderIndexRoute,
   QuestsIndexRoute: QuestsIndexRoute,

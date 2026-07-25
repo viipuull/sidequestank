@@ -8,6 +8,8 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { useProfile } from "@/lib/hooks/useProfile";
 import { useMyProgress, useMyXpHistory } from "@/lib/hooks/useProgression";
 import { XpBar } from "@/components/progression/XpBar";
+import { useEquippedTitle, useMyTitles } from "@/lib/hooks/useTitles";
+import { TitleBadge } from "@/components/titles/TitleBadge";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({
@@ -26,6 +28,8 @@ function ProfileInner() {
   const { data: profile } = useProfile(user?.id);
   const { data: progress } = useMyProgress(!!user);
   const { data: recentXp } = useMyXpHistory(8, !!user);
+  const { data: equipped } = useEquippedTitle(!!user);
+  const { data: myTitles } = useMyTitles(!!user);
   const p = profile ?? {
     display_name: user?.user_metadata?.full_name || user?.user_metadata?.name || "Explorer",
     username: "explorer",
@@ -76,6 +80,19 @@ function ProfileInner() {
             🏆 Pioneer{p.pioneer_number ? ` #${p.pioneer_number}` : ""}
           </span>
         )}
+        {equipped?.titles && (
+          <div className="mt-3 flex justify-center">
+            <Link to="/titles">
+              <TitleBadge
+                name={equipped.titles.name}
+                icon={equipped.titles.icon}
+                rarity={equipped.titles.rarity}
+                color={equipped.titles.color}
+                size="md"
+              />
+            </Link>
+          </div>
+        )}
         <div className="mt-4 inline-flex items-center gap-1 text-xs text-muted-foreground">
           <MapPin className="h-3 w-3 text-primary" /> {p.city}
         </div>
@@ -109,6 +126,29 @@ function ProfileInner() {
           {progress?.level_up_date ? ` · last level up ${new Date(progress.level_up_date).toLocaleDateString()}` : ""}
         </p>
       </motion.section>
+
+      <section className="mt-5 rounded-3xl border border-border bg-card/70 p-5 backdrop-blur">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold">Titles</h3>
+          <Link to="/titles" className="text-xs font-semibold text-primary">Manage →</Link>
+        </div>
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          {(myTitles?.length ?? 0)} unlocked · equip one to show off your progress.
+        </p>
+        {(myTitles?.length ?? 0) > 0 && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {(myTitles ?? []).slice(0, 6).map((pt) => (
+              <TitleBadge
+                key={pt.id}
+                name={pt.titles.name}
+                icon={pt.titles.icon}
+                rarity={pt.titles.rarity}
+                color={pt.titles.color}
+              />
+            ))}
+          </div>
+        )}
+      </section>
 
       {recentXp && recentXp.length > 0 && (
         <section className="mt-5">

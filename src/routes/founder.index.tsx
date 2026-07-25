@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
-import { ArrowLeft, CalendarDays, Compass, Loader2, Sparkles, TrendingUp, Users } from "lucide-react";
+import { ArrowLeft, Award, CalendarDays, Compass, Loader2, Sparkles, TrendingUp, Users } from "lucide-react";
 import { AuthGate } from "@/components/layout/AuthGate";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { getFounderStats, type FounderUserRow } from "@/lib/founder.functions";
@@ -113,6 +113,21 @@ function FounderPage() {
                   </div>
                 </div>
                 <span className="text-lg text-primary">→</span>
+              </Link>
+              <Link
+                to="/founder/titles"
+                className="col-span-2 flex items-center justify-between rounded-2xl border border-amber-300/40 bg-amber-300/10 p-4 shadow-md transition active:scale-[0.99]"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-amber-300/20 text-amber-300">
+                    <Award className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-amber-300">Titles Manager</p>
+                    <p className="text-sm font-semibold text-foreground">Create, edit & assign titles</p>
+                  </div>
+                </div>
+                <span className="text-lg text-amber-300">→</span>
               </Link>
               <StatCard
                 icon={<Users className="h-5 w-5 text-primary" />}

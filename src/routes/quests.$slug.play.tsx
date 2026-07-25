@@ -22,6 +22,7 @@ import {
 import { getPublishedQuestBySlug } from "@/lib/quests.functions";
 import { OBJECTIVE_TYPES } from "@/lib/quests.types";
 import { XpBar } from "@/components/progression/XpBar";
+import { TitleUnlockOverlay, type UnlockedTitle } from "@/components/titles/TitleUnlockOverlay";
 
 export const Route = createFileRoute("/quests/$slug/play")({
   head: ({ params }) => ({
@@ -77,6 +78,7 @@ function PlayPage() {
     xp_earned: number; old_level: number; new_level: number; level_up: boolean;
     lifetime_xp: number; current_level_xp: number; xp_for_next: number;
   } | null>(null);
+  const [unlockedTitles, setUnlockedTitles] = useState<UnlockedTitle[]>([]);
   const firedRef = useRef(false);
   const autoOpenedRef = useRef(false);
 
@@ -223,6 +225,23 @@ function PlayPage() {
               qc.invalidateQueries({ queryKey: ["profile"] });
               refetch();
             }}
+            onUnlockedTitles={(t) => {
+              if (t.length > 0) {
+                setUnlockedTitles((prev) => [...prev, ...t]);
+                qc.invalidateQueries({ queryKey: ["my-titles"] });
+                qc.invalidateQueries({ queryKey: ["equipped-title"] });
+                qc.invalidateQueries({ queryKey: ["titles-catalog"] });
+              }
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {unlockedTitles.length > 0 && (
+          <TitleUnlockOverlay
+            titles={unlockedTitles}
+            onDismiss={() => setUnlockedTitles((prev) => prev.slice(1))}
           />
         )}
       </AnimatePresence>
@@ -257,7 +276,7 @@ type ObjectiveLike = {
 };
 
 function VerificationSheet({
-  sessionId, objective, onClose, onSuccess,
+  sessionId, objective, onClose, onSuccess, onUnlockedTitles,
 }: {
   sessionId: string;
   objective: ObjectiveLike;
@@ -266,6 +285,7 @@ function VerificationSheet({
     xp_earned: number; old_level: number; new_level: number; level_up: boolean;
     lifetime_xp: number; current_level_xp: number; xp_for_next: number;
   } | null) => void;
+  onUnlockedTitles?: (titles: UnlockedTitle[]) => void;
 }) {
   const submit = useServerFn(submitObjective);
   const mutation = useMutation({
@@ -275,6 +295,9 @@ function VerificationSheet({
       if (r.ok) {
         toast.success(r.questCompleted ? "Quest complete! 🎉" : "Objective verified ✨");
         onSuccess(r.questCompleted ? r.xpAward ?? null : null);
+        if (r.unlockedTitles && r.unlockedTitles.length > 0) {
+          onUnlockedTitles?.(r.unlockedTitles as UnlockedTitle[]);
+        }
       } else {
         toast.error(r.reason || "Verification failed");
       }

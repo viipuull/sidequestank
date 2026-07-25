@@ -298,7 +298,20 @@ export const submitObjective = createServerFn({ method: "POST" })
       }
     }
 
-    return { ok: verified, reason, questCompleted, xpAward };
+    // Evaluate title unlocks whenever verification succeeds — level or quest count
+    // may have crossed a threshold. Idempotent; returns only newly-unlocked titles.
+    let unlockedTitles: Array<{
+      id: string; slug: string; name: string; description: string;
+      rarity: string; category: string; icon: string; color: string;
+    }> = [];
+    if (verified) {
+      const { data: titles } = await sb.rpc("evaluate_titles_for_user", {
+        _user_id: context.userId,
+      });
+      if (Array.isArray(titles)) unlockedTitles = titles as typeof unlockedTitles;
+    }
+
+    return { ok: verified, reason, questCompleted, xpAward, unlockedTitles };
   });
 
 // ---- Pause / abandon ----
