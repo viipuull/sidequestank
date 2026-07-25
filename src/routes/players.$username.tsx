@@ -3,7 +3,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Award, ArrowLeft, MapPin, Sparkles, Trophy, Users, Layers, Compass } from "lucide-react";
-import { AuthGate } from "@/components/layout/AuthGate";
 import { AppShell } from "@/components/layout/AppShell";
 import { PlayerAvatar } from "@/components/social/PlayerAvatar";
 import { ActivityItem } from "@/components/social/ActivityItem";
@@ -20,11 +19,7 @@ export const Route = createFileRoute("/players/$username")({
       { property: "og:description", content: `Explorer profile of @${params.username}.` },
     ],
   }),
-  component: () => (
-    <AuthGate>
-      <PublicProfilePage />
-    </AuthGate>
-  ),
+  component: PublicProfilePage,
 });
 
 function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string | number }) {

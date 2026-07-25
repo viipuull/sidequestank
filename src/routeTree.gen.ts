@@ -45,6 +45,7 @@ import { Route as StudioAuditRouteImport } from './routes/studio.audit'
 import { Route as StudioAnalyticsRouteImport } from './routes/studio.analytics'
 import { Route as SettingsSocialRouteImport } from './routes/settings.social'
 import { Route as QuestsSlugRouteImport } from './routes/quests.$slug'
+import { Route as PlayersUsernameRouteImport } from './routes/players.$username'
 import { Route as FounderTitlesRouteImport } from './routes/founder.titles'
 import { Route as FounderSocialRouteImport } from './routes/founder.social'
 import { Route as FounderLiveopsRouteImport } from './routes/founder.liveops'
@@ -241,6 +242,11 @@ const QuestsSlugRoute = QuestsSlugRouteImport.update({
   path: '/quests/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlayersUsernameRoute = PlayersUsernameRouteImport.update({
+  id: '/players/$username',
+  path: '/players/$username',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FounderTitlesRoute = FounderTitlesRouteImport.update({
   id: '/founder/titles',
   path: '/founder/titles',
@@ -292,9 +298,9 @@ const QuestsSlugPlayRoute = QuestsSlugPlayRouteImport.update({
   getParentRoute: () => QuestsSlugRoute,
 } as any)
 const PlayersUsernameCompareRoute = PlayersUsernameCompareRouteImport.update({
-  id: '/players/$username/compare',
-  path: '/players/$username/compare',
-  getParentRoute: () => rootRouteImport,
+  id: '/compare',
+  path: '/compare',
+  getParentRoute: () => PlayersUsernameRoute,
 } as any)
 const FounderQuestsNewRoute = FounderQuestsNewRouteImport.update({
   id: '/founder/quests/new',
@@ -348,6 +354,7 @@ export interface FileRoutesByFullPath {
   '/founder/liveops': typeof FounderLiveopsRoute
   '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
+  '/players/$username': typeof PlayersUsernameRouteWithChildren
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/settings/social': typeof SettingsSocialRoute
   '/studio/analytics': typeof StudioAnalyticsRoute
@@ -400,6 +407,7 @@ export interface FileRoutesByTo {
   '/founder/liveops': typeof FounderLiveopsRoute
   '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
+  '/players/$username': typeof PlayersUsernameRouteWithChildren
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/settings/social': typeof SettingsSocialRoute
   '/studio/analytics': typeof StudioAnalyticsRoute
@@ -454,6 +462,7 @@ export interface FileRoutesById {
   '/founder/liveops': typeof FounderLiveopsRoute
   '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
+  '/players/$username': typeof PlayersUsernameRouteWithChildren
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/settings/social': typeof SettingsSocialRoute
   '/studio/analytics': typeof StudioAnalyticsRoute
@@ -509,6 +518,7 @@ export interface FileRouteTypes {
     | '/founder/liveops'
     | '/founder/social'
     | '/founder/titles'
+    | '/players/$username'
     | '/quests/$slug'
     | '/settings/social'
     | '/studio/analytics'
@@ -561,6 +571,7 @@ export interface FileRouteTypes {
     | '/founder/liveops'
     | '/founder/social'
     | '/founder/titles'
+    | '/players/$username'
     | '/quests/$slug'
     | '/settings/social'
     | '/studio/analytics'
@@ -614,6 +625,7 @@ export interface FileRouteTypes {
     | '/founder/liveops'
     | '/founder/social'
     | '/founder/titles'
+    | '/players/$username'
     | '/quests/$slug'
     | '/settings/social'
     | '/studio/analytics'
@@ -665,6 +677,7 @@ export interface RootRouteChildren {
   FounderLiveopsRoute: typeof FounderLiveopsRoute
   FounderSocialRoute: typeof FounderSocialRoute
   FounderTitlesRoute: typeof FounderTitlesRoute
+  PlayersUsernameRoute: typeof PlayersUsernameRouteWithChildren
   QuestsSlugRoute: typeof QuestsSlugRouteWithChildren
   SettingsSocialRoute: typeof SettingsSocialRoute
   FounderIndexRoute: typeof FounderIndexRoute
@@ -673,7 +686,6 @@ export interface RootRouteChildren {
   SettingsIndexRoute: typeof SettingsIndexRoute
   FounderQuestsIdRoute: typeof FounderQuestsIdRoute
   FounderQuestsNewRoute: typeof FounderQuestsNewRoute
-  PlayersUsernameCompareRoute: typeof PlayersUsernameCompareRoute
   FounderQuestsIndexRoute: typeof FounderQuestsIndexRoute
   ApiPublicHooksLiveopsTickRoute: typeof ApiPublicHooksLiveopsTickRoute
 }
@@ -932,6 +944,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuestsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/players/$username': {
+      id: '/players/$username'
+      path: '/players/$username'
+      fullPath: '/players/$username'
+      preLoaderRoute: typeof PlayersUsernameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/founder/titles': {
       id: '/founder/titles'
       path: '/founder/titles'
@@ -1004,10 +1023,10 @@ declare module '@tanstack/react-router' {
     }
     '/players/$username/compare': {
       id: '/players/$username/compare'
-      path: '/players/$username/compare'
+      path: '/compare'
       fullPath: '/players/$username/compare'
       preLoaderRoute: typeof PlayersUsernameCompareRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof PlayersUsernameRoute
     }
     '/founder/quests/new': {
       id: '/founder/quests/new'
@@ -1113,6 +1132,18 @@ const FounderCollectionsRouteChildren: FounderCollectionsRouteChildren = {
 const FounderCollectionsRouteWithChildren =
   FounderCollectionsRoute._addFileChildren(FounderCollectionsRouteChildren)
 
+interface PlayersUsernameRouteChildren {
+  PlayersUsernameCompareRoute: typeof PlayersUsernameCompareRoute
+}
+
+const PlayersUsernameRouteChildren: PlayersUsernameRouteChildren = {
+  PlayersUsernameCompareRoute: PlayersUsernameCompareRoute,
+}
+
+const PlayersUsernameRouteWithChildren = PlayersUsernameRoute._addFileChildren(
+  PlayersUsernameRouteChildren,
+)
+
 interface QuestsSlugRouteChildren {
   QuestsSlugPlayRoute: typeof QuestsSlugPlayRoute
 }
@@ -1152,6 +1183,7 @@ const rootRouteChildren: RootRouteChildren = {
   FounderLiveopsRoute: FounderLiveopsRoute,
   FounderSocialRoute: FounderSocialRoute,
   FounderTitlesRoute: FounderTitlesRoute,
+  PlayersUsernameRoute: PlayersUsernameRouteWithChildren,
   QuestsSlugRoute: QuestsSlugRouteWithChildren,
   SettingsSocialRoute: SettingsSocialRoute,
   FounderIndexRoute: FounderIndexRoute,
@@ -1160,7 +1192,6 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsIndexRoute: SettingsIndexRoute,
   FounderQuestsIdRoute: FounderQuestsIdRoute,
   FounderQuestsNewRoute: FounderQuestsNewRoute,
-  PlayersUsernameCompareRoute: PlayersUsernameCompareRoute,
   FounderQuestsIndexRoute: FounderQuestsIndexRoute,
   ApiPublicHooksLiveopsTickRoute: ApiPublicHooksLiveopsTickRoute,
 }
