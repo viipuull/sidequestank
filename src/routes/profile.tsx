@@ -31,7 +31,7 @@ function ProfileInner() {
     level: 1,
     xp: 0,
   };
-  const initials = (p.display_name || "SQ").split(/\s+/).slice(0, 2).map((s) => s[0]?.toUpperCase()).join("");
+  const initials = (p.display_name || "SQ").split(/\s+/).slice(0, 2).map((s: string) => s[0]?.toUpperCase()).join("");
   return (
     <AppShell>
       <div className="flex items-center justify-between">
