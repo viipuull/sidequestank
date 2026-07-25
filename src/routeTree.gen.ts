@@ -30,6 +30,7 @@ import { Route as AchievementsRouteImport } from './routes/achievements'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as QuestsIndexRouteImport } from './routes/quests.index'
 import { Route as FounderIndexRouteImport } from './routes/founder.index'
+import { Route as SettingsSocialRouteImport } from './routes/settings.social'
 import { Route as QuestsSlugRouteImport } from './routes/quests.$slug'
 import { Route as PlayersUsernameRouteImport } from './routes/players.$username'
 import { Route as FounderTitlesRouteImport } from './routes/founder.titles'
@@ -149,6 +150,11 @@ const FounderIndexRoute = FounderIndexRouteImport.update({
   path: '/founder/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsSocialRoute = SettingsSocialRouteImport.update({
+  id: '/social',
+  path: '/social',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const QuestsSlugRoute = QuestsSlugRouteImport.update({
   id: '/quests/$slug',
   path: '/quests/$slug',
@@ -228,7 +234,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/profile-setup': typeof ProfileSetupRoute
   '/rules': typeof RulesRoute
-  '/settings': typeof SettingsRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
   '/titles': typeof TitlesRoute
@@ -242,6 +248,7 @@ export interface FileRoutesByFullPath {
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
+  '/settings/social': typeof SettingsSocialRoute
   '/founder/': typeof FounderIndexRoute
   '/quests/': typeof QuestsIndexRoute
   '/founder/collections/$id': typeof FounderCollectionsIdRoute
@@ -264,7 +271,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/profile-setup': typeof ProfileSetupRoute
   '/rules': typeof RulesRoute
-  '/settings': typeof SettingsRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
   '/titles': typeof TitlesRoute
@@ -278,6 +285,7 @@ export interface FileRoutesByTo {
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
+  '/settings/social': typeof SettingsSocialRoute
   '/founder': typeof FounderIndexRoute
   '/quests': typeof QuestsIndexRoute
   '/founder/collections/$id': typeof FounderCollectionsIdRoute
@@ -301,7 +309,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/profile-setup': typeof ProfileSetupRoute
   '/rules': typeof RulesRoute
-  '/settings': typeof SettingsRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
   '/titles': typeof TitlesRoute
@@ -315,6 +323,7 @@ export interface FileRoutesById {
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
+  '/settings/social': typeof SettingsSocialRoute
   '/founder/': typeof FounderIndexRoute
   '/quests/': typeof QuestsIndexRoute
   '/founder/collections/$id': typeof FounderCollectionsIdRoute
@@ -353,6 +362,7 @@ export interface FileRouteTypes {
     | '/founder/titles'
     | '/players/$username'
     | '/quests/$slug'
+    | '/settings/social'
     | '/founder/'
     | '/quests/'
     | '/founder/collections/$id'
@@ -389,6 +399,7 @@ export interface FileRouteTypes {
     | '/founder/titles'
     | '/players/$username'
     | '/quests/$slug'
+    | '/settings/social'
     | '/founder'
     | '/quests'
     | '/founder/collections/$id'
@@ -425,6 +436,7 @@ export interface FileRouteTypes {
     | '/founder/titles'
     | '/players/$username'
     | '/quests/$slug'
+    | '/settings/social'
     | '/founder/'
     | '/quests/'
     | '/founder/collections/$id'
@@ -448,7 +460,7 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   ProfileSetupRoute: typeof ProfileSetupRoute
   RulesRoute: typeof RulesRoute
-  SettingsRoute: typeof SettingsRoute
+  SettingsRoute: typeof SettingsRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StarterRoute: typeof StarterRoute
   TitlesRoute: typeof TitlesRoute
@@ -615,6 +627,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FounderIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/social': {
+      id: '/settings/social'
+      path: '/social'
+      fullPath: '/settings/social'
+      preLoaderRoute: typeof SettingsSocialRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/quests/$slug': {
       id: '/quests/$slug'
       path: '/quests/$slug'
@@ -756,6 +775,18 @@ const PlayersRouteChildren: PlayersRouteChildren = {
 const PlayersRouteWithChildren =
   PlayersRoute._addFileChildren(PlayersRouteChildren)
 
+interface SettingsRouteChildren {
+  SettingsSocialRoute: typeof SettingsSocialRoute
+}
+
+const SettingsRouteChildren: SettingsRouteChildren = {
+  SettingsSocialRoute: SettingsSocialRoute,
+}
+
+const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
+  SettingsRouteChildren,
+)
+
 interface FounderCollectionsRouteChildren {
   FounderCollectionsIdRoute: typeof FounderCollectionsIdRoute
 }
@@ -792,7 +823,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   ProfileSetupRoute: ProfileSetupRoute,
   RulesRoute: RulesRoute,
-  SettingsRoute: SettingsRoute,
+  SettingsRoute: SettingsRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StarterRoute: StarterRoute,
   TitlesRoute: TitlesRoute,
