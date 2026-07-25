@@ -9,6 +9,13 @@ import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useProfile } from "@/lib/hooks/useProfile";
 import { onboarding } from "@/lib/hooks/useOnboarding";
+import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import logoAsset from "@/assets/sidequest-logo.png.asset.json";
+
+const FOUNDER_EMAIL = "ankleshwarweb@gmail.com";
+const FOUNDER_USERNAME = "sidequest";
+const FOUNDER_DISPLAY_NAME = "SideQuest";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -37,6 +44,7 @@ function AuthPage() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile(user?.id);
+  const queryClient = useQueryClient();
   const [signingIn, setSigningIn] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,10 +52,34 @@ function AuthPage() {
     if (authLoading || !user || profileLoading) return;
     if (profile) {
       navigate({ to: onboarding.isTutorialDone() ? "/home" : "/tutorial" });
+      return;
+    }
+    const email = (user.email ?? "").toLowerCase();
+    if (email === FOUNDER_EMAIL) {
+      // Auto-create founder profile; skip profile setup entirely.
+      (async () => {
+        const { error: insErr } = await supabase.from("profiles").upsert(
+          {
+            id: user.id,
+            username: FOUNDER_USERNAME,
+            display_name: FOUNDER_DISPLAY_NAME,
+            avatar_url: logoAsset.url,
+          },
+          { onConflict: "id" },
+        );
+        if (insErr) {
+          console.error("[founder-auto-profile] failed:", insErr);
+          navigate({ to: "/profile-setup" });
+          return;
+        }
+        onboarding.markTutorialDone();
+        await queryClient.invalidateQueries({ queryKey: ["profile", user.id] });
+        navigate({ to: "/home" });
+      })();
     } else {
       navigate({ to: "/profile-setup" });
     }
-  }, [authLoading, profileLoading, user, profile, navigate]);
+  }, [authLoading, profileLoading, user, profile, navigate, queryClient]);
 
   const signIn = async () => {
     setSigningIn(true);
