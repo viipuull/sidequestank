@@ -11,6 +11,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useProfile } from "@/lib/hooks/useProfile";
+import { sendWelcomeEmail } from "@/lib/founder.functions";
 
 export const Route = createFileRoute("/profile-setup")({
   head: () => ({
@@ -104,6 +105,10 @@ function ProfileSetup() {
       });
       if (insErr) throw insErr;
       await queryClient.invalidateQueries({ queryKey: ["profile", user.id] });
+      // Fire-and-forget welcome email (provider not yet connected — see founder.functions.ts).
+      void sendWelcomeEmail({ data: { displayName: displayName.trim() } }).catch((err) => {
+        console.warn("[welcome-email] failed to queue:", err);
+      });
       navigate({ to: "/tutorial" });
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not create profile");
