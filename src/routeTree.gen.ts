@@ -21,6 +21,7 @@ import { Route as ProfileSetupRouteImport } from './routes/profile-setup'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PlayersRouteImport } from './routes/players'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as EventsRouteImport } from './routes/events'
@@ -108,6 +109,11 @@ const PlayersRoute = PlayersRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LeaderboardRoute = LeaderboardRouteImport.update({
@@ -262,6 +268,7 @@ export interface FileRoutesByFullPath {
   '/events': typeof EventsRouteWithChildren
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
   '/players': typeof PlayersRouteWithChildren
   '/profile': typeof ProfileRoute
@@ -304,6 +311,7 @@ export interface FileRoutesByTo {
   '/events': typeof EventsRouteWithChildren
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
   '/players': typeof PlayersRouteWithChildren
   '/profile': typeof ProfileRoute
@@ -347,6 +355,7 @@ export interface FileRoutesById {
   '/events': typeof EventsRouteWithChildren
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
   '/players': typeof PlayersRouteWithChildren
   '/profile': typeof ProfileRoute
@@ -391,6 +400,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/home'
     | '/leaderboard'
+    | '/notifications'
     | '/onboarding'
     | '/players'
     | '/profile'
@@ -433,6 +443,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/home'
     | '/leaderboard'
+    | '/notifications'
     | '/onboarding'
     | '/players'
     | '/profile'
@@ -475,6 +486,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/home'
     | '/leaderboard'
+    | '/notifications'
     | '/onboarding'
     | '/players'
     | '/profile'
@@ -518,6 +530,7 @@ export interface RootRouteChildren {
   EventsRoute: typeof EventsRouteWithChildren
   HomeRoute: typeof HomeRoute
   LeaderboardRoute: typeof LeaderboardRoute
+  NotificationsRoute: typeof NotificationsRoute
   OnboardingRoute: typeof OnboardingRoute
   PlayersRoute: typeof PlayersRouteWithChildren
   ProfileRoute: typeof ProfileRoute
@@ -627,6 +640,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/leaderboard': {
@@ -931,6 +951,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventsRoute: EventsRouteWithChildren,
   HomeRoute: HomeRoute,
   LeaderboardRoute: LeaderboardRoute,
+  NotificationsRoute: NotificationsRoute,
   OnboardingRoute: OnboardingRoute,
   PlayersRoute: PlayersRouteWithChildren,
   ProfileRoute: ProfileRoute,
