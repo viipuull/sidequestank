@@ -234,9 +234,9 @@ const StudioAnalyticsRoute = StudioAnalyticsRouteImport.update({
   getParentRoute: () => StudioRoute,
 } as any)
 const SettingsSocialRoute = SettingsSocialRouteImport.update({
-  id: '/social',
-  path: '/social',
-  getParentRoute: () => SettingsRoute,
+  id: '/settings/social',
+  path: '/settings/social',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsProfileRoute = SettingsProfileRouteImport.update({
   id: '/settings/profile',
@@ -692,6 +692,7 @@ export interface RootRouteChildren {
   PlayersUsernameRoute: typeof PlayersUsernameRouteWithChildren
   QuestsSlugRoute: typeof QuestsSlugRouteWithChildren
   SettingsProfileRoute: typeof SettingsProfileRoute
+  SettingsSocialRoute: typeof SettingsSocialRoute
   FounderIndexRoute: typeof FounderIndexRoute
   PlayersIndexRoute: typeof PlayersIndexRoute
   QuestsIndexRoute: typeof QuestsIndexRoute
@@ -944,10 +945,10 @@ declare module '@tanstack/react-router' {
     }
     '/settings/social': {
       id: '/settings/social'
-      path: '/social'
+      path: '/settings/social'
       fullPath: '/settings/social'
       preLoaderRoute: typeof SettingsSocialRouteImport
-      parentRoute: typeof SettingsRoute
+      parentRoute: typeof rootRouteImport
     }
     '/settings/profile': {
       id: '/settings/profile'
@@ -1205,6 +1206,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlayersUsernameRoute: PlayersUsernameRouteWithChildren,
   QuestsSlugRoute: QuestsSlugRouteWithChildren,
   SettingsProfileRoute: SettingsProfileRoute,
+  SettingsSocialRoute: SettingsSocialRoute,
   FounderIndexRoute: FounderIndexRoute,
   PlayersIndexRoute: PlayersIndexRoute,
   QuestsIndexRoute: QuestsIndexRoute,
@@ -1217,13 +1219,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
