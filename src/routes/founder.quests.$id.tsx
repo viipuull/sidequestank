@@ -66,6 +66,7 @@ function EditQuestPage() {
         objective_type: o.objective_type,
         completion_order: o.completion_order,
         required: o.required,
+        config: (o.config ?? {}) as Record<string, unknown>,
       })),
     };
   }, [data]);
