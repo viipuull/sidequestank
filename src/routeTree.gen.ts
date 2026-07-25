@@ -45,6 +45,7 @@ import { Route as PlayersUsernameCompareRouteImport } from './routes/players.$us
 import { Route as FounderQuestsNewRouteImport } from './routes/founder.quests.new'
 import { Route as FounderQuestsIdRouteImport } from './routes/founder.quests.$id'
 import { Route as FounderCollectionsIdRouteImport } from './routes/founder.collections.$id'
+import { Route as ApiPublicHooksLiveopsTickRouteImport } from './routes/api/public/hooks/liveops-tick'
 
 const XpHistoryRoute = XpHistoryRouteImport.update({
   id: '/xp-history',
@@ -226,6 +227,12 @@ const FounderCollectionsIdRoute = FounderCollectionsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => FounderCollectionsRoute,
 } as any)
+const ApiPublicHooksLiveopsTickRoute =
+  ApiPublicHooksLiveopsTickRouteImport.update({
+    id: '/api/public/hooks/liveops-tick',
+    path: '/api/public/hooks/liveops-tick',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -264,6 +271,7 @@ export interface FileRoutesByFullPath {
   '/players/$username/compare': typeof PlayersUsernameCompareRoute
   '/quests/$slug/play': typeof QuestsSlugPlayRoute
   '/founder/quests/': typeof FounderQuestsIndexRoute
+  '/api/public/hooks/liveops-tick': typeof ApiPublicHooksLiveopsTickRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -302,6 +310,7 @@ export interface FileRoutesByTo {
   '/players/$username/compare': typeof PlayersUsernameCompareRoute
   '/quests/$slug/play': typeof QuestsSlugPlayRoute
   '/founder/quests': typeof FounderQuestsIndexRoute
+  '/api/public/hooks/liveops-tick': typeof ApiPublicHooksLiveopsTickRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -341,6 +350,7 @@ export interface FileRoutesById {
   '/players/$username/compare': typeof PlayersUsernameCompareRoute
   '/quests/$slug/play': typeof QuestsSlugPlayRoute
   '/founder/quests/': typeof FounderQuestsIndexRoute
+  '/api/public/hooks/liveops-tick': typeof ApiPublicHooksLiveopsTickRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -381,6 +391,7 @@ export interface FileRouteTypes {
     | '/players/$username/compare'
     | '/quests/$slug/play'
     | '/founder/quests/'
+    | '/api/public/hooks/liveops-tick'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -419,6 +430,7 @@ export interface FileRouteTypes {
     | '/players/$username/compare'
     | '/quests/$slug/play'
     | '/founder/quests'
+    | '/api/public/hooks/liveops-tick'
   id:
     | '__root__'
     | '/'
@@ -457,6 +469,7 @@ export interface FileRouteTypes {
     | '/players/$username/compare'
     | '/quests/$slug/play'
     | '/founder/quests/'
+    | '/api/public/hooks/liveops-tick'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -489,6 +502,7 @@ export interface RootRouteChildren {
   FounderQuestsIdRoute: typeof FounderQuestsIdRoute
   FounderQuestsNewRoute: typeof FounderQuestsNewRoute
   FounderQuestsIndexRoute: typeof FounderQuestsIndexRoute
+  ApiPublicHooksLiveopsTickRoute: typeof ApiPublicHooksLiveopsTickRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -745,6 +759,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FounderCollectionsIdRouteImport
       parentRoute: typeof FounderCollectionsRoute
     }
+    '/api/public/hooks/liveops-tick': {
+      id: '/api/public/hooks/liveops-tick'
+      path: '/api/public/hooks/liveops-tick'
+      fullPath: '/api/public/hooks/liveops-tick'
+      preLoaderRoute: typeof ApiPublicHooksLiveopsTickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -860,6 +881,7 @@ const rootRouteChildren: RootRouteChildren = {
   FounderQuestsIdRoute: FounderQuestsIdRoute,
   FounderQuestsNewRoute: FounderQuestsNewRoute,
   FounderQuestsIndexRoute: FounderQuestsIndexRoute,
+  ApiPublicHooksLiveopsTickRoute: ApiPublicHooksLiveopsTickRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
