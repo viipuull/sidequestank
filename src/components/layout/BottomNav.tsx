@@ -23,10 +23,10 @@ export function BottomNav() {
             <li key={t.to} className="flex-1">
               <Link
                 to={t.to}
-                className="group flex flex-col items-center gap-1 py-2.5 text-[10px] font-medium text-muted-foreground transition-colors"
+                className="group flex flex-col items-center gap-1 py-2.5 text-[10px] font-medium text-muted-foreground transition-all duration-200 active:scale-95"
                 activeProps={{ className: "text-primary" }}
               >
-                <Icon className="h-5 w-5" />
+                <Icon className="h-5 w-5 transition-transform duration-200 group-hover:-translate-y-0.5" />
                 <span>{t.label}</span>
               </Link>
             </li>
