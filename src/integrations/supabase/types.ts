@@ -193,6 +193,48 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_events: {
+        Row: {
+          action: string
+          actor_email: string | null
+          actor_id: string | null
+          after: Json
+          before: Json
+          created_at: string
+          id: string
+          metadata: Json
+          summary: string | null
+          target_id: string | null
+          target_kind: string
+        }
+        Insert: {
+          action: string
+          actor_email?: string | null
+          actor_id?: string | null
+          after?: Json
+          before?: Json
+          created_at?: string
+          id?: string
+          metadata?: Json
+          summary?: string | null
+          target_id?: string | null
+          target_kind: string
+        }
+        Update: {
+          action?: string
+          actor_email?: string | null
+          actor_id?: string | null
+          after?: Json
+          before?: Json
+          created_at?: string
+          id?: string
+          metadata?: Json
+          summary?: string | null
+          target_id?: string | null
+          target_kind?: string
+        }
+        Relationships: []
+      }
       challenges: {
         Row: {
           active: boolean
@@ -1789,6 +1831,18 @@ export type Database = {
           _payload: Json
           _ref_id: string
           _user_id: string
+        }
+        Returns: string
+      }
+      record_audit: {
+        Args: {
+          _action: string
+          _after?: Json
+          _before?: Json
+          _metadata?: Json
+          _summary?: string
+          _target_id: string
+          _target_kind: string
         }
         Returns: string
       }
