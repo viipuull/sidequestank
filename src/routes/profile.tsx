@@ -27,6 +27,7 @@ function ProfileInner() {
     username: "explorer",
     avatar_url: (user?.user_metadata?.avatar_url as string | undefined) ?? null,
     is_pioneer: false,
+    pioneer_number: null as number | null,
     city: "Ankleshwar",
     level: 1,
     xp: 0,
@@ -54,8 +55,15 @@ function ProfileInner() {
         <h2 className="mt-3 text-xl font-bold">{p.display_name}</h2>
         <p className="text-sm text-muted-foreground">@{p.username}</p>
         {p.is_pioneer && (
-          <span className="mt-3 inline-flex items-center gap-1 rounded-full border border-accent/50 bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
-            🏅 Pioneer
+          <span
+            className="mt-3 inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold"
+            style={{
+              borderColor: "oklch(0.85 0.16 85 / 0.5)",
+              backgroundColor: "oklch(0.85 0.16 85 / 0.12)",
+              color: "oklch(0.85 0.16 85)",
+            }}
+          >
+            🏆 Pioneer{p.pioneer_number ? ` #${p.pioneer_number}` : ""}
           </span>
         )}
         <div className="mt-4 inline-flex items-center gap-1 text-xs text-muted-foreground">

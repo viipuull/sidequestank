@@ -11,6 +11,7 @@ export type FounderUserRow = {
   email: string | null;
   created_at: string;
   is_pioneer: boolean;
+  pioneer_number: number | null;
 };
 
 export type FounderStats = {
@@ -33,7 +34,7 @@ export const getFounderStats = createServerFn({ method: "GET" })
 
     const { data: profiles, error } = await supabaseAdmin
       .from("profiles")
-      .select("id, username, display_name, is_pioneer, created_at")
+      .select("id, username, display_name, is_pioneer, pioneer_number, created_at")
       .order("created_at", { ascending: false });
     if (error) throw error;
 
@@ -75,6 +76,7 @@ export const getFounderStats = createServerFn({ method: "GET" })
       email: emailByUserId.get(p.id) ?? null,
       created_at: p.created_at,
       is_pioneer: p.is_pioneer,
+      pioneer_number: p.pioneer_number ?? null,
     }));
 
     return {

@@ -179,8 +179,14 @@ function FounderPage() {
                       </span>
                       <span className="sm:text-right">
                         {u.is_pioneer ? (
-                          <span className="inline-flex rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-semibold text-accent">
-                            Yes
+                          <span
+                            className="inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                            style={{
+                              backgroundColor: "oklch(0.85 0.16 85 / 0.15)",
+                              color: "oklch(0.85 0.16 85)",
+                            }}
+                          >
+                            #{u.pioneer_number ?? "—"}
                           </span>
                         ) : (
                           <span className="text-[11px] text-muted-foreground">No</span>
