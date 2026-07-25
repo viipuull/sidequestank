@@ -6,6 +6,7 @@ import { ArrowLeft, Clock, MapPin, Loader2, Sparkles, Star, CheckCircle2 } from 
 import { useState } from "react";
 import { getPublishedQuestBySlug } from "@/lib/quests.functions";
 import { startOrResumeSession, getActiveSessionForQuest } from "@/lib/gameplay.functions";
+import { getCollectionsForQuest } from "@/lib/collections.functions";
 import { QUEST_CATEGORIES, QUEST_DIFFICULTIES, QUEST_TYPES, OBJECTIVE_TYPES } from "@/lib/quests.types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -42,6 +43,12 @@ function QuestDetailPage() {
     queryKey: ["quest-active-session", data?.id],
     enabled: !!data?.id && !!user,
     queryFn: () => fetchActive({ data: { questId: data!.id } }),
+  });
+  const collectionsFn = useServerFn(getCollectionsForQuest);
+  const { data: parentCollections } = useQuery({
+    queryKey: ["quest-collections", data?.id],
+    enabled: !!data?.id,
+    queryFn: () => collectionsFn({ data: { questId: data!.id } }),
   });
 
   if (isLoading) {
@@ -153,6 +160,27 @@ function QuestDetailPage() {
             <p className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
               {data.full_description}
             </p>
+          </Section>
+        )}
+
+        {parentCollections && parentCollections.length > 0 && (
+          <Section title={`Part of · ${parentCollections.length}`}>
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {parentCollections.map((c) => (
+                <Link
+                  key={c.id}
+                  to="/collections/$slug"
+                  params={{ slug: c.slug }}
+                  className="flex min-w-[160px] items-center gap-2 rounded-2xl border border-border bg-background/40 p-2 active:scale-[0.98]"
+                >
+                  <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/15 text-xl">{c.icon}</div>
+                  <div className="min-w-0">
+                    <p className="text-[10px] uppercase tracking-wider text-primary">Collection</p>
+                    <p className="truncate text-xs font-semibold">{c.name}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </Section>
         )}
 
