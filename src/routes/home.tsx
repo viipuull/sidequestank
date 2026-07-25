@@ -15,6 +15,9 @@ import { useEquippedTitle } from "@/lib/hooks/useTitles";
 import { TitleBadge } from "@/components/titles/TitleBadge";
 import { useMyAchievements } from "@/lib/hooks/useAchievements";
 import { RARITY_STYLES } from "@/lib/hooks/useTitles";
+import { LiveOpsRail } from "@/components/home/LiveOpsRail";
+import { AnnouncementBanner } from "@/components/home/AnnouncementBanner";
+import { useUnreadNotifCount } from "@/lib/hooks/useLiveOps";
 
 export const Route = createFileRoute("/home")({
   head: () => ({
@@ -35,6 +38,7 @@ function HomeInner() {
   const { data: recentXp } = useMyXpHistory(5, !!user);
   const { data: equipped } = useEquippedTitle(!!user);
   const { data: myAch } = useMyAchievements(!!user);
+  const { data: unread } = useUnreadNotifCount(!!user);
   const unlockedAch = (myAch ?? []).filter((r) => r.completed);
   const featured = unlockedAch.filter((r) => r.featured).sort((a, b) => b.featured_order - a.featured_order);
   const showcase = (featured.length > 0 ? featured : unlockedAch).slice(0, 4);
@@ -89,6 +93,19 @@ function HomeInner() {
         />
       </header>
 
+      <div className="mt-3 flex items-center gap-2">
+        <Link to="/notifications" className="relative inline-flex items-center gap-1.5 rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs font-semibold text-muted-foreground backdrop-blur">
+          <Bell className="h-3.5 w-3.5" /> Inbox
+          {unread && unread.count > 0 && (
+            <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground">{unread.count}</span>
+          )}
+        </Link>
+        <Link to="/events" className="rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs font-semibold text-muted-foreground backdrop-blur">Events</Link>
+        <Link to="/challenges" className="rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs font-semibold text-muted-foreground backdrop-blur">Challenges</Link>
+      </div>
+
+      <AnnouncementBanner />
+
       <motion.div
         className="mt-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-[11px] font-semibold text-primary"
         initial={{ opacity: 0, y: 4 }}
@@ -120,6 +137,8 @@ function HomeInner() {
           className="mt-3"
         />
       </motion.section>
+
+      <LiveOpsRail />
 
       <section className="mt-5 grid grid-cols-2 gap-3">
         <StatCard icon={<Sparkles className="h-5 w-5 text-primary" />} label="Level" value={String(p.level)} />

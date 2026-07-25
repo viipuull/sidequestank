@@ -21,9 +21,12 @@ import { Route as ProfileSetupRouteImport } from './routes/profile-setup'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PlayersRouteImport } from './routes/players'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as HomeRouteImport } from './routes/home'
+import { Route as EventsRouteImport } from './routes/events'
 import { Route as CollectionsRouteImport } from './routes/collections'
+import { Route as ChallengesRouteImport } from './routes/challenges'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ActivityRouteImport } from './routes/activity'
 import { Route as AchievementsRouteImport } from './routes/achievements'
@@ -35,8 +38,10 @@ import { Route as QuestsSlugRouteImport } from './routes/quests.$slug'
 import { Route as PlayersUsernameRouteImport } from './routes/players.$username'
 import { Route as FounderTitlesRouteImport } from './routes/founder.titles'
 import { Route as FounderSocialRouteImport } from './routes/founder.social'
+import { Route as FounderLiveopsRouteImport } from './routes/founder.liveops'
 import { Route as FounderCollectionsRouteImport } from './routes/founder.collections'
 import { Route as FounderAchievementsRouteImport } from './routes/founder.achievements'
+import { Route as EventsSlugRouteImport } from './routes/events.$slug'
 import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
 import { Route as AchievementsSlugRouteImport } from './routes/achievements.$slug'
 import { Route as FounderQuestsIndexRouteImport } from './routes/founder.quests.index'
@@ -45,6 +50,7 @@ import { Route as PlayersUsernameCompareRouteImport } from './routes/players.$us
 import { Route as FounderQuestsNewRouteImport } from './routes/founder.quests.new'
 import { Route as FounderQuestsIdRouteImport } from './routes/founder.quests.$id'
 import { Route as FounderCollectionsIdRouteImport } from './routes/founder.collections.$id'
+import { Route as ApiPublicHooksLiveopsTickRouteImport } from './routes/api/public/hooks/liveops-tick'
 
 const XpHistoryRoute = XpHistoryRouteImport.update({
   id: '/xp-history',
@@ -106,6 +112,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LeaderboardRoute = LeaderboardRouteImport.update({
   id: '/leaderboard',
   path: '/leaderboard',
@@ -116,9 +127,19 @@ const HomeRoute = HomeRouteImport.update({
   path: '/home',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CollectionsRoute = CollectionsRouteImport.update({
   id: '/collections',
   path: '/collections',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChallengesRoute = ChallengesRouteImport.update({
+  id: '/challenges',
+  path: '/challenges',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -176,6 +197,11 @@ const FounderSocialRoute = FounderSocialRouteImport.update({
   path: '/founder/social',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FounderLiveopsRoute = FounderLiveopsRouteImport.update({
+  id: '/founder/liveops',
+  path: '/founder/liveops',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FounderCollectionsRoute = FounderCollectionsRouteImport.update({
   id: '/founder/collections',
   path: '/founder/collections',
@@ -185,6 +211,11 @@ const FounderAchievementsRoute = FounderAchievementsRouteImport.update({
   id: '/founder/achievements',
   path: '/founder/achievements',
   getParentRoute: () => rootRouteImport,
+} as any)
+const EventsSlugRoute = EventsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => EventsRoute,
 } as any)
 const CollectionsSlugRoute = CollectionsSlugRouteImport.update({
   id: '/$slug',
@@ -226,15 +257,24 @@ const FounderCollectionsIdRoute = FounderCollectionsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => FounderCollectionsRoute,
 } as any)
+const ApiPublicHooksLiveopsTickRoute =
+  ApiPublicHooksLiveopsTickRouteImport.update({
+    id: '/api/public/hooks/liveops-tick',
+    path: '/api/public/hooks/liveops-tick',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/achievements': typeof AchievementsRouteWithChildren
   '/activity': typeof ActivityRoute
   '/auth': typeof AuthRoute
+  '/challenges': typeof ChallengesRoute
   '/collections': typeof CollectionsRouteWithChildren
+  '/events': typeof EventsRouteWithChildren
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
   '/players': typeof PlayersRouteWithChildren
   '/profile': typeof ProfileRoute
@@ -249,8 +289,10 @@ export interface FileRoutesByFullPath {
   '/xp-history': typeof XpHistoryRoute
   '/achievements/$slug': typeof AchievementsSlugRoute
   '/collections/$slug': typeof CollectionsSlugRoute
+  '/events/$slug': typeof EventsSlugRoute
   '/founder/achievements': typeof FounderAchievementsRoute
   '/founder/collections': typeof FounderCollectionsRouteWithChildren
+  '/founder/liveops': typeof FounderLiveopsRoute
   '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
@@ -264,15 +306,19 @@ export interface FileRoutesByFullPath {
   '/players/$username/compare': typeof PlayersUsernameCompareRoute
   '/quests/$slug/play': typeof QuestsSlugPlayRoute
   '/founder/quests/': typeof FounderQuestsIndexRoute
+  '/api/public/hooks/liveops-tick': typeof ApiPublicHooksLiveopsTickRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/achievements': typeof AchievementsRouteWithChildren
   '/activity': typeof ActivityRoute
   '/auth': typeof AuthRoute
+  '/challenges': typeof ChallengesRoute
   '/collections': typeof CollectionsRouteWithChildren
+  '/events': typeof EventsRouteWithChildren
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
   '/players': typeof PlayersRouteWithChildren
   '/profile': typeof ProfileRoute
@@ -287,8 +333,10 @@ export interface FileRoutesByTo {
   '/xp-history': typeof XpHistoryRoute
   '/achievements/$slug': typeof AchievementsSlugRoute
   '/collections/$slug': typeof CollectionsSlugRoute
+  '/events/$slug': typeof EventsSlugRoute
   '/founder/achievements': typeof FounderAchievementsRoute
   '/founder/collections': typeof FounderCollectionsRouteWithChildren
+  '/founder/liveops': typeof FounderLiveopsRoute
   '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
@@ -302,6 +350,7 @@ export interface FileRoutesByTo {
   '/players/$username/compare': typeof PlayersUsernameCompareRoute
   '/quests/$slug/play': typeof QuestsSlugPlayRoute
   '/founder/quests': typeof FounderQuestsIndexRoute
+  '/api/public/hooks/liveops-tick': typeof ApiPublicHooksLiveopsTickRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -309,9 +358,12 @@ export interface FileRoutesById {
   '/achievements': typeof AchievementsRouteWithChildren
   '/activity': typeof ActivityRoute
   '/auth': typeof AuthRoute
+  '/challenges': typeof ChallengesRoute
   '/collections': typeof CollectionsRouteWithChildren
+  '/events': typeof EventsRouteWithChildren
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
+  '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
   '/players': typeof PlayersRouteWithChildren
   '/profile': typeof ProfileRoute
@@ -326,8 +378,10 @@ export interface FileRoutesById {
   '/xp-history': typeof XpHistoryRoute
   '/achievements/$slug': typeof AchievementsSlugRoute
   '/collections/$slug': typeof CollectionsSlugRoute
+  '/events/$slug': typeof EventsSlugRoute
   '/founder/achievements': typeof FounderAchievementsRoute
   '/founder/collections': typeof FounderCollectionsRouteWithChildren
+  '/founder/liveops': typeof FounderLiveopsRoute
   '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
@@ -341,6 +395,7 @@ export interface FileRoutesById {
   '/players/$username/compare': typeof PlayersUsernameCompareRoute
   '/quests/$slug/play': typeof QuestsSlugPlayRoute
   '/founder/quests/': typeof FounderQuestsIndexRoute
+  '/api/public/hooks/liveops-tick': typeof ApiPublicHooksLiveopsTickRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -349,9 +404,12 @@ export interface FileRouteTypes {
     | '/achievements'
     | '/activity'
     | '/auth'
+    | '/challenges'
     | '/collections'
+    | '/events'
     | '/home'
     | '/leaderboard'
+    | '/notifications'
     | '/onboarding'
     | '/players'
     | '/profile'
@@ -366,8 +424,10 @@ export interface FileRouteTypes {
     | '/xp-history'
     | '/achievements/$slug'
     | '/collections/$slug'
+    | '/events/$slug'
     | '/founder/achievements'
     | '/founder/collections'
+    | '/founder/liveops'
     | '/founder/social'
     | '/founder/titles'
     | '/players/$username'
@@ -381,15 +441,19 @@ export interface FileRouteTypes {
     | '/players/$username/compare'
     | '/quests/$slug/play'
     | '/founder/quests/'
+    | '/api/public/hooks/liveops-tick'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/achievements'
     | '/activity'
     | '/auth'
+    | '/challenges'
     | '/collections'
+    | '/events'
     | '/home'
     | '/leaderboard'
+    | '/notifications'
     | '/onboarding'
     | '/players'
     | '/profile'
@@ -404,8 +468,10 @@ export interface FileRouteTypes {
     | '/xp-history'
     | '/achievements/$slug'
     | '/collections/$slug'
+    | '/events/$slug'
     | '/founder/achievements'
     | '/founder/collections'
+    | '/founder/liveops'
     | '/founder/social'
     | '/founder/titles'
     | '/players/$username'
@@ -419,15 +485,19 @@ export interface FileRouteTypes {
     | '/players/$username/compare'
     | '/quests/$slug/play'
     | '/founder/quests'
+    | '/api/public/hooks/liveops-tick'
   id:
     | '__root__'
     | '/'
     | '/achievements'
     | '/activity'
     | '/auth'
+    | '/challenges'
     | '/collections'
+    | '/events'
     | '/home'
     | '/leaderboard'
+    | '/notifications'
     | '/onboarding'
     | '/players'
     | '/profile'
@@ -442,8 +512,10 @@ export interface FileRouteTypes {
     | '/xp-history'
     | '/achievements/$slug'
     | '/collections/$slug'
+    | '/events/$slug'
     | '/founder/achievements'
     | '/founder/collections'
+    | '/founder/liveops'
     | '/founder/social'
     | '/founder/titles'
     | '/players/$username'
@@ -457,6 +529,7 @@ export interface FileRouteTypes {
     | '/players/$username/compare'
     | '/quests/$slug/play'
     | '/founder/quests/'
+    | '/api/public/hooks/liveops-tick'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -464,9 +537,12 @@ export interface RootRouteChildren {
   AchievementsRoute: typeof AchievementsRouteWithChildren
   ActivityRoute: typeof ActivityRoute
   AuthRoute: typeof AuthRoute
+  ChallengesRoute: typeof ChallengesRoute
   CollectionsRoute: typeof CollectionsRouteWithChildren
+  EventsRoute: typeof EventsRouteWithChildren
   HomeRoute: typeof HomeRoute
   LeaderboardRoute: typeof LeaderboardRoute
+  NotificationsRoute: typeof NotificationsRoute
   OnboardingRoute: typeof OnboardingRoute
   PlayersRoute: typeof PlayersRouteWithChildren
   ProfileRoute: typeof ProfileRoute
@@ -481,6 +557,7 @@ export interface RootRouteChildren {
   XpHistoryRoute: typeof XpHistoryRoute
   FounderAchievementsRoute: typeof FounderAchievementsRoute
   FounderCollectionsRoute: typeof FounderCollectionsRouteWithChildren
+  FounderLiveopsRoute: typeof FounderLiveopsRoute
   FounderSocialRoute: typeof FounderSocialRoute
   FounderTitlesRoute: typeof FounderTitlesRoute
   QuestsSlugRoute: typeof QuestsSlugRouteWithChildren
@@ -489,6 +566,7 @@ export interface RootRouteChildren {
   FounderQuestsIdRoute: typeof FounderQuestsIdRoute
   FounderQuestsNewRoute: typeof FounderQuestsNewRoute
   FounderQuestsIndexRoute: typeof FounderQuestsIndexRoute
+  ApiPublicHooksLiveopsTickRoute: typeof ApiPublicHooksLiveopsTickRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -577,6 +655,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/leaderboard': {
       id: '/leaderboard'
       path: '/leaderboard'
@@ -591,11 +676,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/collections': {
       id: '/collections'
       path: '/collections'
       fullPath: '/collections'
       preLoaderRoute: typeof CollectionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/challenges': {
+      id: '/challenges'
+      path: '/challenges'
+      fullPath: '/challenges'
+      preLoaderRoute: typeof ChallengesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -675,6 +774,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FounderSocialRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/founder/liveops': {
+      id: '/founder/liveops'
+      path: '/founder/liveops'
+      fullPath: '/founder/liveops'
+      preLoaderRoute: typeof FounderLiveopsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/founder/collections': {
       id: '/founder/collections'
       path: '/founder/collections'
@@ -688,6 +794,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/founder/achievements'
       preLoaderRoute: typeof FounderAchievementsRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/events/$slug': {
+      id: '/events/$slug'
+      path: '/$slug'
+      fullPath: '/events/$slug'
+      preLoaderRoute: typeof EventsSlugRouteImport
+      parentRoute: typeof EventsRoute
     }
     '/collections/$slug': {
       id: '/collections/$slug'
@@ -745,6 +858,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FounderCollectionsIdRouteImport
       parentRoute: typeof FounderCollectionsRoute
     }
+    '/api/public/hooks/liveops-tick': {
+      id: '/api/public/hooks/liveops-tick'
+      path: '/api/public/hooks/liveops-tick'
+      fullPath: '/api/public/hooks/liveops-tick'
+      preLoaderRoute: typeof ApiPublicHooksLiveopsTickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -771,6 +891,17 @@ const CollectionsRouteChildren: CollectionsRouteChildren = {
 const CollectionsRouteWithChildren = CollectionsRoute._addFileChildren(
   CollectionsRouteChildren,
 )
+
+interface EventsRouteChildren {
+  EventsSlugRoute: typeof EventsSlugRoute
+}
+
+const EventsRouteChildren: EventsRouteChildren = {
+  EventsSlugRoute: EventsSlugRoute,
+}
+
+const EventsRouteWithChildren =
+  EventsRoute._addFileChildren(EventsRouteChildren)
 
 interface PlayersUsernameRouteChildren {
   PlayersUsernameCompareRoute: typeof PlayersUsernameCompareRoute
@@ -835,9 +966,12 @@ const rootRouteChildren: RootRouteChildren = {
   AchievementsRoute: AchievementsRouteWithChildren,
   ActivityRoute: ActivityRoute,
   AuthRoute: AuthRoute,
+  ChallengesRoute: ChallengesRoute,
   CollectionsRoute: CollectionsRouteWithChildren,
+  EventsRoute: EventsRouteWithChildren,
   HomeRoute: HomeRoute,
   LeaderboardRoute: LeaderboardRoute,
+  NotificationsRoute: NotificationsRoute,
   OnboardingRoute: OnboardingRoute,
   PlayersRoute: PlayersRouteWithChildren,
   ProfileRoute: ProfileRoute,
@@ -852,6 +986,7 @@ const rootRouteChildren: RootRouteChildren = {
   XpHistoryRoute: XpHistoryRoute,
   FounderAchievementsRoute: FounderAchievementsRoute,
   FounderCollectionsRoute: FounderCollectionsRouteWithChildren,
+  FounderLiveopsRoute: FounderLiveopsRoute,
   FounderSocialRoute: FounderSocialRoute,
   FounderTitlesRoute: FounderTitlesRoute,
   QuestsSlugRoute: QuestsSlugRouteWithChildren,
@@ -860,6 +995,7 @@ const rootRouteChildren: RootRouteChildren = {
   FounderQuestsIdRoute: FounderQuestsIdRoute,
   FounderQuestsNewRoute: FounderQuestsNewRoute,
   FounderQuestsIndexRoute: FounderQuestsIndexRoute,
+  ApiPublicHooksLiveopsTickRoute: ApiPublicHooksLiveopsTickRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

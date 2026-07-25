@@ -1,80 +1,101 @@
+# SideQuest — Prompt 10: LiveOps, Events & Notifications
 
-# Prompt 9 — Social, Leaderboards & Community
+Build a full LiveOps layer on top of the existing quest / XP / titles / achievements / collections / social systems. **Purely additive** — no existing screens redesigned, no existing tables changed, no existing routes removed.
 
-Additive layer on top of the existing platform. No existing screen or route is redesigned; existing systems (XP, titles, achievements, collections, gameplay) stay intact and become inputs to the new social surfaces.
+---
 
-## 1. Database (new migration)
+## 1. Database (one migration)
 
-New tables in `public`, all with GRANTs + RLS in the same migration:
+New tables (all under `public`, with GRANTs, RLS, updated_at triggers):
 
-- `player_social_settings` — one row per user, controls visibility (`public_profile`, `show_stats`, `show_achievements`, `show_collections`, `show_titles`, `appear_on_leaderboard`, `allow_friend_requests`, `allow_followers`, `moderation_hidden`). Auto-created via trigger on `profiles` insert.
-- `player_stats` — denormalized rollup (`total_xp`, `level`, `quests_completed`, `collections_completed`, `achievements_earned`, `titles_earned`, `cities_explored`, `last_active_at`, `join_date`). Maintained by triggers on `player_progress`, `player_achievements`, `player_titles`, `player_collections`.
-- `leaderboard_snapshots` — `scope` (`global|country|state|city|event|friends|team`), `scope_key` (nullable text, e.g. city name), `period` (`all_time|weekly|monthly|seasonal`), `period_key` (e.g. `2026-W30`, `2026-07`, `season-1`), `season_id` (nullable), `user_id`, `rank`, `xp`, `level`, `quests`, `collections`, `computed_at`. Unique `(scope, scope_key, period, period_key, user_id)`.
-- `leaderboard_seasons` — id, name, starts_at, ends_at, active. Managed in Founder Studio.
-- `featured_players` — spotlight rows managed by founders (user_id, blurb, priority, active).
-- `activity_events` — feed items (`user_id`, `kind` [`quest_completed|level_up|title_unlocked|achievement_unlocked|collection_completed`], `ref_id`, `payload jsonb`, `created_at`, `visibility`). Public feed reads only where the acting user's `public_profile = true AND moderation_hidden = false`.
+- **events** — LiveOps events. Columns include `event_type` (enum: `daily_quest_set`, `weekly_challenge`, `monthly_challenge`, `seasonal`, `holiday`, `limited_time`, `founder`, `community`, `beta`, `sponsored`), `status` (draft/scheduled/live/ended/archived), `visibility`, `starts_at`, `ends_at`, `timezone`, `banner_url`, `cover_url`, `icon`, `featured`, `priority`, `max_participants`, `repeatable`, `config jsonb` (extensible — reward multipliers, exclusive quest ids, etc.), `community_goal int`, `community_progress int`.
+- **event_rewards** — many rewards per event (`kind`: xp / title / achievement / collection / badge_image, references + amounts).
+- **event_quests** — pins/features specific quests to an event with a display order (drives Limited-Time Quests & Featured pools).
+- **challenges** — reusable challenge templates: `metric` (quests_completed / xp_earned / locations_visited / qr_scans / photos / collections_completed / achievements_unlocked / level_reached), `target`, `reset_frequency` (none/daily/weekly/monthly), `reward_xp`, `reward_title_id`, `reward_achievement_id`, `active`, `visibility`.
+- **event_challenges** — join table so an event bundles N challenges.
+- **player_events** — per-player join/progress on an event (`percent`, `completed`, `reward_granted`, `contribution` for community events).
+- **player_challenges** — per-player challenge progress with `period_start` (so daily/weekly/monthly rows are one-per-period-per-player via unique index).
+- **notifications** — in-app notifications: `kind`, `title`, `body`, `icon`, `deep_link`, `priority`, `read_at`, `created_at`.
+- **announcements** — founder-authored broadcasts with `priority`, `visibility`, `starts_at`, `ends_at`, `banner_url`, `deep_link`.
+- **announcement_reads** — per-user dismissal state.
+- **featured_quests** — pin/boost with `starts_at`/`ends_at`/`priority` (does not modify `quests`).
 
-Ranking view / SQL: `compute_leaderboard(scope, scope_key, period, period_key)` — SECURITY DEFINER function that recomputes rows into `leaderboard_snapshots` for that slice. Ordered by `total_xp DESC, level DESC, quests_completed DESC, collections_completed DESC, join_date ASC`.
+Helper SQL:
 
-Triggers append `activity_events` when XP is awarded, title/achievement/collection completes (piggyback on existing RPCs — small extensions inside those functions).
+- Function `public.current_period_start(freq text) → timestamptz` (UTC-day / ISO-week / month).
+- Function `public.progress_challenges_for_user(_user_id uuid, _delta jsonb)` — bumps every active `player_challenges` row for that user matching the metric, upserts row for current period, grants reward + notification when target hit (idempotent per period).
+- Function `public.progress_event_for_user(_user_id uuid, _event_id uuid, _delta int)` — same shape for community goals.
+- Function `public.reset_periodic_challenges()` — closes expired challenge periods and archives old rows.
+- Function `public.tick_liveops()` — publishes scheduled events (`scheduled → live`), ends expired events (`live → ended`), grants completion rewards, ensures a "today" `daily_quest_set` event exists.
+- Function `public.notify_user(...)` — writes into `notifications` (used everywhere).
 
-## 2. Backend server functions (`src/lib/social.functions.ts`, `leaderboards.functions.ts`, `activity.functions.ts`)
+Existing `award_quest_completion_xp` and `submitObjective` will call `progress_challenges_for_user` in the same transaction so every gameplay event advances LiveOps.
 
-- `getMySocialSettings`, `updateMySocialSettings` (auth).
-- `getPublicProfile({ username })` — respects visibility; returns profile, stats, equipped title, featured badges, recent activity, ranks (global/city), member since.
-- `discoverPlayers({ query, sort, city, limit, cursor })` — sorts: top_xp, top_level, most_collections, most_achievements, most_active, newest.
-- `getLeaderboard({ scope, scope_key, period, period_key, limit, cursor })` + `getMyRank(...)`.
-- `getActivityFeed({ scope, cursor })` — global or by user.
-- `comparePlayers({ userIdA, userIdB })`.
-- `generateShareCard({ kind, ref_id })` — returns structured data for the client canvas share card.
-- Founder-only: `listSeasons`, `createSeason`, `resetSeason`, `setFeaturedPlayer`, `moderateVisibility({ user_id, hidden })`, `recomputeLeaderboards(period)`.
+RLS: players see their own `player_events`, `player_challenges`, `notifications`, and public `events`/`challenges`/`announcements`/`featured_quests` rows within their visibility window. Founders manage everything via `has_role(auth.uid(),'founder')`.
 
-All privacy checks in server fns; a hidden or private profile returns 404-ish shape.
+## 2. Scheduling
 
-## 3. Player-facing routes (all new files, no existing routes touched)
+TanStack public route `src/routes/api/public/hooks/liveops-tick.ts` calls `tick_liveops()` and `reset_periodic_challenges()`. Insert-tool SQL registers a `pg_cron` job (every 5 minutes) via `pg_net` with the anon key. This gives us automatic publish / archive / resets without any manual intervention.
 
-- `src/routes/leaderboard.tsx` — tabs (Global / City / Weekly / Monthly / All-Time), search, sticky "My Position" row, paginated list, rank change animation.
-- `src/routes/players.tsx` — Discover Players (search + sort chips + featured spotlight strip).
-- `src/routes/players.$username.tsx` — public RPG-style profile.
-- `src/routes/players.$username.compare.tsx` — head-to-head comparison vs current user.
-- `src/routes/activity.tsx` — global activity feed.
-- `src/routes/settings.social.tsx` — social & privacy toggles.
-- `src/routes/share.$kind.$id.tsx` — shareable card page (also used for canvas capture / OG image).
+## 3. Server functions (`src/lib/*.functions.ts`)
 
-Bottom nav's existing Leaderboard tab is rewired to `/leaderboard` (currently placeholder). Profile menu gets links to Social Settings and Public Profile preview. No visual redesign of existing screens — just new entries.
+- `events.functions.ts` — list active/upcoming events, event detail (with rewards, challenges, quests, community progress), join event, calendar range fetch, founder CRUD (create/update/duplicate/archive/restore/publish/unpublish), preview.
+- `challenges.functions.ts` — my daily/weekly/monthly, all-active list, founder CRUD, attach/detach to events.
+- `notifications.functions.ts` — list/paginate mine, unread count, mark read / mark all / delete, filters.
+- `announcements.functions.ts` — active for me, dismiss, founder CRUD.
+- `featured.functions.ts` — active featured quests, founder pin/unpin.
+- `liveops.functions.ts` — founder metrics (active/upcoming/ending-soon counts, participation, completion rates, notification volume).
 
-## 4. Components (`src/components/social/`)
+All player-facing writes are `.middleware([requireSupabaseAuth])`. Public reads (`activeAnnouncements`, `featuredQuests`) use the server publishable client for SSR-safety.
 
-`PlayerCard`, `LeaderboardRow`, `RankBadge`, `RankChange`, `StatCounter` (animated), `ActivityItem`, `ShareCard` (canvas-based image export), `ProfileHeader`, `CompareTable`, `FeaturedPlayerStrip`, `SocialToggleRow`.
+## 4. Player UI (new routes only)
 
-Framer Motion for row reveal, rank delta arrows, counter tweens, share card entrance.
+- `/events` — Event Calendar hub with tabs: **Today · Upcoming · Ending Soon · Seasonal · All**. Toggle List / Month view (list default on mobile).
+- `/events/$slug` — premium detail page: banner, countdown, description, join/continue CTA, rewards grid, featured quests, challenges checklist, community progress bar, share.
+- `/challenges` — daily/weekly/monthly tabs with progress bars and countdown to reset.
+- `/notifications` — Notification Center with search, filters, mark-all-read, deep links, unread badge.
+- `/announcements` — Founder announcements list; latest also surfaces as a dismissible banner on Home.
 
-## 5. Founder Studio (`/founder/social`)
+Home dashboard gains an additive **LiveOps Rail** block (below existing content): today's daily quests, weekly progress ring, active event card, featured quest, unread announcement banner. Bottom nav is untouched; a small bell badge on the ProfileMenu links to Notifications.
 
-- Season manager (create/reset/close, view active).
-- Featured players (search user, add blurb, order).
-- Moderation queue (hide/restore visibility, remove from leaderboards).
-- Leaderboard analytics (top-N by scope, participation counts).
-- Manual "Recompute now" trigger.
+## 5. Founder Studio (new routes only)
 
-Linked from `founder.index.tsx` alongside the other manager tiles.
+- `/founder/liveops` — LiveOps overview: active/upcoming/ending soon, participation snapshot, notification volume, quick-create buttons.
+- `/founder/events` — table of events with status pills, quick actions (publish, unpublish, duplicate, archive, restore).
+- `/founder/events/new` and `/founder/events/$id` — Event Builder: metadata, dates+timezone, banner/cover/icon upload (reuse `quest-media` bucket), reward composer, challenge picker, quest picker, community goal, preview.
+- `/founder/challenges` — CRUD for challenge templates.
+- `/founder/announcements` — CRUD with priority, schedule, expiration, banner.
+- `/founder/featured` — pin/boost quests with schedule + priority.
 
-## 6. Security & performance
+Founder dashboard (`/founder`) gets one new "LiveOps Manager" tile linking to `/founder/liveops`.
 
-- RLS: `player_social_settings` read = own or `public_profile=true`; write = own. `player_stats` public read gated by settings. `activity_events` public read gated by settings + moderation flag. `leaderboard_snapshots` public read (already filtered on write to opted-in users). Founder-only writes on seasons/featured/moderation.
-- Ranking done in SQL with proper indexes on `(scope, scope_key, period, period_key, rank)` and `(user_id)`.
-- Pagination via keyset (`rank > cursor`). React Query caching with 60s stale for leaderboards.
+## 6. Rewards & notifications
 
-## 7. Future-ready hooks
+`grant_event_rewards(_user_id, _event_id)` runs once per (user,event) when a player completes an event or when a community goal is hit for a participant. It reuses existing paths: `award_quest_completion_xp` logic style for XP, `_grant_title` for titles, `player_achievements` upsert for achievements, and marks `reward_granted=true` on `player_events`. Every reward, level up, challenge completion, event start, and announcement creation writes an in-app notification via `notify_user`.
 
-Scope enum includes `friends|team|event`; `activity_events.visibility` supports `public|friends|guild|private`; `player_social_settings.allow_friend_requests/allow_followers` already present. No hardcoded assumptions.
+## 7. UI kit reuse
 
-## Technical notes
+Reuses existing `AppShell`, `ScreenShell`, `AuthGate`, `GlassCard`, `XpBar`, `BadgeCard`, motion presets, and confetti. New shared components:
 
-- Migration order: types/enums → tables → GRANTs → RLS → policies → triggers → seed active season.
-- Extend existing `award_quest_completion_xp`, `evaluate_titles_for_user`, `evaluate_achievements_for_user`, and the collection-complete path to insert into `activity_events` and bump `player_stats` in the same transaction (idempotent).
-- `computeLeaderboard` runs on-demand from server fn; nightly cron via `/api/public/cron/leaderboards` route (guarded by `CRON_SECRET`) recomputes weekly/monthly/seasonal slices.
+- `EventCard`, `EventHeader`, `Countdown`
+- `ChallengeRow`, `RewardChip`
+- `NotificationItem`, `NotificationBell`
+- `AnnouncementBanner`, `CommunityGoalBar`
+- `CalendarList` (mobile-first list, optional month grid on `sm+`)
 
-## Non-goals for this prompt
+## 8. Technical notes / non-goals
 
-Friends/followers/guilds actual send-request flows, messaging, marketplace, real social-media posting APIs. Architecture supports them; UI is stubbed as "Coming soon" where appropriate.
+- No email/SMS/native push in this pass. Architecture is push-ready (a `notifications` table + `deep_link` string is the exact schema a future push worker will read), but the shipped surface is in-app.
+- Reward multipliers live in `events.config` — awarded XP is multiplied by `config.xp_multiplier` (default 1) inside `award_quest_completion_xp` when the completed quest belongs to a currently live event via `event_quests`.
+- Sponsored / guild / battle-pass event kinds are enum values now; no code paths hardcode event_type outside display strings.
+- All new tables have `service_role` grants and `authenticated` grants sized to their policies; `anon` grants only on `announcements`, `events` (public visibility, live status), `featured_quests`, and `event_quests` for public event previews.
+- Absolutely no changes to auth, profiles, existing quest tables, existing routes, or any file in `src/integrations/supabase/`.
+
+## 9. Rollout order
+
+1. Migration + cron registration (insert tool)
+2. Server functions + hooks
+3. Player routes (`/events`, `/events/$slug`, `/challenges`, `/notifications`, `/announcements`) + Home LiveOps rail
+4. Founder routes (`/founder/liveops`, events, challenges, announcements, featured)
+5. Wire `submitObjective` and `award_quest_completion_xp` to `progress_challenges_for_user` + `progress_event_for_user`
+6. Typecheck, smoke test, done.
