@@ -62,7 +62,12 @@ function Tutorial() {
             className="w-full"
           >
             {step === 0 && (
-              <WelcomeCard name={profile?.display_name || "Explorer"} pioneer={!!profile?.is_pioneer} slotsLeft={slotsLeft} />
+              <WelcomeCard
+                name={profile?.display_name || "Explorer"}
+                pioneer={!!profile?.is_pioneer}
+                pioneerNumber={profile?.pioneer_number ?? null}
+                slotsLeft={slotsLeft}
+              />
             )}
             {step === 1 && <TutorialCard icon={Map} title="🗺️ Explore Your City" desc="Walk around your city and discover exciting locations waiting to become your next adventure." />}
             {step === 2 && <TutorialCard icon={Target} title="🎯 Complete Missions" desc="Each quest has its own story, challenge and reward. Complete them to earn XP and unlock more adventures." />}
@@ -82,7 +87,7 @@ function Tutorial() {
   );
 }
 
-function WelcomeCard({ name, pioneer, slotsLeft }: { name: string; pioneer: boolean; slotsLeft?: number }) {
+function WelcomeCard({ name, pioneer, pioneerNumber, slotsLeft }: { name: string; pioneer: boolean; pioneerNumber: number | null; slotsLeft?: number }) {
   return (
     <div className="flex flex-col items-center text-center">
       <div className="text-5xl">🎉</div>
@@ -91,8 +96,15 @@ function WelcomeCard({ name, pioneer, slotsLeft }: { name: string; pioneer: bool
         Your adventure begins today. Explore your city, complete quests, earn rewards and become one of the top explorers.
       </p>
       {pioneer && (
-        <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-accent/50 bg-accent/10 px-4 py-2 text-sm font-semibold text-accent">
-          🏅 Pioneer Status Reserved
+        <div
+          className="mt-6 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold"
+          style={{
+            borderColor: "oklch(0.85 0.16 85 / 0.5)",
+            backgroundColor: "oklch(0.85 0.16 85 / 0.12)",
+            color: "oklch(0.85 0.16 85)",
+          }}
+        >
+          🏆 Pioneer{pioneerNumber ? ` #${pioneerNumber}` : ""} — permanent
         </div>
       )}
       {!pioneer && typeof slotsLeft === "number" && slotsLeft > 0 && (
