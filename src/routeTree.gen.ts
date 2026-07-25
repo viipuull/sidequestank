@@ -27,6 +27,7 @@ import { Route as QuestsIndexRouteImport } from './routes/quests.index'
 import { Route as FounderIndexRouteImport } from './routes/founder.index'
 import { Route as QuestsSlugRouteImport } from './routes/quests.$slug'
 import { Route as FounderQuestsIndexRouteImport } from './routes/founder.quests.index'
+import { Route as QuestsSlugPlayRouteImport } from './routes/quests.$slug.play'
 import { Route as FounderQuestsNewRouteImport } from './routes/founder.quests.new'
 import { Route as FounderQuestsIdRouteImport } from './routes/founder.quests.$id'
 
@@ -120,6 +121,11 @@ const FounderQuestsIndexRoute = FounderQuestsIndexRouteImport.update({
   path: '/founder/quests/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const QuestsSlugPlayRoute = QuestsSlugPlayRouteImport.update({
+  id: '/play',
+  path: '/play',
+  getParentRoute: () => QuestsSlugRoute,
+} as any)
 const FounderQuestsNewRoute = FounderQuestsNewRouteImport.update({
   id: '/founder/quests/new',
   path: '/founder/quests/new',
@@ -146,11 +152,12 @@ export interface FileRoutesByFullPath {
   '/starter': typeof StarterRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
-  '/quests/$slug': typeof QuestsSlugRoute
+  '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/founder/': typeof FounderIndexRoute
   '/quests/': typeof QuestsIndexRoute
   '/founder/quests/$id': typeof FounderQuestsIdRoute
   '/founder/quests/new': typeof FounderQuestsNewRoute
+  '/quests/$slug/play': typeof QuestsSlugPlayRoute
   '/founder/quests/': typeof FounderQuestsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -168,11 +175,12 @@ export interface FileRoutesByTo {
   '/starter': typeof StarterRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
-  '/quests/$slug': typeof QuestsSlugRoute
+  '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/founder': typeof FounderIndexRoute
   '/quests': typeof QuestsIndexRoute
   '/founder/quests/$id': typeof FounderQuestsIdRoute
   '/founder/quests/new': typeof FounderQuestsNewRoute
+  '/quests/$slug/play': typeof QuestsSlugPlayRoute
   '/founder/quests': typeof FounderQuestsIndexRoute
 }
 export interface FileRoutesById {
@@ -191,11 +199,12 @@ export interface FileRoutesById {
   '/starter': typeof StarterRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
-  '/quests/$slug': typeof QuestsSlugRoute
+  '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/founder/': typeof FounderIndexRoute
   '/quests/': typeof QuestsIndexRoute
   '/founder/quests/$id': typeof FounderQuestsIdRoute
   '/founder/quests/new': typeof FounderQuestsNewRoute
+  '/quests/$slug/play': typeof QuestsSlugPlayRoute
   '/founder/quests/': typeof FounderQuestsIndexRoute
 }
 export interface FileRouteTypes {
@@ -220,6 +229,7 @@ export interface FileRouteTypes {
     | '/quests/'
     | '/founder/quests/$id'
     | '/founder/quests/new'
+    | '/quests/$slug/play'
     | '/founder/quests/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -242,6 +252,7 @@ export interface FileRouteTypes {
     | '/quests'
     | '/founder/quests/$id'
     | '/founder/quests/new'
+    | '/quests/$slug/play'
     | '/founder/quests'
   id:
     | '__root__'
@@ -264,6 +275,7 @@ export interface FileRouteTypes {
     | '/quests/'
     | '/founder/quests/$id'
     | '/founder/quests/new'
+    | '/quests/$slug/play'
     | '/founder/quests/'
   fileRoutesById: FileRoutesById
 }
@@ -282,7 +294,7 @@ export interface RootRouteChildren {
   StarterRoute: typeof StarterRoute
   TutorialRoute: typeof TutorialRoute
   WelcomeRoute: typeof WelcomeRoute
-  QuestsSlugRoute: typeof QuestsSlugRoute
+  QuestsSlugRoute: typeof QuestsSlugRouteWithChildren
   FounderIndexRoute: typeof FounderIndexRoute
   QuestsIndexRoute: typeof QuestsIndexRoute
   FounderQuestsIdRoute: typeof FounderQuestsIdRoute
@@ -418,6 +430,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FounderQuestsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/quests/$slug/play': {
+      id: '/quests/$slug/play'
+      path: '/play'
+      fullPath: '/quests/$slug/play'
+      preLoaderRoute: typeof QuestsSlugPlayRouteImport
+      parentRoute: typeof QuestsSlugRoute
+    }
     '/founder/quests/new': {
       id: '/founder/quests/new'
       path: '/founder/quests/new'
@@ -435,6 +454,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface QuestsSlugRouteChildren {
+  QuestsSlugPlayRoute: typeof QuestsSlugPlayRoute
+}
+
+const QuestsSlugRouteChildren: QuestsSlugRouteChildren = {
+  QuestsSlugPlayRoute: QuestsSlugPlayRoute,
+}
+
+const QuestsSlugRouteWithChildren = QuestsSlugRoute._addFileChildren(
+  QuestsSlugRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
@@ -450,7 +481,7 @@ const rootRouteChildren: RootRouteChildren = {
   StarterRoute: StarterRoute,
   TutorialRoute: TutorialRoute,
   WelcomeRoute: WelcomeRoute,
-  QuestsSlugRoute: QuestsSlugRoute,
+  QuestsSlugRoute: QuestsSlugRouteWithChildren,
   FounderIndexRoute: FounderIndexRoute,
   QuestsIndexRoute: QuestsIndexRoute,
   FounderQuestsIdRoute: FounderQuestsIdRoute,

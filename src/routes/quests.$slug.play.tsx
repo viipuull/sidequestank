@@ -85,8 +85,9 @@ function PlayPage() {
   }, [state]);
 
   const objectives = state?.objectives ?? [];
+  type ProgressRow = NonNullable<typeof state>["progress"][number];
   const progressById = useMemo(() => {
-    const m = new Map<string, (typeof state extends { progress: infer P } ? P : never)[number] | undefined>();
+    const m = new Map<string, ProgressRow>();
     (state?.progress ?? []).forEach((p) => m.set(p.objective_id, p));
     return m;
   }, [state]);
