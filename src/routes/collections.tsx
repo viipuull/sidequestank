@@ -2,12 +2,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Award, Clock, Filter, Loader2, Search, Sparkles, Star, Trophy } from "lucide-react";
+import { Award, Clock, Filter, Search, Sparkles, Star, Trophy } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { EmptyState, LoadingScreen } from "@/components/feedback";
 import {
   listPublicCollections,
   myCollections,
@@ -128,13 +129,23 @@ function CollectionsGallery() {
       </div>
 
       {listQ.isLoading ? (
-        <div className="mt-10 grid place-items-center">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
-        </div>
+        <LoadingScreen label="Loading collections" fullscreen={false} />
       ) : filtered.length === 0 ? (
-        <p className="mt-10 rounded-2xl border border-dashed border-border p-6 text-center text-xs text-muted-foreground">
-          No collections match your filters yet.
-        </p>
+        <div className="mt-10">
+          {(listQ.data ?? []).length === 0 ? (
+            <EmptyState
+              icon={Award}
+              title="No collections yet"
+              description="Themed quest sets and seasonal trails will appear here soon."
+            />
+          ) : (
+            <EmptyState
+              icon={Filter}
+              title="No matches for these filters"
+              description="Try clearing filters or switching category to see more collections."
+            />
+          )}
+        </div>
       ) : (
         <div className="mt-4 space-y-3">
           {filtered.map((c) => <CollectionRow key={c.id} c={c} />)}
