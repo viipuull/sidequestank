@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
-import { ArrowLeft, CalendarDays, Loader2, Sparkles, TrendingUp, Users } from "lucide-react";
+import { ArrowLeft, CalendarDays, Compass, Loader2, Sparkles, TrendingUp, Users } from "lucide-react";
 import { AuthGate } from "@/components/layout/AuthGate";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { getFounderStats, type FounderUserRow } from "@/lib/founder.functions";
@@ -99,6 +99,21 @@ function FounderPage() {
         {data && (
           <>
             <section className="mt-6 grid grid-cols-2 gap-3">
+              <Link
+                to="/founder/quests"
+                className="col-span-2 flex items-center justify-between rounded-2xl border border-primary/40 bg-primary/10 p-4 shadow-md transition active:scale-[0.99]"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/20 text-primary">
+                    <Compass className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-primary">Quest Studio</p>
+                    <p className="text-sm font-semibold text-foreground">Create & manage quests</p>
+                  </div>
+                </div>
+                <span className="text-lg text-primary">→</span>
+              </Link>
               <StatCard
                 icon={<Users className="h-5 w-5 text-primary" />}
                 label="Total users"
