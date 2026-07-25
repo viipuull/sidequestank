@@ -28,7 +28,7 @@ export const Route = createFileRoute("/founder/collections")({
 
 function FounderCollectionsPage() {
   const { user } = useAuth();
-  const { data: profile } = useProfile();
+  const { data: profile } = useProfile(user?.id);
   const qc = useQueryClient();
   const listFn = useServerFn(founderListCollections);
   const archFn = useServerFn(founderArchiveCollection);
@@ -41,9 +41,7 @@ function FounderCollectionsPage() {
     enabled: !!user,
   });
 
-  if (!user || (profile && profile.username !== "sidequest" && !profile?.display_name?.toLowerCase().includes("founder"))) {
-    // Simple guard; RLS also enforces server-side.
-  }
+  void profile;
 
   async function handleCreate() {
     const slug = `collection-${Math.random().toString(36).slice(2, 8)}`;
