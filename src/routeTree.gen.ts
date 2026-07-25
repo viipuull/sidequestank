@@ -30,6 +30,7 @@ import { Route as QuestsIndexRouteImport } from './routes/quests.index'
 import { Route as FounderIndexRouteImport } from './routes/founder.index'
 import { Route as QuestsSlugRouteImport } from './routes/quests.$slug'
 import { Route as FounderTitlesRouteImport } from './routes/founder.titles'
+import { Route as AchievementsSlugRouteImport } from './routes/achievements.$slug'
 import { Route as FounderQuestsIndexRouteImport } from './routes/founder.quests.index'
 import { Route as QuestsSlugPlayRouteImport } from './routes/quests.$slug.play'
 import { Route as FounderQuestsNewRouteImport } from './routes/founder.quests.new'
@@ -140,6 +141,11 @@ const FounderTitlesRoute = FounderTitlesRouteImport.update({
   path: '/founder/titles',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AchievementsSlugRoute = AchievementsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => AchievementsRoute,
+} as any)
 const FounderQuestsIndexRoute = FounderQuestsIndexRouteImport.update({
   id: '/founder/quests/',
   path: '/founder/quests/',
@@ -163,7 +169,7 @@ const FounderQuestsIdRoute = FounderQuestsIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/achievements': typeof AchievementsRoute
+  '/achievements': typeof AchievementsRouteWithChildren
   '/auth': typeof AuthRoute
   '/collection': typeof CollectionRoute
   '/home': typeof HomeRoute
@@ -179,6 +185,7 @@ export interface FileRoutesByFullPath {
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
   '/xp-history': typeof XpHistoryRoute
+  '/achievements/$slug': typeof AchievementsSlugRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/founder/': typeof FounderIndexRoute
@@ -190,7 +197,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/achievements': typeof AchievementsRoute
+  '/achievements': typeof AchievementsRouteWithChildren
   '/auth': typeof AuthRoute
   '/collection': typeof CollectionRoute
   '/home': typeof HomeRoute
@@ -206,6 +213,7 @@ export interface FileRoutesByTo {
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
   '/xp-history': typeof XpHistoryRoute
+  '/achievements/$slug': typeof AchievementsSlugRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/founder': typeof FounderIndexRoute
@@ -218,7 +226,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/achievements': typeof AchievementsRoute
+  '/achievements': typeof AchievementsRouteWithChildren
   '/auth': typeof AuthRoute
   '/collection': typeof CollectionRoute
   '/home': typeof HomeRoute
@@ -234,6 +242,7 @@ export interface FileRoutesById {
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
   '/xp-history': typeof XpHistoryRoute
+  '/achievements/$slug': typeof AchievementsSlugRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/founder/': typeof FounderIndexRoute
@@ -263,6 +272,7 @@ export interface FileRouteTypes {
     | '/tutorial'
     | '/welcome'
     | '/xp-history'
+    | '/achievements/$slug'
     | '/founder/titles'
     | '/quests/$slug'
     | '/founder/'
@@ -290,6 +300,7 @@ export interface FileRouteTypes {
     | '/tutorial'
     | '/welcome'
     | '/xp-history'
+    | '/achievements/$slug'
     | '/founder/titles'
     | '/quests/$slug'
     | '/founder'
@@ -317,6 +328,7 @@ export interface FileRouteTypes {
     | '/tutorial'
     | '/welcome'
     | '/xp-history'
+    | '/achievements/$slug'
     | '/founder/titles'
     | '/quests/$slug'
     | '/founder/'
@@ -329,7 +341,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AchievementsRoute: typeof AchievementsRoute
+  AchievementsRoute: typeof AchievementsRouteWithChildren
   AuthRoute: typeof AuthRoute
   CollectionRoute: typeof CollectionRoute
   HomeRoute: typeof HomeRoute
@@ -503,6 +515,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FounderTitlesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/achievements/$slug': {
+      id: '/achievements/$slug'
+      path: '/$slug'
+      fullPath: '/achievements/$slug'
+      preLoaderRoute: typeof AchievementsSlugRouteImport
+      parentRoute: typeof AchievementsRoute
+    }
     '/founder/quests/': {
       id: '/founder/quests/'
       path: '/founder/quests'
@@ -534,6 +553,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AchievementsRouteChildren {
+  AchievementsSlugRoute: typeof AchievementsSlugRoute
+}
+
+const AchievementsRouteChildren: AchievementsRouteChildren = {
+  AchievementsSlugRoute: AchievementsSlugRoute,
+}
+
+const AchievementsRouteWithChildren = AchievementsRoute._addFileChildren(
+  AchievementsRouteChildren,
+)
+
 interface QuestsSlugRouteChildren {
   QuestsSlugPlayRoute: typeof QuestsSlugPlayRoute
 }
@@ -548,7 +579,7 @@ const QuestsSlugRouteWithChildren = QuestsSlugRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AchievementsRoute: AchievementsRoute,
+  AchievementsRoute: AchievementsRouteWithChildren,
   AuthRoute: AuthRoute,
   CollectionRoute: CollectionRoute,
   HomeRoute: HomeRoute,
