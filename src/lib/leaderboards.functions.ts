@@ -51,17 +51,28 @@ export const getLeaderboard = createServerFn({ method: "GET" })
   .handler(async ({ data }): Promise<LeaderboardEntry[]> => {
     const sb = serverPublicClient();
     let q = sb.from("leaderboard_snapshots")
-      .select(sel("rank, user_id, xp, level, quests_completed, collections_completed, achievements_earned, titles_earned, profiles!inner(username, display_name, avatar_url, city, is_pioneer, pioneer_number)"))
+      .select(sel("rank, user_id, xp, level, quests_completed, collections_completed, achievements_earned, titles_earned"))
       .eq("scope", data.scope).eq("scope_key", data.scope_key)
       .eq("period", data.period).eq("period_key", data.period_key)
       .order("rank", { ascending: true });
-    if (data.query) {
-      q = q.or(`username.ilike.%${data.query}%,display_name.ilike.%${data.query}%`, { referencedTable: "profiles" });
-    }
     q = q.range(data.offset, data.offset + data.limit - 1);
     const { data: rows, error } = await q;
     if (error) throw error;
-    const ids = (rows ?? []).map((r) => (r as unknown as { user_id: string }).user_id);
+    const baseRows = (rows ?? []) as unknown as Array<{
+      rank: number; user_id: string; xp: number; level: number;
+      quests_completed: number; collections_completed: number;
+      achievements_earned: number; titles_earned: number;
+    }>;
+    const ids = baseRows.map((r) => r.user_id);
+    const pmap = new Map<string, LeaderboardEntry["profile"]>();
+    if (ids.length) {
+      const { data: profs } = await sb.from("profiles")
+        .select(sel("id, username, display_name, avatar_url, city, is_pioneer, pioneer_number"))
+        .in("id", ids);
+      for (const p of (profs ?? []) as unknown as Array<{ id: string } & LeaderboardEntry["profile"]>) {
+        pmap.set(p.id, { username: p.username, display_name: p.display_name, avatar_url: p.avatar_url, city: p.city, is_pioneer: p.is_pioneer, pioneer_number: p.pioneer_number });
+      }
+    }
     const tmap = new Map<string, LeaderboardEntry["equipped_title"]>();
     if (ids.length) {
       const { data: t } = await sb.from("player_titles")
@@ -71,20 +82,18 @@ export const getLeaderboard = createServerFn({ method: "GET" })
         tmap.set(r.user_id, r.titles);
       }
     }
-    return (rows ?? []).map((r) => {
-      const row = r as unknown as {
-        rank: number; user_id: string; xp: number; level: number;
-        quests_completed: number; collections_completed: number;
-        achievements_earned: number; titles_earned: number;
-        profiles: LeaderboardEntry["profile"];
-      };
-      return {
-        rank: row.rank, user_id: row.user_id, xp: row.xp, level: row.level,
-        quests_completed: row.quests_completed, collections_completed: row.collections_completed,
-        achievements_earned: row.achievements_earned, titles_earned: row.titles_earned,
-        profile: row.profiles, equipped_title: tmap.get(row.user_id) ?? null,
-      };
-    });
+    const fallback: LeaderboardEntry["profile"] = { username: "explorer", display_name: "Explorer", avatar_url: null, city: "", is_pioneer: false, pioneer_number: null };
+    const query = data.query?.trim().toLowerCase();
+    const mapped = baseRows.map((row) => ({
+      rank: row.rank, user_id: row.user_id, xp: row.xp, level: row.level,
+      quests_completed: row.quests_completed, collections_completed: row.collections_completed,
+      achievements_earned: row.achievements_earned, titles_earned: row.titles_earned,
+      profile: pmap.get(row.user_id) ?? fallback,
+      equipped_title: tmap.get(row.user_id) ?? null,
+    }));
+    return query
+      ? mapped.filter((r) => r.profile.username.toLowerCase().includes(query) || r.profile.display_name.toLowerCase().includes(query))
+      : mapped;
   });
 
 const myRankInput = z.object({
