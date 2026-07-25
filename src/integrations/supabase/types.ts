@@ -23,6 +23,7 @@ export type Database = {
           id: string
           is_pioneer: boolean
           level: number
+          pioneer_number: number | null
           updated_at: string
           username: string
           xp: number
@@ -35,6 +36,7 @@ export type Database = {
           id: string
           is_pioneer?: boolean
           level?: number
+          pioneer_number?: number | null
           updated_at?: string
           username: string
           xp?: number
@@ -47,6 +49,7 @@ export type Database = {
           id?: string
           is_pioneer?: boolean
           level?: number
+          pioneer_number?: number | null
           updated_at?: string
           username?: string
           xp?: number
