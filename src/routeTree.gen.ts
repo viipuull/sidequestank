@@ -25,6 +25,7 @@ import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as CollectionsRouteImport } from './routes/collections'
+import { Route as ChallengesRouteImport } from './routes/challenges'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ActivityRouteImport } from './routes/activity'
 import { Route as AchievementsRouteImport } from './routes/achievements'
@@ -127,6 +128,11 @@ const EventsRoute = EventsRouteImport.update({
 const CollectionsRoute = CollectionsRouteImport.update({
   id: '/collections',
   path: '/collections',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChallengesRoute = ChallengesRouteImport.update({
+  id: '/challenges',
+  path: '/challenges',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -251,6 +257,7 @@ export interface FileRoutesByFullPath {
   '/achievements': typeof AchievementsRouteWithChildren
   '/activity': typeof ActivityRoute
   '/auth': typeof AuthRoute
+  '/challenges': typeof ChallengesRoute
   '/collections': typeof CollectionsRouteWithChildren
   '/events': typeof EventsRouteWithChildren
   '/home': typeof HomeRoute
@@ -292,6 +299,7 @@ export interface FileRoutesByTo {
   '/achievements': typeof AchievementsRouteWithChildren
   '/activity': typeof ActivityRoute
   '/auth': typeof AuthRoute
+  '/challenges': typeof ChallengesRoute
   '/collections': typeof CollectionsRouteWithChildren
   '/events': typeof EventsRouteWithChildren
   '/home': typeof HomeRoute
@@ -334,6 +342,7 @@ export interface FileRoutesById {
   '/achievements': typeof AchievementsRouteWithChildren
   '/activity': typeof ActivityRoute
   '/auth': typeof AuthRoute
+  '/challenges': typeof ChallengesRoute
   '/collections': typeof CollectionsRouteWithChildren
   '/events': typeof EventsRouteWithChildren
   '/home': typeof HomeRoute
@@ -377,6 +386,7 @@ export interface FileRouteTypes {
     | '/achievements'
     | '/activity'
     | '/auth'
+    | '/challenges'
     | '/collections'
     | '/events'
     | '/home'
@@ -418,6 +428,7 @@ export interface FileRouteTypes {
     | '/achievements'
     | '/activity'
     | '/auth'
+    | '/challenges'
     | '/collections'
     | '/events'
     | '/home'
@@ -459,6 +470,7 @@ export interface FileRouteTypes {
     | '/achievements'
     | '/activity'
     | '/auth'
+    | '/challenges'
     | '/collections'
     | '/events'
     | '/home'
@@ -501,6 +513,7 @@ export interface RootRouteChildren {
   AchievementsRoute: typeof AchievementsRouteWithChildren
   ActivityRoute: typeof ActivityRoute
   AuthRoute: typeof AuthRoute
+  ChallengesRoute: typeof ChallengesRoute
   CollectionsRoute: typeof CollectionsRouteWithChildren
   EventsRoute: typeof EventsRouteWithChildren
   HomeRoute: typeof HomeRoute
@@ -642,6 +655,13 @@ declare module '@tanstack/react-router' {
       path: '/collections'
       fullPath: '/collections'
       preLoaderRoute: typeof CollectionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/challenges': {
+      id: '/challenges'
+      path: '/challenges'
+      fullPath: '/challenges'
+      preLoaderRoute: typeof ChallengesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -906,6 +926,7 @@ const rootRouteChildren: RootRouteChildren = {
   AchievementsRoute: AchievementsRouteWithChildren,
   ActivityRoute: ActivityRoute,
   AuthRoute: AuthRoute,
+  ChallengesRoute: ChallengesRoute,
   CollectionsRoute: CollectionsRouteWithChildren,
   EventsRoute: EventsRouteWithChildren,
   HomeRoute: HomeRoute,
