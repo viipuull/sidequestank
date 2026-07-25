@@ -73,6 +73,7 @@ function PlayPage() {
   const [activeObjectiveId, setActiveObjectiveId] = useState<string | null>(null);
   const [showCelebration, setShowCelebration] = useState(false);
   const firedRef = useRef(false);
+  const autoOpenedRef = useRef(false);
 
   useEffect(() => {
     if (!state) return;
@@ -81,6 +82,21 @@ function PlayPage() {
       setShowCelebration(true);
       confetti({ particleCount: 160, spread: 90, origin: { y: 0.6 }, colors: ["#a855f7", "#ec4899", "#22d3ee", "#f59e0b"] });
       setTimeout(() => confetti({ particleCount: 80, spread: 120, origin: { y: 0.4 } }), 300);
+    }
+  }, [state]);
+
+  // Auto-open the first pending objective on entry so players know what to do next.
+  useEffect(() => {
+    if (!state || autoOpenedRef.current) return;
+    if (state.session.status === "completed") return;
+    const progressMap = new Map<string, { status: string }>();
+    (state.progress ?? []).forEach((p) => progressMap.set(p.objective_id, p));
+    const firstPending = (state.objectives ?? []).find(
+      (o) => progressMap.get(o.id)?.status !== "completed",
+    );
+    if (firstPending) {
+      autoOpenedRef.current = true;
+      setActiveObjectiveId(firstPending.id);
     }
   }, [state]);
 
@@ -287,7 +303,7 @@ function VerificationSheet({
           ) : objective.objective_type === "answer_trivia" ? (
             <TriviaVerifier config={(objective.config as Record<string, unknown>) ?? {}} disabled={mutation.isPending} onSubmit={(payload) => mutation.mutate(payload)} />
           ) : objective.objective_type === "take_photo" ? (
-            <PhotoVerifier sessionId={sessionId} disabled={mutation.isPending} onSubmit={(payload) => mutation.mutate(payload)} />
+            <PhotoVerifier sessionId={sessionId} config={(objective.config as Record<string, unknown>) ?? {}} disabled={mutation.isPending} onSubmit={(payload) => mutation.mutate(payload)} />
           ) : (
             <ManualVerifier disabled={mutation.isPending} onSubmit={(payload) => mutation.mutate(payload)} />
           )}
@@ -422,11 +438,14 @@ function TriviaVerifier({ config, onSubmit, disabled }: { config: Record<string,
   );
 }
 
-function PhotoVerifier({ sessionId, onSubmit, disabled }: { sessionId: string; onSubmit: (p: Record<string, unknown>) => void; disabled?: boolean }) {
+function PhotoVerifier({ sessionId, onSubmit, disabled, config }: { sessionId: string; onSubmit: (p: Record<string, unknown>) => void; disabled?: boolean; config?: Record<string, unknown> }) {
+  const photoSource = String(config?.photo_source ?? "both"); // "camera" | "gallery" | "both"
+  const hint = typeof config?.hint === "string" ? config.hint : "";
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploadedPath, setUploadedPath] = useState<string | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const cameraInputRef = useRef<HTMLInputElement | null>(null);
+  const galleryInputRef = useRef<HTMLInputElement | null>(null);
   const buildPath = useServerFn(buildPhotoUploadPath);
 
   async function handleFile(file: File) {
@@ -447,30 +466,56 @@ function PhotoVerifier({ sessionId, onSubmit, disabled }: { sessionId: string; o
     }
   }
 
+  const showCamera = photoSource === "camera" || photoSource === "both";
+  const showGallery = photoSource === "gallery" || photoSource === "both";
+
   return (
     <div className="space-y-3">
-      <p className="text-xs text-muted-foreground">Snap a photo that proves you completed this objective.</p>
-      <input ref={inputRef} type="file" accept="image/*" capture="environment" className="hidden"
+      <p className="text-xs text-muted-foreground">
+        {hint || "Capture a photo that proves you completed this objective."}
+      </p>
+      <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden"
+        onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleFile(f); }} />
+      <input ref={galleryInputRef} type="file" accept="image/*" className="hidden"
         onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleFile(f); }} />
       {previewUrl ? (
-        <img src={previewUrl} alt="Preview" className="mx-auto aspect-square w-full max-w-[280px] rounded-2xl object-cover" />
+        <div className="relative mx-auto aspect-square w-full max-w-[280px]">
+          <img src={previewUrl} alt="Preview" className="h-full w-full rounded-2xl object-cover" />
+          {uploading && (
+            <div className="absolute inset-0 grid place-items-center rounded-2xl bg-background/60 backdrop-blur-sm">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
+          )}
+        </div>
       ) : (
-        <button onClick={() => inputRef.current?.click()}
+        <button type="button" onClick={() => (showCamera ? cameraInputRef : galleryInputRef).current?.click()}
           className="grid aspect-square w-full max-w-[280px] mx-auto place-items-center rounded-2xl border-2 border-dashed border-border/60 bg-background/40 text-muted-foreground">
           <div className="flex flex-col items-center gap-2">
             <Camera className="h-8 w-8" />
-            <span className="text-xs">Tap to take a photo</span>
+            <span className="text-xs">{showCamera && showGallery ? "Tap to add a photo" : showCamera ? "Tap to take a photo" : "Tap to choose from gallery"}</span>
           </div>
         </button>
       )}
-      <div className="flex gap-2">
-        <Button variant="outline" className="flex-1" onClick={() => { setPreviewUrl(null); setUploadedPath(null); inputRef.current?.click(); }} disabled={uploading}>
-          {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Camera className="mr-2 h-4 w-4" />} {previewUrl ? "Retake" : "Choose"}
-        </Button>
-        <Button className="flex-1" disabled={disabled || !uploadedPath} onClick={() => uploadedPath && onSubmit({ photoPath: uploadedPath })}>
-          <CheckCircle2 className="mr-2 h-4 w-4" /> Submit
-        </Button>
+      <div className="grid grid-cols-2 gap-2">
+        {showCamera && (
+          <Button type="button" variant="outline" onClick={() => { setPreviewUrl(null); setUploadedPath(null); cameraInputRef.current?.click(); }} disabled={uploading}>
+            <Camera className="mr-2 h-4 w-4" /> {previewUrl ? "Retake" : "Camera"}
+          </Button>
+        )}
+        {showGallery && (
+          <Button type="button" variant="outline" onClick={() => { setPreviewUrl(null); setUploadedPath(null); galleryInputRef.current?.click(); }} disabled={uploading}>
+            <Sparkles className="mr-2 h-4 w-4" /> Gallery
+          </Button>
+        )}
+        {previewUrl && (
+          <Button type="button" variant="ghost" onClick={() => { setPreviewUrl(null); setUploadedPath(null); }} disabled={uploading} className={showCamera && showGallery ? "col-span-2" : ""}>
+            <X className="mr-2 h-4 w-4" /> Remove
+          </Button>
+        )}
       </div>
+      <Button className="h-12 w-full rounded-2xl text-sm font-bold" disabled={disabled || uploading || !uploadedPath} onClick={() => uploadedPath && onSubmit({ photoPath: uploadedPath })}>
+        {disabled || uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-2 h-4 w-4" />} Submit photo
+      </Button>
     </div>
   );
 }
