@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as XpHistoryRouteImport } from './routes/xp-history'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as TutorialRouteImport } from './routes/tutorial'
 import { Route as StarterRouteImport } from './routes/starter'
@@ -31,6 +32,11 @@ import { Route as QuestsSlugPlayRouteImport } from './routes/quests.$slug.play'
 import { Route as FounderQuestsNewRouteImport } from './routes/founder.quests.new'
 import { Route as FounderQuestsIdRouteImport } from './routes/founder.quests.$id'
 
+const XpHistoryRoute = XpHistoryRouteImport.update({
+  id: '/xp-history',
+  path: '/xp-history',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
   path: '/welcome',
@@ -152,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/starter': typeof StarterRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
+  '/xp-history': typeof XpHistoryRoute
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/founder/': typeof FounderIndexRoute
   '/quests/': typeof QuestsIndexRoute
@@ -175,6 +182,7 @@ export interface FileRoutesByTo {
   '/starter': typeof StarterRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
+  '/xp-history': typeof XpHistoryRoute
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/founder': typeof FounderIndexRoute
   '/quests': typeof QuestsIndexRoute
@@ -199,6 +207,7 @@ export interface FileRoutesById {
   '/starter': typeof StarterRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
+  '/xp-history': typeof XpHistoryRoute
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/founder/': typeof FounderIndexRoute
   '/quests/': typeof QuestsIndexRoute
@@ -224,6 +233,7 @@ export interface FileRouteTypes {
     | '/starter'
     | '/tutorial'
     | '/welcome'
+    | '/xp-history'
     | '/quests/$slug'
     | '/founder/'
     | '/quests/'
@@ -247,6 +257,7 @@ export interface FileRouteTypes {
     | '/starter'
     | '/tutorial'
     | '/welcome'
+    | '/xp-history'
     | '/quests/$slug'
     | '/founder'
     | '/quests'
@@ -270,6 +281,7 @@ export interface FileRouteTypes {
     | '/starter'
     | '/tutorial'
     | '/welcome'
+    | '/xp-history'
     | '/quests/$slug'
     | '/founder/'
     | '/quests/'
@@ -294,6 +306,7 @@ export interface RootRouteChildren {
   StarterRoute: typeof StarterRoute
   TutorialRoute: typeof TutorialRoute
   WelcomeRoute: typeof WelcomeRoute
+  XpHistoryRoute: typeof XpHistoryRoute
   QuestsSlugRoute: typeof QuestsSlugRouteWithChildren
   FounderIndexRoute: typeof FounderIndexRoute
   QuestsIndexRoute: typeof QuestsIndexRoute
@@ -304,6 +317,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/xp-history': {
+      id: '/xp-history'
+      path: '/xp-history'
+      fullPath: '/xp-history'
+      preLoaderRoute: typeof XpHistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/welcome': {
       id: '/welcome'
       path: '/welcome'
@@ -481,6 +501,7 @@ const rootRouteChildren: RootRouteChildren = {
   StarterRoute: StarterRoute,
   TutorialRoute: TutorialRoute,
   WelcomeRoute: WelcomeRoute,
+  XpHistoryRoute: XpHistoryRoute,
   QuestsSlugRoute: QuestsSlugRouteWithChildren,
   FounderIndexRoute: FounderIndexRoute,
   QuestsIndexRoute: QuestsIndexRoute,
