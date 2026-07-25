@@ -25,6 +25,7 @@ import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as QuestsIndexRouteImport } from './routes/quests.index'
+import { Route as QuestsSlugRouteImport } from './routes/quests.$slug'
 
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
@@ -106,6 +107,11 @@ const QuestsIndexRoute = QuestsIndexRouteImport.update({
   path: '/quests/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const QuestsSlugRoute = QuestsSlugRouteImport.update({
+  id: '/quests/$slug',
+  path: '/quests/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/starter': typeof StarterRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
+  '/quests/$slug': typeof QuestsSlugRoute
   '/quests/': typeof QuestsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/starter': typeof StarterRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
+  '/quests/$slug': typeof QuestsSlugRoute
   '/quests': typeof QuestsIndexRoute
 }
 export interface FileRoutesById {
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/starter': typeof StarterRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
+  '/quests/$slug': typeof QuestsSlugRoute
   '/quests/': typeof QuestsIndexRoute
 }
 export interface FileRouteTypes {
@@ -180,6 +189,7 @@ export interface FileRouteTypes {
     | '/starter'
     | '/tutorial'
     | '/welcome'
+    | '/quests/$slug'
     | '/quests/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/starter'
     | '/tutorial'
     | '/welcome'
+    | '/quests/$slug'
     | '/quests'
   id:
     | '__root__'
@@ -216,6 +227,7 @@ export interface FileRouteTypes {
     | '/starter'
     | '/tutorial'
     | '/welcome'
+    | '/quests/$slug'
     | '/quests/'
   fileRoutesById: FileRoutesById
 }
@@ -235,6 +247,7 @@ export interface RootRouteChildren {
   StarterRoute: typeof StarterRoute
   TutorialRoute: typeof TutorialRoute
   WelcomeRoute: typeof WelcomeRoute
+  QuestsSlugRoute: typeof QuestsSlugRoute
   QuestsIndexRoute: typeof QuestsIndexRoute
 }
 
@@ -352,6 +365,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuestsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/quests/$slug': {
+      id: '/quests/$slug'
+      path: '/quests/$slug'
+      fullPath: '/quests/$slug'
+      preLoaderRoute: typeof QuestsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -371,6 +391,7 @@ const rootRouteChildren: RootRouteChildren = {
   StarterRoute: StarterRoute,
   TutorialRoute: TutorialRoute,
   WelcomeRoute: WelcomeRoute,
+  QuestsSlugRoute: QuestsSlugRoute,
   QuestsIndexRoute: QuestsIndexRoute,
 }
 export const routeTree = rootRouteImport
