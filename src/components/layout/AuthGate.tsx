@@ -1,9 +1,9 @@
 import { useEffect, type ReactNode } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { Loader2 } from "lucide-react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useProfile } from "@/lib/hooks/useProfile";
 import { onboarding } from "@/lib/hooks/useOnboarding";
+import { LoadingScreen } from "@/components/feedback";
 
 export function AuthGate({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
@@ -21,11 +21,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
   }, [loading, profileLoading, user, profile, profileError, navigate]);
 
   if (loading || !user || (profileLoading && !profile)) {
-    return (
-      <div className="grid min-h-[100dvh] place-items-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
+    return <LoadingScreen label="Signing you in" />;
   }
   if (!profile) {
     // Profile query settled without data (error path); render children with defaults
