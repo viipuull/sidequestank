@@ -8,6 +8,7 @@ export interface Profile {
   avatar_url: string | null;
   city: string;
   is_pioneer: boolean;
+  pioneer_number: number | null;
   level: number;
   xp: number;
   created_at: string;
