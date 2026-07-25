@@ -73,6 +73,7 @@ function PlayPage() {
   const [activeObjectiveId, setActiveObjectiveId] = useState<string | null>(null);
   const [showCelebration, setShowCelebration] = useState(false);
   const firedRef = useRef(false);
+  const autoOpenedRef = useRef(false);
 
   useEffect(() => {
     if (!state) return;
@@ -81,6 +82,21 @@ function PlayPage() {
       setShowCelebration(true);
       confetti({ particleCount: 160, spread: 90, origin: { y: 0.6 }, colors: ["#a855f7", "#ec4899", "#22d3ee", "#f59e0b"] });
       setTimeout(() => confetti({ particleCount: 80, spread: 120, origin: { y: 0.4 } }), 300);
+    }
+  }, [state]);
+
+  // Auto-open the first pending objective on entry so players know what to do next.
+  useEffect(() => {
+    if (!state || autoOpenedRef.current) return;
+    if (state.session.status === "completed") return;
+    const progressMap = new Map<string, { status: string }>();
+    (state.progress ?? []).forEach((p) => progressMap.set(p.objective_id, p));
+    const firstPending = (state.objectives ?? []).find(
+      (o) => progressMap.get(o.id)?.status !== "completed",
+    );
+    if (firstPending) {
+      autoOpenedRef.current = true;
+      setActiveObjectiveId(firstPending.id);
     }
   }, [state]);
 
