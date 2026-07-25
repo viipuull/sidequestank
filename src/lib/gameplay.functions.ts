@@ -326,7 +326,26 @@ export const submitObjective = createServerFn({ method: "POST" })
       if (Array.isArray(ach)) unlockedAchievements = ach as typeof unlockedAchievements;
     }
 
-    return { ok: verified, reason, questCompleted, xpAward, unlockedTitles, unlockedAchievements };
+    // Update collection progress whenever a quest finishes; grants XP/title/
+    // achievement rewards atomically inside the RPC and returns any newly
+    // completed collections so the client can show a celebration.
+    let completedCollections: Array<{
+      id: string; slug: string; name: string; icon: string;
+      cover_image_url: string | null; banner_image_url: string | null;
+      reward_xp: number; reward_summary: string;
+    }> = [];
+    if (questCompleted) {
+      const { data: cols } = await sb.rpc("update_collection_progress_for_user", {
+        _user_id: context.userId,
+        _quest_id: session.quest_id,
+      });
+      if (Array.isArray(cols)) completedCollections = cols as typeof completedCollections;
+    }
+
+    return {
+      ok: verified, reason, questCompleted, xpAward,
+      unlockedTitles, unlockedAchievements, completedCollections,
+    };
   });
 
 // ---- Pause / abandon ----

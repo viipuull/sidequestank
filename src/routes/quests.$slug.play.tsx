@@ -24,6 +24,7 @@ import { OBJECTIVE_TYPES } from "@/lib/quests.types";
 import { XpBar } from "@/components/progression/XpBar";
 import { TitleUnlockOverlay, type UnlockedTitle } from "@/components/titles/TitleUnlockOverlay";
 import { AchievementUnlockOverlay } from "@/components/achievements/AchievementUnlockOverlay";
+import { CollectionCompletionOverlay, type CompletedCollectionData } from "@/components/collections/CollectionCompletionOverlay";
 import type { UnlockedAchievement } from "@/lib/achievements.functions";
 
 export const Route = createFileRoute("/quests/$slug/play")({
@@ -82,6 +83,7 @@ function PlayPage() {
   } | null>(null);
   const [unlockedTitles, setUnlockedTitles] = useState<UnlockedTitle[]>([]);
   const [unlockedAchievements, setUnlockedAchievements] = useState<UnlockedAchievement[]>([]);
+  const [completedCollections, setCompletedCollections] = useState<CompletedCollectionData[]>([]);
   const firedRef = useRef(false);
   const autoOpenedRef = useRef(false);
 
@@ -243,6 +245,13 @@ function PlayPage() {
                 qc.invalidateQueries({ queryKey: ["achievements-catalog"] });
               }
             }}
+            onCompletedCollections={(c) => {
+              if (c.length > 0) {
+                setCompletedCollections((prev) => [...prev, ...c]);
+                qc.invalidateQueries({ queryKey: ["collections-mine"] });
+                qc.invalidateQueries({ queryKey: ["collection"] });
+              }
+            }}
           />
         )}
       </AnimatePresence>
@@ -261,6 +270,15 @@ function PlayPage() {
           <AchievementUnlockOverlay
             achievements={unlockedAchievements}
             onDismiss={() => setUnlockedAchievements((prev) => prev.slice(1))}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {completedCollections.length > 0 && (
+          <CollectionCompletionOverlay
+            collections={completedCollections}
+            onDismiss={() => setCompletedCollections((prev) => prev.slice(1))}
           />
         )}
       </AnimatePresence>
@@ -295,7 +313,7 @@ type ObjectiveLike = {
 };
 
 function VerificationSheet({
-  sessionId, objective, onClose, onSuccess, onUnlockedTitles, onUnlockedAchievements,
+  sessionId, objective, onClose, onSuccess, onUnlockedTitles, onUnlockedAchievements, onCompletedCollections,
 }: {
   sessionId: string;
   objective: ObjectiveLike;
@@ -306,6 +324,7 @@ function VerificationSheet({
   } | null) => void;
   onUnlockedTitles?: (titles: UnlockedTitle[]) => void;
   onUnlockedAchievements?: (achievements: UnlockedAchievement[]) => void;
+  onCompletedCollections?: (collections: CompletedCollectionData[]) => void;
 }) {
   const submit = useServerFn(submitObjective);
   const mutation = useMutation({
@@ -320,6 +339,9 @@ function VerificationSheet({
         }
         if (r.unlockedAchievements && r.unlockedAchievements.length > 0) {
           onUnlockedAchievements?.(r.unlockedAchievements as UnlockedAchievement[]);
+        }
+        if ((r as { completedCollections?: CompletedCollectionData[] }).completedCollections?.length) {
+          onCompletedCollections?.((r as { completedCollections: CompletedCollectionData[] }).completedCollections);
         }
       } else {
         toast.error(r.reason || "Verification failed");
