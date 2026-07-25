@@ -4,8 +4,8 @@ import { Home, Compass, Trophy, Award, User } from "lucide-react";
 const TABS = [
   { to: "/home", label: "Home", icon: Home },
   { to: "/quests", label: "Quests", icon: Compass },
-  { to: "/leaderboard", label: "Ranks", icon: Trophy },
-  { to: "/collections", label: "Collect", icon: Award },
+  { to: "/leaderboard", label: "Leaders", icon: Trophy },
+  { to: "/collections", label: "Sets", icon: Award },
   { to: "/profile", label: "Profile", icon: User },
 ] as const;
 

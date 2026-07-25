@@ -4,6 +4,7 @@ import { PartyPopper } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const STORAGE_PREFIX = "sq_welcome_seen_v1:";
+const GLOBAL_KEY = "sq_welcome_seen_v1_global";
 
 export function WelcomePopup({ userId }: { userId: string | undefined }) {
   const [open, setOpen] = useState(false);
@@ -11,14 +12,20 @@ export function WelcomePopup({ userId }: { userId: string | undefined }) {
   useEffect(() => {
     if (!userId || typeof window === "undefined") return;
     const key = STORAGE_PREFIX + userId;
-    if (localStorage.getItem(key) !== "1") {
+    const seenUser = localStorage.getItem(key) === "1";
+    const seenGlobal = localStorage.getItem(GLOBAL_KEY) === "1";
+    if (!seenUser && !seenGlobal) {
       setOpen(true);
+    } else if (seenGlobal && !seenUser) {
+      // Backfill per-user marker so it stays dismissed even if global is cleared later.
+      localStorage.setItem(key, "1");
     }
   }, [userId]);
 
   const dismiss = () => {
     if (userId && typeof window !== "undefined") {
       localStorage.setItem(STORAGE_PREFIX + userId, "1");
+      localStorage.setItem(GLOBAL_KEY, "1");
     }
     setOpen(false);
   };

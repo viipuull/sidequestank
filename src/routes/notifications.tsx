@@ -4,6 +4,7 @@ import { Bell, CheckCheck, Trash2 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { AuthGate } from "@/components/layout/AuthGate";
 import { useDeleteNotif, useMarkAllNotifRead, useMarkNotifRead, useMyNotifications } from "@/lib/hooks/useLiveOps";
+import { EmptyState, LoadingScreen } from "@/components/feedback";
 
 export const Route = createFileRoute("/notifications")({
   head: () => ({
@@ -40,12 +41,15 @@ function NotificationsPage() {
         )}
       </header>
 
-      {isLoading && <p className="mt-6 text-sm text-muted-foreground">Loading…</p>}
+      {isLoading && <LoadingScreen label="Loading notifications" fullscreen={false} />}
 
       {!isLoading && items.length === 0 && (
-        <div className="mt-10 rounded-2xl border border-dashed border-border bg-card/40 p-8 text-center">
-          <Bell className="mx-auto h-8 w-8 text-muted-foreground" />
-          <p className="mt-3 text-sm text-muted-foreground">You're all caught up.</p>
+        <div className="mt-10">
+          <EmptyState
+            icon={Bell}
+            title="You're all caught up"
+            description="Level ups, event drops and rewards will appear here as soon as they arrive."
+          />
         </div>
       )}
 

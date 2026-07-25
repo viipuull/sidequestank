@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { AppShell } from "@/components/layout/AppShell";
 import { AuthGate } from "@/components/layout/AuthGate";
 import { useMyChallenges } from "@/lib/hooks/useLiveOps";
+import { EmptyState, LoadingScreen } from "@/components/feedback";
+import { Flag } from "lucide-react";
 
 export const Route = createFileRoute("/challenges")({
   head: () => ({
@@ -35,7 +37,7 @@ function ChallengesPage() {
         <h1 className="text-2xl font-bold">Challenges</h1>
         <p className="mt-1 text-sm text-muted-foreground">Reset daily, weekly, and monthly. Complete for XP and rewards.</p>
       </header>
-      {isLoading && <p className="mt-6 text-sm text-muted-foreground">Loading…</p>}
+      {isLoading && <LoadingScreen label="Loading challenges" fullscreen={false} />}
 
       {(["daily", "weekly", "monthly", "none"] as const).map((freq) => (
         grouped[freq].length > 0 && (
@@ -72,9 +74,13 @@ function ChallengesPage() {
       ))}
 
       {!isLoading && challenges.length === 0 && (
-        <p className="mt-8 rounded-2xl border border-dashed border-border bg-card/40 p-6 text-center text-sm text-muted-foreground">
-          No active challenges. Check back soon.
-        </p>
+        <div className="mt-8">
+          <EmptyState
+            icon={Flag}
+            title="No active challenges"
+            description="Fresh daily, weekly and monthly challenges appear here on every reset."
+          />
+        </div>
       )}
     </AppShell>
   );

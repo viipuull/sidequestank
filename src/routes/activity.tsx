@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { Loader2, Radio } from "lucide-react";
+import { Radio } from "lucide-react";
 import { AuthGate } from "@/components/layout/AuthGate";
 import { AppShell } from "@/components/layout/AppShell";
 import { ActivityItem } from "@/components/social/ActivityItem";
 import { getGlobalActivity } from "@/lib/activity.functions";
+import { EmptyState, LoadingScreen } from "@/components/feedback";
 
 export const Route = createFileRoute("/activity")({
   head: () => ({ meta: [
@@ -28,9 +29,13 @@ function ActivityPage() {
       </header>
       <p className="mt-1 text-xs text-muted-foreground">Live activity from explorers around the world.</p>
       <div className="mt-4 space-y-2">
-        {q.isLoading && <div className="grid place-items-center py-10"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>}
+        {q.isLoading && <LoadingScreen label="Loading community feed" fullscreen={false} />}
         {q.data?.length === 0 && !q.isLoading && (
-          <p className="py-10 text-center text-sm text-muted-foreground">No activity yet — go start a quest!</p>
+          <EmptyState
+            icon={Radio}
+            title="No activity yet"
+            description="As explorers finish quests and unlock rewards, their moments will appear here."
+          />
         )}
         {(q.data ?? []).map((it) => (<ActivityItem key={it.id} item={it} />))}
       </div>
