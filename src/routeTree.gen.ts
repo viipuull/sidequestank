@@ -38,6 +38,7 @@ import { Route as QuestsSlugRouteImport } from './routes/quests.$slug'
 import { Route as PlayersUsernameRouteImport } from './routes/players.$username'
 import { Route as FounderTitlesRouteImport } from './routes/founder.titles'
 import { Route as FounderSocialRouteImport } from './routes/founder.social'
+import { Route as FounderLiveopsRouteImport } from './routes/founder.liveops'
 import { Route as FounderCollectionsRouteImport } from './routes/founder.collections'
 import { Route as FounderAchievementsRouteImport } from './routes/founder.achievements'
 import { Route as EventsSlugRouteImport } from './routes/events.$slug'
@@ -196,6 +197,11 @@ const FounderSocialRoute = FounderSocialRouteImport.update({
   path: '/founder/social',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FounderLiveopsRoute = FounderLiveopsRouteImport.update({
+  id: '/founder/liveops',
+  path: '/founder/liveops',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FounderCollectionsRoute = FounderCollectionsRouteImport.update({
   id: '/founder/collections',
   path: '/founder/collections',
@@ -286,6 +292,7 @@ export interface FileRoutesByFullPath {
   '/events/$slug': typeof EventsSlugRoute
   '/founder/achievements': typeof FounderAchievementsRoute
   '/founder/collections': typeof FounderCollectionsRouteWithChildren
+  '/founder/liveops': typeof FounderLiveopsRoute
   '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
@@ -329,6 +336,7 @@ export interface FileRoutesByTo {
   '/events/$slug': typeof EventsSlugRoute
   '/founder/achievements': typeof FounderAchievementsRoute
   '/founder/collections': typeof FounderCollectionsRouteWithChildren
+  '/founder/liveops': typeof FounderLiveopsRoute
   '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
@@ -373,6 +381,7 @@ export interface FileRoutesById {
   '/events/$slug': typeof EventsSlugRoute
   '/founder/achievements': typeof FounderAchievementsRoute
   '/founder/collections': typeof FounderCollectionsRouteWithChildren
+  '/founder/liveops': typeof FounderLiveopsRoute
   '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
@@ -418,6 +427,7 @@ export interface FileRouteTypes {
     | '/events/$slug'
     | '/founder/achievements'
     | '/founder/collections'
+    | '/founder/liveops'
     | '/founder/social'
     | '/founder/titles'
     | '/players/$username'
@@ -461,6 +471,7 @@ export interface FileRouteTypes {
     | '/events/$slug'
     | '/founder/achievements'
     | '/founder/collections'
+    | '/founder/liveops'
     | '/founder/social'
     | '/founder/titles'
     | '/players/$username'
@@ -504,6 +515,7 @@ export interface FileRouteTypes {
     | '/events/$slug'
     | '/founder/achievements'
     | '/founder/collections'
+    | '/founder/liveops'
     | '/founder/social'
     | '/founder/titles'
     | '/players/$username'
@@ -545,6 +557,7 @@ export interface RootRouteChildren {
   XpHistoryRoute: typeof XpHistoryRoute
   FounderAchievementsRoute: typeof FounderAchievementsRoute
   FounderCollectionsRoute: typeof FounderCollectionsRouteWithChildren
+  FounderLiveopsRoute: typeof FounderLiveopsRoute
   FounderSocialRoute: typeof FounderSocialRoute
   FounderTitlesRoute: typeof FounderTitlesRoute
   QuestsSlugRoute: typeof QuestsSlugRouteWithChildren
@@ -761,6 +774,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FounderSocialRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/founder/liveops': {
+      id: '/founder/liveops'
+      path: '/founder/liveops'
+      fullPath: '/founder/liveops'
+      preLoaderRoute: typeof FounderLiveopsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/founder/collections': {
       id: '/founder/collections'
       path: '/founder/collections'
@@ -966,6 +986,7 @@ const rootRouteChildren: RootRouteChildren = {
   XpHistoryRoute: XpHistoryRoute,
   FounderAchievementsRoute: FounderAchievementsRoute,
   FounderCollectionsRoute: FounderCollectionsRouteWithChildren,
+  FounderLiveopsRoute: FounderLiveopsRoute,
   FounderSocialRoute: FounderSocialRoute,
   FounderTitlesRoute: FounderTitlesRoute,
   QuestsSlugRoute: QuestsSlugRouteWithChildren,

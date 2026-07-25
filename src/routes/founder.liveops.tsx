@@ -95,7 +95,7 @@ function EventsPanel() {
   const qc = useQueryClient();
   const { data } = useQuery({ queryKey: ["founder-events"], queryFn: () => listFn() });
   const upsert = useMutation({
-    mutationFn: (v: Parameters<typeof upsertFn>[0]["data"]) => upsertFn({ data: v }),
+    mutationFn: (v: any) => upsertFn({ data: v }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["founder-events"] }),
   });
   const del = useMutation({
@@ -181,7 +181,7 @@ function ChallengesPanel() {
   const qc = useQueryClient();
   const { data } = useQuery({ queryKey: ["founder-challenges"], queryFn: () => listFn() });
   const upsert = useMutation({
-    mutationFn: (v: Parameters<typeof upsertFn>[0]["data"]) => upsertFn({ data: v }),
+    mutationFn: (v: any) => upsertFn({ data: v }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["founder-challenges"] }),
   });
   const del = useMutation({
@@ -254,7 +254,7 @@ function AnnouncementsPanel() {
   const qc = useQueryClient();
   const { data } = useQuery({ queryKey: ["founder-announcements"], queryFn: () => listFn() });
   const upsert = useMutation({
-    mutationFn: (v: Parameters<typeof upsertFn>[0]["data"]) => upsertFn({ data: v }),
+    mutationFn: (v: any) => upsertFn({ data: v }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["founder-announcements"] }),
   });
   const del = useMutation({
