@@ -22,8 +22,16 @@ export const Route = createFileRoute("/profile")({
 function ProfileInner() {
   const { user } = useAuth();
   const { data: profile } = useProfile(user?.id);
-  const p = profile!;
-  const initials = p.display_name.split(/\s+/).slice(0, 2).map((s) => s[0]?.toUpperCase()).join("");
+  const p = profile ?? {
+    display_name: user?.user_metadata?.full_name || user?.user_metadata?.name || "Explorer",
+    username: "explorer",
+    avatar_url: (user?.user_metadata?.avatar_url as string | undefined) ?? null,
+    is_pioneer: false,
+    city: "Ankleshwar",
+    level: 1,
+    xp: 0,
+  };
+  const initials = (p.display_name || "SQ").split(/\s+/).slice(0, 2).map((s) => s[0]?.toUpperCase()).join("");
   return (
     <AppShell>
       <div className="flex items-center justify-between">
