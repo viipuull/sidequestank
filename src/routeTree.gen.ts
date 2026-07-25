@@ -19,23 +19,29 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RulesRouteImport } from './routes/rules'
 import { Route as ProfileSetupRouteImport } from './routes/profile-setup'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PlayersRouteImport } from './routes/players'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as CollectionsRouteImport } from './routes/collections'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ActivityRouteImport } from './routes/activity'
 import { Route as AchievementsRouteImport } from './routes/achievements'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as QuestsIndexRouteImport } from './routes/quests.index'
 import { Route as FounderIndexRouteImport } from './routes/founder.index'
+import { Route as SettingsSocialRouteImport } from './routes/settings.social'
 import { Route as QuestsSlugRouteImport } from './routes/quests.$slug'
+import { Route as PlayersUsernameRouteImport } from './routes/players.$username'
 import { Route as FounderTitlesRouteImport } from './routes/founder.titles'
+import { Route as FounderSocialRouteImport } from './routes/founder.social'
 import { Route as FounderCollectionsRouteImport } from './routes/founder.collections'
 import { Route as FounderAchievementsRouteImport } from './routes/founder.achievements'
 import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
 import { Route as AchievementsSlugRouteImport } from './routes/achievements.$slug'
 import { Route as FounderQuestsIndexRouteImport } from './routes/founder.quests.index'
 import { Route as QuestsSlugPlayRouteImport } from './routes/quests.$slug.play'
+import { Route as PlayersUsernameCompareRouteImport } from './routes/players.$username.compare'
 import { Route as FounderQuestsNewRouteImport } from './routes/founder.quests.new'
 import { Route as FounderQuestsIdRouteImport } from './routes/founder.quests.$id'
 import { Route as FounderCollectionsIdRouteImport } from './routes/founder.collections.$id'
@@ -90,6 +96,11 @@ const ProfileRoute = ProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlayersRoute = PlayersRouteImport.update({
+  id: '/players',
+  path: '/players',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -115,6 +126,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ActivityRoute = ActivityRouteImport.update({
+  id: '/activity',
+  path: '/activity',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AchievementsRoute = AchievementsRouteImport.update({
   id: '/achievements',
   path: '/achievements',
@@ -135,14 +151,29 @@ const FounderIndexRoute = FounderIndexRouteImport.update({
   path: '/founder/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsSocialRoute = SettingsSocialRouteImport.update({
+  id: '/social',
+  path: '/social',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const QuestsSlugRoute = QuestsSlugRouteImport.update({
   id: '/quests/$slug',
   path: '/quests/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlayersUsernameRoute = PlayersUsernameRouteImport.update({
+  id: '/$username',
+  path: '/$username',
+  getParentRoute: () => PlayersRoute,
+} as any)
 const FounderTitlesRoute = FounderTitlesRouteImport.update({
   id: '/founder/titles',
   path: '/founder/titles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FounderSocialRoute = FounderSocialRouteImport.update({
+  id: '/founder/social',
+  path: '/founder/social',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FounderCollectionsRoute = FounderCollectionsRouteImport.update({
@@ -175,6 +206,11 @@ const QuestsSlugPlayRoute = QuestsSlugPlayRouteImport.update({
   path: '/play',
   getParentRoute: () => QuestsSlugRoute,
 } as any)
+const PlayersUsernameCompareRoute = PlayersUsernameCompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
+  getParentRoute: () => PlayersUsernameRoute,
+} as any)
 const FounderQuestsNewRoute = FounderQuestsNewRouteImport.update({
   id: '/founder/quests/new',
   path: '/founder/quests/new',
@@ -194,15 +230,17 @@ const FounderCollectionsIdRoute = FounderCollectionsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/achievements': typeof AchievementsRouteWithChildren
+  '/activity': typeof ActivityRoute
   '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRouteWithChildren
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/players': typeof PlayersRouteWithChildren
   '/profile': typeof ProfileRoute
   '/profile-setup': typeof ProfileSetupRoute
   '/rules': typeof RulesRoute
-  '/settings': typeof SettingsRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
   '/titles': typeof TitlesRoute
@@ -213,28 +251,34 @@ export interface FileRoutesByFullPath {
   '/collections/$slug': typeof CollectionsSlugRoute
   '/founder/achievements': typeof FounderAchievementsRoute
   '/founder/collections': typeof FounderCollectionsRouteWithChildren
+  '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
+  '/players/$username': typeof PlayersUsernameRouteWithChildren
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
+  '/settings/social': typeof SettingsSocialRoute
   '/founder/': typeof FounderIndexRoute
   '/quests/': typeof QuestsIndexRoute
   '/founder/collections/$id': typeof FounderCollectionsIdRoute
   '/founder/quests/$id': typeof FounderQuestsIdRoute
   '/founder/quests/new': typeof FounderQuestsNewRoute
+  '/players/$username/compare': typeof PlayersUsernameCompareRoute
   '/quests/$slug/play': typeof QuestsSlugPlayRoute
   '/founder/quests/': typeof FounderQuestsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/achievements': typeof AchievementsRouteWithChildren
+  '/activity': typeof ActivityRoute
   '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRouteWithChildren
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/players': typeof PlayersRouteWithChildren
   '/profile': typeof ProfileRoute
   '/profile-setup': typeof ProfileSetupRoute
   '/rules': typeof RulesRoute
-  '/settings': typeof SettingsRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
   '/titles': typeof TitlesRoute
@@ -245,13 +289,17 @@ export interface FileRoutesByTo {
   '/collections/$slug': typeof CollectionsSlugRoute
   '/founder/achievements': typeof FounderAchievementsRoute
   '/founder/collections': typeof FounderCollectionsRouteWithChildren
+  '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
+  '/players/$username': typeof PlayersUsernameRouteWithChildren
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
+  '/settings/social': typeof SettingsSocialRoute
   '/founder': typeof FounderIndexRoute
   '/quests': typeof QuestsIndexRoute
   '/founder/collections/$id': typeof FounderCollectionsIdRoute
   '/founder/quests/$id': typeof FounderQuestsIdRoute
   '/founder/quests/new': typeof FounderQuestsNewRoute
+  '/players/$username/compare': typeof PlayersUsernameCompareRoute
   '/quests/$slug/play': typeof QuestsSlugPlayRoute
   '/founder/quests': typeof FounderQuestsIndexRoute
 }
@@ -259,15 +307,17 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/achievements': typeof AchievementsRouteWithChildren
+  '/activity': typeof ActivityRoute
   '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRouteWithChildren
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/players': typeof PlayersRouteWithChildren
   '/profile': typeof ProfileRoute
   '/profile-setup': typeof ProfileSetupRoute
   '/rules': typeof RulesRoute
-  '/settings': typeof SettingsRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
   '/titles': typeof TitlesRoute
@@ -278,13 +328,17 @@ export interface FileRoutesById {
   '/collections/$slug': typeof CollectionsSlugRoute
   '/founder/achievements': typeof FounderAchievementsRoute
   '/founder/collections': typeof FounderCollectionsRouteWithChildren
+  '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
+  '/players/$username': typeof PlayersUsernameRouteWithChildren
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
+  '/settings/social': typeof SettingsSocialRoute
   '/founder/': typeof FounderIndexRoute
   '/quests/': typeof QuestsIndexRoute
   '/founder/collections/$id': typeof FounderCollectionsIdRoute
   '/founder/quests/$id': typeof FounderQuestsIdRoute
   '/founder/quests/new': typeof FounderQuestsNewRoute
+  '/players/$username/compare': typeof PlayersUsernameCompareRoute
   '/quests/$slug/play': typeof QuestsSlugPlayRoute
   '/founder/quests/': typeof FounderQuestsIndexRoute
 }
@@ -293,11 +347,13 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/achievements'
+    | '/activity'
     | '/auth'
     | '/collections'
     | '/home'
     | '/leaderboard'
     | '/onboarding'
+    | '/players'
     | '/profile'
     | '/profile-setup'
     | '/rules'
@@ -312,24 +368,30 @@ export interface FileRouteTypes {
     | '/collections/$slug'
     | '/founder/achievements'
     | '/founder/collections'
+    | '/founder/social'
     | '/founder/titles'
+    | '/players/$username'
     | '/quests/$slug'
+    | '/settings/social'
     | '/founder/'
     | '/quests/'
     | '/founder/collections/$id'
     | '/founder/quests/$id'
     | '/founder/quests/new'
+    | '/players/$username/compare'
     | '/quests/$slug/play'
     | '/founder/quests/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/achievements'
+    | '/activity'
     | '/auth'
     | '/collections'
     | '/home'
     | '/leaderboard'
     | '/onboarding'
+    | '/players'
     | '/profile'
     | '/profile-setup'
     | '/rules'
@@ -344,24 +406,30 @@ export interface FileRouteTypes {
     | '/collections/$slug'
     | '/founder/achievements'
     | '/founder/collections'
+    | '/founder/social'
     | '/founder/titles'
+    | '/players/$username'
     | '/quests/$slug'
+    | '/settings/social'
     | '/founder'
     | '/quests'
     | '/founder/collections/$id'
     | '/founder/quests/$id'
     | '/founder/quests/new'
+    | '/players/$username/compare'
     | '/quests/$slug/play'
     | '/founder/quests'
   id:
     | '__root__'
     | '/'
     | '/achievements'
+    | '/activity'
     | '/auth'
     | '/collections'
     | '/home'
     | '/leaderboard'
     | '/onboarding'
+    | '/players'
     | '/profile'
     | '/profile-setup'
     | '/rules'
@@ -376,13 +444,17 @@ export interface FileRouteTypes {
     | '/collections/$slug'
     | '/founder/achievements'
     | '/founder/collections'
+    | '/founder/social'
     | '/founder/titles'
+    | '/players/$username'
     | '/quests/$slug'
+    | '/settings/social'
     | '/founder/'
     | '/quests/'
     | '/founder/collections/$id'
     | '/founder/quests/$id'
     | '/founder/quests/new'
+    | '/players/$username/compare'
     | '/quests/$slug/play'
     | '/founder/quests/'
   fileRoutesById: FileRoutesById
@@ -390,15 +462,17 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AchievementsRoute: typeof AchievementsRouteWithChildren
+  ActivityRoute: typeof ActivityRoute
   AuthRoute: typeof AuthRoute
   CollectionsRoute: typeof CollectionsRouteWithChildren
   HomeRoute: typeof HomeRoute
   LeaderboardRoute: typeof LeaderboardRoute
   OnboardingRoute: typeof OnboardingRoute
+  PlayersRoute: typeof PlayersRouteWithChildren
   ProfileRoute: typeof ProfileRoute
   ProfileSetupRoute: typeof ProfileSetupRoute
   RulesRoute: typeof RulesRoute
-  SettingsRoute: typeof SettingsRoute
+  SettingsRoute: typeof SettingsRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StarterRoute: typeof StarterRoute
   TitlesRoute: typeof TitlesRoute
@@ -407,6 +481,7 @@ export interface RootRouteChildren {
   XpHistoryRoute: typeof XpHistoryRoute
   FounderAchievementsRoute: typeof FounderAchievementsRoute
   FounderCollectionsRoute: typeof FounderCollectionsRouteWithChildren
+  FounderSocialRoute: typeof FounderSocialRoute
   FounderTitlesRoute: typeof FounderTitlesRoute
   QuestsSlugRoute: typeof QuestsSlugRouteWithChildren
   FounderIndexRoute: typeof FounderIndexRoute
@@ -488,6 +563,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/players': {
+      id: '/players'
+      path: '/players'
+      fullPath: '/players'
+      preLoaderRoute: typeof PlayersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -523,6 +605,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/activity': {
+      id: '/activity'
+      path: '/activity'
+      fullPath: '/activity'
+      preLoaderRoute: typeof ActivityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/achievements': {
       id: '/achievements'
       path: '/achievements'
@@ -551,6 +640,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FounderIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/social': {
+      id: '/settings/social'
+      path: '/social'
+      fullPath: '/settings/social'
+      preLoaderRoute: typeof SettingsSocialRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/quests/$slug': {
       id: '/quests/$slug'
       path: '/quests/$slug'
@@ -558,11 +654,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuestsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/players/$username': {
+      id: '/players/$username'
+      path: '/$username'
+      fullPath: '/players/$username'
+      preLoaderRoute: typeof PlayersUsernameRouteImport
+      parentRoute: typeof PlayersRoute
+    }
     '/founder/titles': {
       id: '/founder/titles'
       path: '/founder/titles'
       fullPath: '/founder/titles'
       preLoaderRoute: typeof FounderTitlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/founder/social': {
+      id: '/founder/social'
+      path: '/founder/social'
+      fullPath: '/founder/social'
+      preLoaderRoute: typeof FounderSocialRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/founder/collections': {
@@ -606,6 +716,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/quests/$slug/play'
       preLoaderRoute: typeof QuestsSlugPlayRouteImport
       parentRoute: typeof QuestsSlugRoute
+    }
+    '/players/$username/compare': {
+      id: '/players/$username/compare'
+      path: '/compare'
+      fullPath: '/players/$username/compare'
+      preLoaderRoute: typeof PlayersUsernameCompareRouteImport
+      parentRoute: typeof PlayersUsernameRoute
     }
     '/founder/quests/new': {
       id: '/founder/quests/new'
@@ -655,6 +772,41 @@ const CollectionsRouteWithChildren = CollectionsRoute._addFileChildren(
   CollectionsRouteChildren,
 )
 
+interface PlayersUsernameRouteChildren {
+  PlayersUsernameCompareRoute: typeof PlayersUsernameCompareRoute
+}
+
+const PlayersUsernameRouteChildren: PlayersUsernameRouteChildren = {
+  PlayersUsernameCompareRoute: PlayersUsernameCompareRoute,
+}
+
+const PlayersUsernameRouteWithChildren = PlayersUsernameRoute._addFileChildren(
+  PlayersUsernameRouteChildren,
+)
+
+interface PlayersRouteChildren {
+  PlayersUsernameRoute: typeof PlayersUsernameRouteWithChildren
+}
+
+const PlayersRouteChildren: PlayersRouteChildren = {
+  PlayersUsernameRoute: PlayersUsernameRouteWithChildren,
+}
+
+const PlayersRouteWithChildren =
+  PlayersRoute._addFileChildren(PlayersRouteChildren)
+
+interface SettingsRouteChildren {
+  SettingsSocialRoute: typeof SettingsSocialRoute
+}
+
+const SettingsRouteChildren: SettingsRouteChildren = {
+  SettingsSocialRoute: SettingsSocialRoute,
+}
+
+const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
+  SettingsRouteChildren,
+)
+
 interface FounderCollectionsRouteChildren {
   FounderCollectionsIdRoute: typeof FounderCollectionsIdRoute
 }
@@ -681,15 +833,17 @@ const QuestsSlugRouteWithChildren = QuestsSlugRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AchievementsRoute: AchievementsRouteWithChildren,
+  ActivityRoute: ActivityRoute,
   AuthRoute: AuthRoute,
   CollectionsRoute: CollectionsRouteWithChildren,
   HomeRoute: HomeRoute,
   LeaderboardRoute: LeaderboardRoute,
   OnboardingRoute: OnboardingRoute,
+  PlayersRoute: PlayersRouteWithChildren,
   ProfileRoute: ProfileRoute,
   ProfileSetupRoute: ProfileSetupRoute,
   RulesRoute: RulesRoute,
-  SettingsRoute: SettingsRoute,
+  SettingsRoute: SettingsRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StarterRoute: StarterRoute,
   TitlesRoute: TitlesRoute,
@@ -698,6 +852,7 @@ const rootRouteChildren: RootRouteChildren = {
   XpHistoryRoute: XpHistoryRoute,
   FounderAchievementsRoute: FounderAchievementsRoute,
   FounderCollectionsRoute: FounderCollectionsRouteWithChildren,
+  FounderSocialRoute: FounderSocialRoute,
   FounderTitlesRoute: FounderTitlesRoute,
   QuestsSlugRoute: QuestsSlugRouteWithChildren,
   FounderIndexRoute: FounderIndexRoute,
