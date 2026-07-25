@@ -2,9 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Loader2, Search, Trophy } from "lucide-react";
+import { Search, Trophy, Users } from "lucide-react";
 import { AuthGate } from "@/components/layout/AuthGate";
 import { AppShell } from "@/components/layout/AppShell";
+import { EmptyState, LoadingScreen, ErrorState } from "@/components/feedback";
 import { LeaderboardRow } from "@/components/social/LeaderboardRow";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useProfile } from "@/lib/hooks/useProfile";
@@ -113,15 +114,14 @@ function LeaderboardPage() {
       )}
 
       <div className="mt-5 space-y-2">
-        {listQ.isLoading && (
-          <div className="grid place-items-center py-10">
-            <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          </div>
+        {listQ.isPending && <LoadingScreen label="Loading leaderboard" fullscreen={false} />}
+        {listQ.isError && !listQ.isPending && (
+          <ErrorState title="Couldn't load leaderboard" description={(listQ.error as Error)?.message ?? "Please try again."} onRetry={() => listQ.refetch()} />
         )}
-        {listQ.data?.length === 0 && !listQ.isLoading && (
-          <p className="py-10 text-center text-sm text-muted-foreground">No players on this board yet — be the first!</p>
+        {!listQ.isPending && !listQ.isError && (listQ.data?.length ?? 0) === 0 && (
+          <EmptyState icon={Users} title="No players on this board yet" description="Be the first explorer to claim a rank here." />
         )}
-        {(listQ.data ?? []).map((entry, i) => (
+        {!listQ.isPending && !listQ.isError && (listQ.data ?? []).map((entry, i) => (
           <LeaderboardRow key={entry.user_id} entry={entry} index={i} highlight={entry.user_id === user?.id} />
         ))}
       </div>
