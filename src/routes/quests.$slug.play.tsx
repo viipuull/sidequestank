@@ -23,6 +23,8 @@ import { getPublishedQuestBySlug } from "@/lib/quests.functions";
 import { OBJECTIVE_TYPES } from "@/lib/quests.types";
 import { XpBar } from "@/components/progression/XpBar";
 import { TitleUnlockOverlay, type UnlockedTitle } from "@/components/titles/TitleUnlockOverlay";
+import { AchievementUnlockOverlay } from "@/components/achievements/AchievementUnlockOverlay";
+import type { UnlockedAchievement } from "@/lib/achievements.functions";
 
 export const Route = createFileRoute("/quests/$slug/play")({
   head: ({ params }) => ({
@@ -79,6 +81,7 @@ function PlayPage() {
     lifetime_xp: number; current_level_xp: number; xp_for_next: number;
   } | null>(null);
   const [unlockedTitles, setUnlockedTitles] = useState<UnlockedTitle[]>([]);
+  const [unlockedAchievements, setUnlockedAchievements] = useState<UnlockedAchievement[]>([]);
   const firedRef = useRef(false);
   const autoOpenedRef = useRef(false);
 
@@ -233,6 +236,13 @@ function PlayPage() {
                 qc.invalidateQueries({ queryKey: ["titles-catalog"] });
               }
             }}
+            onUnlockedAchievements={(a) => {
+              if (a.length > 0) {
+                setUnlockedAchievements((prev) => [...prev, ...a]);
+                qc.invalidateQueries({ queryKey: ["my-achievements"] });
+                qc.invalidateQueries({ queryKey: ["achievements-catalog"] });
+              }
+            }}
           />
         )}
       </AnimatePresence>
@@ -242,6 +252,15 @@ function PlayPage() {
           <TitleUnlockOverlay
             titles={unlockedTitles}
             onDismiss={() => setUnlockedTitles((prev) => prev.slice(1))}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {unlockedAchievements.length > 0 && (
+          <AchievementUnlockOverlay
+            achievements={unlockedAchievements}
+            onDismiss={() => setUnlockedAchievements((prev) => prev.slice(1))}
           />
         )}
       </AnimatePresence>
@@ -276,7 +295,7 @@ type ObjectiveLike = {
 };
 
 function VerificationSheet({
-  sessionId, objective, onClose, onSuccess, onUnlockedTitles,
+  sessionId, objective, onClose, onSuccess, onUnlockedTitles, onUnlockedAchievements,
 }: {
   sessionId: string;
   objective: ObjectiveLike;
@@ -286,6 +305,7 @@ function VerificationSheet({
     lifetime_xp: number; current_level_xp: number; xp_for_next: number;
   } | null) => void;
   onUnlockedTitles?: (titles: UnlockedTitle[]) => void;
+  onUnlockedAchievements?: (achievements: UnlockedAchievement[]) => void;
 }) {
   const submit = useServerFn(submitObjective);
   const mutation = useMutation({
@@ -297,6 +317,9 @@ function VerificationSheet({
         onSuccess(r.questCompleted ? r.xpAward ?? null : null);
         if (r.unlockedTitles && r.unlockedTitles.length > 0) {
           onUnlockedTitles?.(r.unlockedTitles as UnlockedTitle[]);
+        }
+        if (r.unlockedAchievements && r.unlockedAchievements.length > 0) {
+          onUnlockedAchievements?.(r.unlockedAchievements as UnlockedAchievement[]);
         }
       } else {
         toast.error(r.reason || "Verification failed");
