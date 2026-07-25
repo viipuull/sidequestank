@@ -104,6 +104,47 @@ export type Database = {
         }
         Relationships: []
       }
+      player_titles: {
+        Row: {
+          created_at: string
+          equipped: boolean
+          id: string
+          notes: string | null
+          source: Database["public"]["Enums"]["title_source"]
+          title_id: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          equipped?: boolean
+          id?: string
+          notes?: string | null
+          source?: Database["public"]["Enums"]["title_source"]
+          title_id: string
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          equipped?: boolean
+          id?: string
+          notes?: string | null
+          source?: Database["public"]["Enums"]["title_source"]
+          title_id?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_titles_title_id_fkey"
+            columns: ["title_id"]
+            isOneToOne: false
+            referencedRelation: "titles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -327,6 +368,63 @@ export type Database = {
         }
         Relationships: []
       }
+      titles: {
+        Row: {
+          active: boolean
+          category: Database["public"]["Enums"]["title_category"]
+          color: string
+          created_at: string
+          created_by: string | null
+          description: string
+          display_order: number
+          hidden: boolean
+          icon: string
+          id: string
+          name: string
+          rarity: Database["public"]["Enums"]["title_rarity"]
+          slug: string
+          unlock_requirement: Json
+          unlock_type: Database["public"]["Enums"]["title_unlock_type"]
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category?: Database["public"]["Enums"]["title_category"]
+          color?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          display_order?: number
+          hidden?: boolean
+          icon?: string
+          id?: string
+          name: string
+          rarity?: Database["public"]["Enums"]["title_rarity"]
+          slug: string
+          unlock_requirement?: Json
+          unlock_type?: Database["public"]["Enums"]["title_unlock_type"]
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category?: Database["public"]["Enums"]["title_category"]
+          color?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          display_order?: number
+          hidden?: boolean
+          icon?: string
+          id?: string
+          name?: string
+          rarity?: Database["public"]["Enums"]["title_rarity"]
+          slug?: string
+          unlock_requirement?: Json
+          unlock_type?: Database["public"]["Enums"]["title_unlock_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -401,9 +499,39 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _grant_title: {
+        Args: {
+          _source: Database["public"]["Enums"]["title_source"]
+          _title_id: string
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      assign_title: {
+        Args: { _title_id: string; _user_id: string }
+        Returns: boolean
+      }
       award_quest_completion_xp: {
         Args: { _session_id: string }
         Returns: Json
+      }
+      equip_highest_owned_title: {
+        Args: { _user_id: string }
+        Returns: undefined
+      }
+      equip_title: { Args: { _title_id: string }; Returns: boolean }
+      evaluate_titles_for_user: {
+        Args: { _user_id: string }
+        Returns: {
+          category: Database["public"]["Enums"]["title_category"]
+          color: string
+          description: string
+          icon: string
+          id: string
+          name: string
+          rarity: Database["public"]["Enums"]["title_rarity"]
+          slug: string
+        }[]
       }
       has_role: {
         Args: {
@@ -415,6 +543,11 @@ export type Database = {
       is_founder: { Args: never; Returns: boolean }
       level_from_total_xp: { Args: { _xp: number }; Returns: number }
       pioneer_slots_remaining: { Args: never; Returns: number }
+      remove_title: {
+        Args: { _title_id: string; _user_id: string }
+        Returns: boolean
+      }
+      unequip_all_titles: { Args: never; Returns: boolean }
       xp_required_for_level: { Args: { _level: number }; Returns: number }
     }
     Enums: {
@@ -452,6 +585,32 @@ export type Database = {
         | "limited_time"
       quest_visibility: "public" | "unlisted" | "private"
       session_status: "active" | "paused" | "completed" | "abandoned"
+      title_category:
+        | "explorer"
+        | "adventure"
+        | "completion"
+        | "founder"
+        | "seasonal"
+        | "event"
+        | "special"
+        | "community"
+        | "hidden"
+      title_rarity:
+        | "common"
+        | "uncommon"
+        | "rare"
+        | "epic"
+        | "legendary"
+        | "mythic"
+      title_source: "auto" | "founder" | "event" | "system"
+      title_unlock_type:
+        | "reach_level"
+        | "quest_count"
+        | "specific_quest"
+        | "pioneer"
+        | "founder"
+        | "manual"
+        | "event"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -616,6 +775,35 @@ export const Constants = {
       ],
       quest_visibility: ["public", "unlisted", "private"],
       session_status: ["active", "paused", "completed", "abandoned"],
+      title_category: [
+        "explorer",
+        "adventure",
+        "completion",
+        "founder",
+        "seasonal",
+        "event",
+        "special",
+        "community",
+        "hidden",
+      ],
+      title_rarity: [
+        "common",
+        "uncommon",
+        "rare",
+        "epic",
+        "legendary",
+        "mythic",
+      ],
+      title_source: ["auto", "founder", "event", "system"],
+      title_unlock_type: [
+        "reach_level",
+        "quest_count",
+        "specific_quest",
+        "pioneer",
+        "founder",
+        "manual",
+        "event",
+      ],
     },
   },
 } as const
