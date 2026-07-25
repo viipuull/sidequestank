@@ -15,7 +15,6 @@ import { Route as StarterRouteImport } from './routes/starter'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RulesRouteImport } from './routes/rules'
-import { Route as QuestsRouteImport } from './routes/quests'
 import { Route as ProfileSetupRouteImport } from './routes/profile-setup'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
@@ -54,11 +53,6 @@ const SettingsRoute = SettingsRouteImport.update({
 const RulesRoute = RulesRouteImport.update({
   id: '/rules',
   path: '/rules',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const QuestsRoute = QuestsRouteImport.update({
-  id: '/quests',
-  path: '/quests',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileSetupRoute = ProfileSetupRouteImport.update({
@@ -117,7 +111,6 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/profile-setup': typeof ProfileSetupRoute
-  '/quests': typeof QuestsRoute
   '/rules': typeof RulesRoute
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -135,7 +128,6 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/profile-setup': typeof ProfileSetupRoute
-  '/quests': typeof QuestsRoute
   '/rules': typeof RulesRoute
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -154,7 +146,6 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/profile-setup': typeof ProfileSetupRoute
-  '/quests': typeof QuestsRoute
   '/rules': typeof RulesRoute
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -174,7 +165,6 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/profile-setup'
-    | '/quests'
     | '/rules'
     | '/settings'
     | '/sitemap.xml'
@@ -192,7 +182,6 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/profile-setup'
-    | '/quests'
     | '/rules'
     | '/settings'
     | '/sitemap.xml'
@@ -210,7 +199,6 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/profile-setup'
-    | '/quests'
     | '/rules'
     | '/settings'
     | '/sitemap.xml'
@@ -229,7 +217,6 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
   ProfileSetupRoute: typeof ProfileSetupRoute
-  QuestsRoute: typeof QuestsRoute
   RulesRoute: typeof RulesRoute
   SettingsRoute: typeof SettingsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -280,13 +267,6 @@ declare module '@tanstack/react-router' {
       path: '/rules'
       fullPath: '/rules'
       preLoaderRoute: typeof RulesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/quests': {
-      id: '/quests'
-      path: '/quests'
-      fullPath: '/quests'
-      preLoaderRoute: typeof QuestsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile-setup': {
@@ -365,7 +345,6 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
   ProfileSetupRoute: ProfileSetupRoute,
-  QuestsRoute: QuestsRoute,
   RulesRoute: RulesRoute,
   SettingsRoute: SettingsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
