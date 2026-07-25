@@ -1,54 +1,55 @@
+# SideQuest — Production Stabilization Plan
 
-# SideQuest Studio Pro — Implementation Plan
+This is a massive scope (auth, gameplay, progression, social, LiveOps, Studio, DB, security, a11y, perf, docs). Landing it in one turn would be reckless — hundreds of files could churn without you being able to verify each area. I'll break it into **6 focused phases**, each shippable and reviewable on its own. You approve the plan, then say "continue phase N" between phases.
 
-The Prompt 11 scope (analytics, players, moderation, content, bulk ops, media library, rewards, LiveOps integration, settings, universal search, filters, audit log, import/export, version history, automation, RBAC, widgets, backend services, security, performance, animations) is roughly 6–10 large feature areas. Shipping all of it in a single pass would take dozens of migrations and hundreds of files, and would risk regressing the working systems (auth, quests, XP, titles, achievements, collections, leaderboards, LiveOps).
+No new gameplay systems will be added — only fixes, hardening, and polish on what exists.
 
-To keep quality high and preserve existing functionality, I want to ship this in **4 phased releases**. Each phase leaves the app fully working and each surface production-ready before we move to the next.
+## Phase 1 — Foundations: Errors, Loading, Routing, 404/500
+- Global `errorComponent` + `notFoundComponent` on root route with retry + home actions.
+- Consistent `LoadingScreen`, `EmptyState`, `ErrorState` primitives; adopt across routes that currently render blank/`null` during loads.
+- Fix known route edges: back-button on gameplay, resume-quest race, tutorial→home transition, deep-link redirects preserving `redirect` param.
+- Route audit: verify every `createFileRoute` path matches filename; kill dead routes.
 
-## Phase 1 — Foundation & Studio Home (this turn)
+## Phase 2 — Data Layer: RLS, Indexes, Constraints, Storage
+- Audit every table's RLS (run linter). Tighten `anon` grants; ensure `service_role` grants everywhere edge/admin touches.
+- Add missing indexes: `quest_sessions(user_id,status)`, `xp_events(user_id,created_at desc)`, `notifications(user_id,read_at)`, `player_collections(user_id)`, `activity_events(user_id,created_at desc)`, `leaderboard_snapshots(scope,scope_key,period,period_key,rank)`.
+- Storage: verify `quest-media` policies (founder write, public read of published), add `avatars` bucket if missing with per-user path policies, size/type validation client-side.
+- Foreign keys / ON DELETE review to prevent orphans.
 
-Ship the shell and the highest-leverage pieces that unlock everything else.
+## Phase 3 — Gameplay & Progression Reliability
+- Start/Resume quest: idempotent session creation, resume from last incomplete objective.
+- Objective verifiers: GPS (timeout, permission-denied UX), QR (camera fallback, torch), Photo (camera-only vs gallery config honored, size limit, HEIC handling), Trivia (single-answer lock).
+- XP/Level: guard against double-award (already partially handled via `xp_events` unique-ish check — verify), level-up overlay dedupe.
+- Achievement/Title/Collection evaluators called after every completion path; consolidate into one post-completion hook.
 
-- **Studio shell**: new `/studio` route (keep `/founder/*` working as aliases → redirect) with a persistent left sidebar (desktop) + drawer (mobile), top bar with universal search input and quick actions. Founder-only guard via existing `has_role('founder')`.
-- **Studio Home**: live tiles for player count, today's active players, new players (24h), quests completed today, XP earned today, collections completed today, achievements earned today, upcoming events (next 7 days), recently published quests, recent notifications, quick actions, quick search.
-- **Backend services layer**: new `src/lib/studio/` module with `analytics.functions.ts`, `players.functions.ts`, `moderation.functions.ts`, `audit.functions.ts` — thin, typed, founder-gated server functions using `requireSupabaseAuth` + `has_role`.
-- **Audit log**: `audit_events` table + `record_audit()` RPC. Every moderation/content mutation from Studio writes to it.
-- **Universal search (v1)**: single server fn searching players, quests, collections, events, achievements, titles by name/slug; results grouped by type, opens in a `⌘K`-style command palette.
-- Preserve all existing routes; the old `/founder` dashboard stays and links to the new `/studio`.
+## Phase 4 — Performance & Rendering
+- React Query defaults: `staleTime`, `gcTime`, retry policy per query family.
+- Route-level code splitting review (Studio, Founder, gameplay in separate chunks).
+- Image handling: `loading="lazy"`, `decoding="async"`, `aspect-*` wrappers, `object-cover`.
+- Memoize heavy lists (leaderboard, discovery); virtualize if >100 items.
+- Framer Motion: respect `prefers-reduced-motion`, drop layout animations from long lists.
 
-## Phase 2 — Analytics + Player Management + Moderation
+## Phase 5 — UX Polish, Accessibility, Responsive
+- A11y sweep: icon-only buttons get `aria-label`, single `<main>` per route, focus rings, `h-dvh` for full-height, form labels.
+- Toast system consistency (success/error/info) — one provider, one API.
+- Empty states with clear CTAs on all list screens.
+- Responsive audit at 360/414/768/1280; fix overflows, tap targets ≥44px.
+- Reduced-motion + high-contrast fallback tokens.
 
-- Analytics dashboard with daily/weekly/monthly/custom range using Recharts (already in stack via shadcn charts).
-- Player Manager: searchable/paginated table, profile drawer with XP, level, titles, achievements, collections, activity, notes.
-- Moderation actions: suspend/unsuspend, hide/restore profile, grant/remove XP, grant title/badge/collection/achievement, reset progress (typed confirm). All logged to `audit_events`.
-- Extend `profiles` with `suspended_at`, `suspension_reason`; RLS updated.
+## Phase 6 — Security, SEO, Docs, Launch Prep
+- Founder-only server functions: verify role check inside handler (not just RLS).
+- Input validation via Zod on every `createServerFn` `.inputValidator`.
+- Per-route `head()` meta on every public route (unique title/desc/og).
+- `robots.txt`, sitemap, canonical.
+- `docs/` folder: ARCHITECTURE.md, DATABASE.md, ROLES.md, DEPLOYMENT.md, RUNBOOK.md.
+- Run security scanner + linter; resolve or document findings.
 
-## Phase 3 — Unified Content Manager + Bulk Ops + Media Library + Reward Manager
+## Technical notes
+- Each phase ends with: build check, linter, targeted Playwright smoke on 2–3 critical flows (auth, start quest, complete quest → XP).
+- Migrations only in Phase 2 and Phase 6 (indexes, then any policy tightening).
+- No breaking API changes to existing server functions — signatures stable.
 
-- Single "Content" hub with tabs (Quests, Collections, Achievements, Titles, Events, Challenges, Announcements, Notifications, Media). Shared table component with status/category/date/creator/difficulty filters + saved filters.
-- Bulk publish/archive/soft-delete/restore/category/reward/schedule with confirm dialogs.
-- Media Library backed by existing `quest-media` bucket + new `media_assets` table (search, tags, folders, replace, delete, preview).
-- Reward Manager consolidates XP / titles / achievements / collections / event rewards editing.
-
-## Phase 4 — Advanced (Version History, Automation, RBAC, Import/Export, Widgets, Settings)
-
-- Version history for quests/collections/events (`*_versions` tables, restore, compare).
-- Scheduled publish/archive/notification/announcement (extend `tick_liveops`).
-- Granular founder roles: extend `app_role` with `admin`, `content_manager`, `moderator`, `event_manager`, `support`, `analytics_viewer`; permission helper `has_permission()`.
-- CSV / JSON export & template import for quests/collections/achievements/events.
-- Customizable dashboard widgets (layout persisted per user).
-- System Settings (branding, defaults, XP/level formula overrides, maintenance mode, registration toggle, map settings) in `system_settings` singleton table.
-
-## Technical notes (for the technical reader)
-
-- All new server functions live under `src/lib/studio/*.functions.ts`, gated by `requireSupabaseAuth` + a shared `assertFounder(context)` helper (already in `social.functions.ts` — will extract).
-- All mutations call `record_audit(actor, action, target_kind, target_id, before, after)` in the same transaction.
-- Analytics uses SQL views + a couple of `SECURITY DEFINER` aggregate RPCs so we never ship service-role reads to the client.
-- No changes to existing tables' RLS beyond additive columns; existing routes untouched.
-- Preserve `/founder/*` routes as-is; `/studio` is additive. Old founder tiles cross-link into the new studio pages so nothing regresses.
-
-## Deliverable for this turn
-
-Phase 1 only: Studio shell + Studio Home + audit table + universal search + backend service scaffolding. Phases 2–4 ship in follow-up turns so each is reviewable and testable.
-
-Confirm and I'll build Phase 1.
+## What I need from you
+1. Approve this phased approach (vs one giant turn).
+2. Confirm priority order — default is 1→6, but if you want (e.g.) security first, say so.
+3. Any specific bugs you've already noticed I should treat as P0 in Phase 1?
