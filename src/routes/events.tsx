@@ -4,6 +4,7 @@ import { CalendarDays, Flame, Users } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { AuthGate } from "@/components/layout/AuthGate";
 import { useLiveEvents } from "@/lib/hooks/useLiveOps";
+import { EmptyState, LoadingScreen } from "@/components/feedback";
 
 export const Route = createFileRoute("/events")({
   head: () => ({
@@ -31,11 +32,11 @@ function EventsPage() {
         <p className="mt-1 text-sm text-muted-foreground">Join live drops, seasonal takeovers and community goals.</p>
       </header>
 
-      {isLoading && <p className="mt-6 text-sm text-muted-foreground">Loading events…</p>}
+      {isLoading && <LoadingScreen label="Loading events" fullscreen={false} />}
 
-      <Section title="Live now" icon={<Flame className="h-4 w-4 text-primary" />} items={live} empty="No live events right now." />
-      <Section title="Upcoming" icon={<CalendarDays className="h-4 w-4 text-accent" />} items={upcoming} empty="Nothing scheduled yet." />
-      <Section title="Recent" icon={<Users className="h-4 w-4 text-muted-foreground" />} items={ended.slice(0, 6)} empty="No past events yet." muted />
+      <Section title="Live now" icon={<Flame className="h-4 w-4 text-primary" />} items={live} empty="Nothing live at the moment — check upcoming events below." />
+      <Section title="Upcoming" icon={<CalendarDays className="h-4 w-4 text-accent" />} items={upcoming} empty="No events scheduled yet. New drops are added regularly." />
+      <Section title="Recent" icon={<Users className="h-4 w-4 text-muted-foreground" />} items={ended.slice(0, 6)} empty="Past events will show up here once the first one wraps." muted />
     </AppShell>
   );
 }
