@@ -294,7 +294,7 @@ export const submitObjective = createServerFn({ method: "POST" })
         const { data: award, error: aErr } = await sb.rpc("award_quest_completion_xp", {
           _session_id: session.id,
         });
-        if (!aErr && award) xpAward = award as typeof xpAward;
+        if (!aErr && award) xpAward = award as unknown as typeof xpAward;
       }
     }
 
