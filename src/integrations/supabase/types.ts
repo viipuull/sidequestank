@@ -56,15 +56,212 @@ export type Database = {
         }
         Relationships: []
       }
+      quest_objectives: {
+        Row: {
+          completion_order: number
+          config: Json
+          created_at: string
+          description: string
+          id: string
+          objective_type: Database["public"]["Enums"]["objective_type"]
+          quest_id: string
+          required: boolean
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          completion_order?: number
+          config?: Json
+          created_at?: string
+          description?: string
+          id?: string
+          objective_type?: Database["public"]["Enums"]["objective_type"]
+          quest_id: string
+          required?: boolean
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          completion_order?: number
+          config?: Json
+          created_at?: string
+          description?: string
+          id?: string
+          objective_type?: Database["public"]["Enums"]["objective_type"]
+          quest_id?: string
+          required?: boolean
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quest_objectives_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quests: {
+        Row: {
+          address: string | null
+          category: Database["public"]["Enums"]["quest_category"]
+          city: string
+          cover_image_url: string | null
+          created_at: string
+          created_by: string
+          difficulty: Database["public"]["Enums"]["quest_difficulty"]
+          ends_at: string | null
+          estimated_minutes: number
+          featured: boolean
+          full_description: string
+          gallery_urls: string[]
+          id: string
+          latitude: number | null
+          longitude: number | null
+          published_at: string | null
+          quest_type: Database["public"]["Enums"]["quest_type"]
+          reward_preview: string
+          reward_xp: number
+          short_description: string
+          slug: string
+          starts_at: string | null
+          status: Database["public"]["Enums"]["quest_status"]
+          tags: string[]
+          title: string
+          updated_at: string
+          visibility: Database["public"]["Enums"]["quest_visibility"]
+        }
+        Insert: {
+          address?: string | null
+          category?: Database["public"]["Enums"]["quest_category"]
+          city?: string
+          cover_image_url?: string | null
+          created_at?: string
+          created_by: string
+          difficulty?: Database["public"]["Enums"]["quest_difficulty"]
+          ends_at?: string | null
+          estimated_minutes?: number
+          featured?: boolean
+          full_description?: string
+          gallery_urls?: string[]
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          published_at?: string | null
+          quest_type?: Database["public"]["Enums"]["quest_type"]
+          reward_preview?: string
+          reward_xp?: number
+          short_description?: string
+          slug: string
+          starts_at?: string | null
+          status?: Database["public"]["Enums"]["quest_status"]
+          tags?: string[]
+          title: string
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["quest_visibility"]
+        }
+        Update: {
+          address?: string | null
+          category?: Database["public"]["Enums"]["quest_category"]
+          city?: string
+          cover_image_url?: string | null
+          created_at?: string
+          created_by?: string
+          difficulty?: Database["public"]["Enums"]["quest_difficulty"]
+          ends_at?: string | null
+          estimated_minutes?: number
+          featured?: boolean
+          full_description?: string
+          gallery_urls?: string[]
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          published_at?: string | null
+          quest_type?: Database["public"]["Enums"]["quest_type"]
+          reward_preview?: string
+          reward_xp?: number
+          short_description?: string
+          slug?: string
+          starts_at?: string | null
+          status?: Database["public"]["Enums"]["quest_status"]
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["quest_visibility"]
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_founder: { Args: never; Returns: boolean }
       pioneer_slots_remaining: { Args: never; Returns: number }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "player" | "founder"
+      objective_type:
+        | "visit_location"
+        | "gps_checkin"
+        | "scan_qr"
+        | "take_photo"
+        | "answer_trivia"
+        | "collect_item"
+        | "custom"
+      quest_category:
+        | "exploration"
+        | "food"
+        | "culture"
+        | "nature"
+        | "history"
+        | "photography"
+        | "trivia"
+        | "fitness"
+        | "nightlife"
+        | "community"
+      quest_difficulty: "easy" | "medium" | "hard" | "expert"
+      quest_status: "draft" | "published" | "archived"
+      quest_type:
+        | "walking"
+        | "photo"
+        | "trivia"
+        | "treasure_hunt"
+        | "gps_checkin"
+        | "qr_hunt"
+        | "event"
+        | "limited_time"
+      quest_visibility: "public" | "unlisted" | "private"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -191,6 +388,42 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["player", "founder"],
+      objective_type: [
+        "visit_location",
+        "gps_checkin",
+        "scan_qr",
+        "take_photo",
+        "answer_trivia",
+        "collect_item",
+        "custom",
+      ],
+      quest_category: [
+        "exploration",
+        "food",
+        "culture",
+        "nature",
+        "history",
+        "photography",
+        "trivia",
+        "fitness",
+        "nightlife",
+        "community",
+      ],
+      quest_difficulty: ["easy", "medium", "hard", "expert"],
+      quest_status: ["draft", "published", "archived"],
+      quest_type: [
+        "walking",
+        "photo",
+        "trivia",
+        "treasure_hunt",
+        "gps_checkin",
+        "qr_hunt",
+        "event",
+        "limited_time",
+      ],
+      quest_visibility: ["public", "unlisted", "private"],
+    },
   },
 } as const
