@@ -241,6 +241,10 @@ export function QuestForm({ value, onChange, onSubmit, submitting, submitLabel =
           <Input type="number" min={0} value={value.reward_xp}
             onChange={(e) => patch({ reward_xp: Number(e.target.value) || 0 })} />
         </Field>
+        <p className="text-[11px] text-muted-foreground">
+          Players earn <span className="font-semibold text-primary">+{Math.max(0, value.reward_xp)} XP</span> on completion.
+          Suggested: 25 (quick), 75 (short), 150 (medium), 500 (epic).
+        </p>
       </Section>
 
       <Section title="Tags">

@@ -8,6 +8,9 @@ import { WelcomePopup } from "@/components/home/WelcomePopup";
 import { PioneerCelebration } from "@/components/home/PioneerCelebration";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useProfile } from "@/lib/hooks/useProfile";
+import { useMyProgress, useMyXpHistory } from "@/lib/hooks/useProgression";
+import { XpBar } from "@/components/progression/XpBar";
+import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/home")({
   head: () => ({
@@ -24,12 +27,17 @@ export const Route = createFileRoute("/home")({
 function HomeInner() {
   const { user } = useAuth();
   const { data: profile } = useProfile(user?.id);
+  const { data: progress } = useMyProgress(!!user);
+  const { data: recentXp } = useMyXpHistory(5, !!user);
   // Home must render even if some optional profile fields are missing.
   const displayName = profile?.display_name?.trim() || user?.email?.split("@")[0] || "Explorer";
   const username = profile?.username || (user?.email?.split("@")[0] ?? "explorer");
   const city = profile?.city || "Ankleshwar";
-  const level = profile?.level ?? 1;
-  const xp = profile?.xp ?? 0;
+  const level = progress?.current_level ?? profile?.level ?? 1;
+  const lifetimeXp = progress?.lifetime_xp ?? profile?.xp ?? 0;
+  const currentLevelXp = progress?.current_level_xp ?? 0;
+  const xpForNext = progress?.xp_for_next_level ?? 100;
+  const questsDone = progress?.total_quests_completed ?? 0;
   const avatarUrl = profile?.avatar_url ?? null;
   const initials =
     displayName
@@ -37,9 +45,7 @@ function HomeInner() {
       .slice(0, 2)
       .map((s) => s[0]?.toUpperCase() ?? "")
       .join("") || "SQ";
-  const xpToNext = 200;
-  const xpPct = Math.max(0, Math.min(100, (xp / xpToNext) * 100));
-  const p = { display_name: displayName, city, level, xp, avatar_url: avatarUrl };
+  const p = { display_name: displayName, city, level, xp: lifetimeXp, avatar_url: avatarUrl };
 
   return (
     <AppShell>
@@ -84,19 +90,46 @@ function HomeInner() {
             <p className="text-xs uppercase tracking-wider opacity-80">Explorer</p>
             <p className="text-lg font-bold">Level {p.level}</p>
           </div>
-          <p className="text-sm opacity-90">{p.xp} / {xpToNext} XP</p>
+          <p className="text-sm opacity-90">{lifetimeXp} total XP</p>
         </div>
-        <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-white/20">
-          <motion.div initial={{ width: 0 }} animate={{ width: `${xpPct}%` }} transition={{ duration: 0.8 }} className="h-full bg-white/90" />
-        </div>
+        <XpBar
+          level={p.level}
+          currentLevelXp={currentLevelXp}
+          xpForNextLevel={xpForNext}
+          className="mt-3"
+        />
       </motion.section>
 
       <section className="mt-5 grid grid-cols-2 gap-3">
         <StatCard icon={<Sparkles className="h-5 w-5 text-primary" />} label="Level" value={String(p.level)} />
-        <StatCard icon={<Star className="h-5 w-5 text-accent" />} label="XP" value={String(p.xp)} />
-        <StatCard icon={<Compass className="h-5 w-5 text-primary" />} label="Quests" value="0" />
+        <StatCard icon={<Star className="h-5 w-5 text-accent" />} label="XP" value={String(lifetimeXp)} />
+        <StatCard icon={<Compass className="h-5 w-5 text-primary" />} label="Quests" value={String(questsDone)} />
         <StatCard icon={<Award className="h-5 w-5 text-accent" />} label="Badges" value="1" />
       </section>
+
+      {recentXp && recentXp.length > 0 && (
+        <section className="mt-6">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Recent XP</h2>
+            <Link to="/xp-history" className="text-xs font-semibold text-primary">View all</Link>
+          </div>
+          <div className="space-y-2">
+            {recentXp.map((e) => (
+              <div key={e.id} className="flex items-center justify-between rounded-2xl border border-border bg-card/60 p-3 backdrop-blur">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold">
+                    {e.quests?.title ?? "Bonus"}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {new Date(e.created_at).toLocaleString()} · {e.reason.replace(/_/g, " ")}
+                  </p>
+                </div>
+                <span className="rounded-full bg-primary/15 px-2.5 py-1 text-xs font-bold text-primary">+{e.xp_earned} XP</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="mt-6">
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Coming soon</h2>

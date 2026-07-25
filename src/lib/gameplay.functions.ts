@@ -263,6 +263,16 @@ export const submitObjective = createServerFn({ method: "POST" })
 
     // Check completion — all required objectives completed?
     let questCompleted = false;
+    let xpAward: {
+      xp_earned: number;
+      old_level: number;
+      new_level: number;
+      level_up: boolean;
+      lifetime_xp: number;
+      current_level_xp: number;
+      xp_for_next: number;
+      already_awarded: boolean;
+    } | null = null;
     if (verified) {
       const { data: allObjs } = await sb
         .from("quest_objectives")
@@ -280,10 +290,15 @@ export const submitObjective = createServerFn({ method: "POST" })
           .update({ status: "completed", completed_at: new Date().toISOString() })
           .eq("id", session.id);
         questCompleted = true;
+        // Award XP idempotently via the progression service.
+        const { data: award, error: aErr } = await sb.rpc("award_quest_completion_xp", {
+          _session_id: session.id,
+        });
+        if (!aErr && award) xpAward = award as unknown as typeof xpAward;
       }
     }
 
-    return { ok: verified, reason, questCompleted };
+    return { ok: verified, reason, questCompleted, xpAward };
   });
 
 // ---- Pause / abandon ----

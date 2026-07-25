@@ -6,6 +6,8 @@ import { AuthGate } from "@/components/layout/AuthGate";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useProfile } from "@/lib/hooks/useProfile";
+import { useMyProgress, useMyXpHistory } from "@/lib/hooks/useProgression";
+import { XpBar } from "@/components/progression/XpBar";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({
@@ -22,6 +24,8 @@ export const Route = createFileRoute("/profile")({
 function ProfileInner() {
   const { user } = useAuth();
   const { data: profile } = useProfile(user?.id);
+  const { data: progress } = useMyProgress(!!user);
+  const { data: recentXp } = useMyXpHistory(8, !!user);
   const p = profile ?? {
     display_name: user?.user_metadata?.full_name || user?.user_metadata?.name || "Explorer",
     username: "explorer",
@@ -32,6 +36,12 @@ function ProfileInner() {
     level: 1,
     xp: 0,
   };
+  const level = progress?.current_level ?? p.level;
+  const lifetimeXp = progress?.lifetime_xp ?? p.xp;
+  const currentLevelXp = progress?.current_level_xp ?? 0;
+  const xpForNext = progress?.xp_for_next_level ?? 100;
+  const xpRemaining = Math.max(0, xpForNext - currentLevelXp);
+  const questsDone = progress?.total_quests_completed ?? 0;
   const initials = (p.display_name || "SQ").split(/\s+/).slice(0, 2).map((s: string) => s[0]?.toUpperCase()).join("");
   return (
     <AppShell>
@@ -72,10 +82,54 @@ function ProfileInner() {
       </motion.div>
 
       <div className="mt-5 grid grid-cols-3 gap-3 text-center">
-        <Stat label="Level" value={String(p.level)} />
-        <Stat label="XP" value={String(p.xp)} />
-        <Stat label="Badges" value="1" />
+        <Stat label="Level" value={String(level)} />
+        <Stat label="Lifetime XP" value={String(lifetimeXp)} />
+        <Stat label="Quests" value={String(questsDone)} />
       </div>
+
+      <motion.section
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mt-5 rounded-3xl border border-border bg-card/70 p-5 backdrop-blur"
+        style={{ boxShadow: "var(--shadow-elevated)" }}
+      >
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold">Progression</h3>
+          <Link to="/xp-history" className="text-xs font-semibold text-primary">History →</Link>
+        </div>
+        <XpBar
+          level={level}
+          currentLevelXp={currentLevelXp}
+          xpForNextLevel={xpForNext}
+          variant="onLight"
+          className="mt-3"
+        />
+        <p className="mt-2 text-[11px] text-muted-foreground">
+          {xpRemaining} XP to Level {level + 1}
+          {progress?.level_up_date ? ` · last level up ${new Date(progress.level_up_date).toLocaleDateString()}` : ""}
+        </p>
+      </motion.section>
+
+      {recentXp && recentXp.length > 0 && (
+        <section className="mt-5">
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Recent activity</h3>
+          <div className="space-y-2">
+            {recentXp.map((e) => (
+              <div key={e.id} className="flex items-center justify-between rounded-2xl border border-border bg-card/60 p-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold">{e.quests?.title ?? "Bonus XP"}</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {new Date(e.created_at).toLocaleDateString()} · {e.reason.replace(/_/g, " ")}
+                  </p>
+                </div>
+                <span className="rounded-full bg-primary/15 px-2.5 py-1 text-xs font-bold text-primary">
+                  +{e.xp_earned} XP
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </AppShell>
   );
 }

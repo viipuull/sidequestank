@@ -68,6 +68,42 @@ export type Database = {
           },
         ]
       }
+      player_progress: {
+        Row: {
+          created_at: string
+          current_level: number
+          current_level_xp: number
+          level_up_date: string | null
+          lifetime_xp: number
+          total_quests_completed: number
+          updated_at: string
+          user_id: string
+          xp_for_next_level: number
+        }
+        Insert: {
+          created_at?: string
+          current_level?: number
+          current_level_xp?: number
+          level_up_date?: string | null
+          lifetime_xp?: number
+          total_quests_completed?: number
+          updated_at?: string
+          user_id: string
+          xp_for_next_level?: number
+        }
+        Update: {
+          created_at?: string
+          current_level?: number
+          current_level_xp?: number
+          level_up_date?: string | null
+          lifetime_xp?: number
+          total_quests_completed?: number
+          updated_at?: string
+          user_id?: string
+          xp_for_next_level?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -312,11 +348,63 @@ export type Database = {
         }
         Relationships: []
       }
+      xp_events: {
+        Row: {
+          created_at: string
+          id: string
+          metadata: Json
+          quest_id: string | null
+          reason: string
+          session_id: string | null
+          user_id: string
+          xp_earned: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metadata?: Json
+          quest_id?: string | null
+          reason?: string
+          session_id?: string | null
+          user_id: string
+          xp_earned: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metadata?: Json
+          quest_id?: string | null
+          reason?: string
+          session_id?: string | null
+          user_id?: string
+          xp_earned?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "xp_events_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "xp_events_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "quest_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      award_quest_completion_xp: {
+        Args: { _session_id: string }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -325,7 +413,9 @@ export type Database = {
         Returns: boolean
       }
       is_founder: { Args: never; Returns: boolean }
+      level_from_total_xp: { Args: { _xp: number }; Returns: number }
       pioneer_slots_remaining: { Args: never; Returns: number }
+      xp_required_for_level: { Args: { _level: number }; Returns: number }
     }
     Enums: {
       app_role: "player" | "founder"

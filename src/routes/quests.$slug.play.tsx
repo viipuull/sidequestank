@@ -21,6 +21,7 @@ import {
 } from "@/lib/gameplay.functions";
 import { getPublishedQuestBySlug } from "@/lib/quests.functions";
 import { OBJECTIVE_TYPES } from "@/lib/quests.types";
+import { XpBar } from "@/components/progression/XpBar";
 
 export const Route = createFileRoute("/quests/$slug/play")({
   head: ({ params }) => ({
@@ -72,6 +73,10 @@ function PlayPage() {
 
   const [activeObjectiveId, setActiveObjectiveId] = useState<string | null>(null);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [awardResult, setAwardResult] = useState<{
+    xp_earned: number; old_level: number; new_level: number; level_up: boolean;
+    lifetime_xp: number; current_level_xp: number; xp_for_next: number;
+  } | null>(null);
   const firedRef = useRef(false);
   const autoOpenedRef = useRef(false);
 
@@ -209,9 +214,13 @@ function PlayPage() {
             sessionId={sessionId}
             objective={activeObjective}
             onClose={() => setActiveObjectiveId(null)}
-            onSuccess={() => {
+            onSuccess={(award) => {
+              if (award) setAwardResult(award);
               setActiveObjectiveId(null);
               qc.invalidateQueries({ queryKey: ["play-state", sessionId] });
+              qc.invalidateQueries({ queryKey: ["my-progress"] });
+              qc.invalidateQueries({ queryKey: ["my-xp-history"] });
+              qc.invalidateQueries({ queryKey: ["profile"] });
               refetch();
             }}
           />
@@ -223,6 +232,7 @@ function PlayPage() {
           <CompletionOverlay
             xp={quest.reward_xp}
             title={quest.title}
+            award={awardResult}
             onClose={() => {
               setShowCelebration(false);
               navigate({ to: "/quests/$slug", params: { slug } });
@@ -252,7 +262,10 @@ function VerificationSheet({
   sessionId: string;
   objective: ObjectiveLike;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (award: {
+    xp_earned: number; old_level: number; new_level: number; level_up: boolean;
+    lifetime_xp: number; current_level_xp: number; xp_for_next: number;
+  } | null) => void;
 }) {
   const submit = useServerFn(submitObjective);
   const mutation = useMutation({
@@ -261,7 +274,7 @@ function VerificationSheet({
     onSuccess: (r) => {
       if (r.ok) {
         toast.success(r.questCompleted ? "Quest complete! 🎉" : "Objective verified ✨");
-        onSuccess();
+        onSuccess(r.questCompleted ? r.xpAward ?? null : null);
       } else {
         toast.error(r.reason || "Verification failed");
       }
@@ -534,7 +547,17 @@ function ManualVerifier({ onSubmit, disabled }: { onSubmit: (p: Record<string, u
   );
 }
 
-function CompletionOverlay({ xp, title, onClose }: { xp: number; title: string; onClose: () => void }) {
+function CompletionOverlay({ xp, title, award, onClose }: {
+  xp: number;
+  title: string;
+  award: {
+    xp_earned: number; old_level: number; new_level: number; level_up: boolean;
+    lifetime_xp: number; current_level_xp: number; xp_for_next: number;
+  } | null;
+  onClose: () => void;
+}) {
+  const earned = award?.xp_earned ?? xp;
+  const leveledUp = award?.level_up ?? false;
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -553,9 +576,39 @@ function CompletionOverlay({ xp, title, onClose }: { xp: number; title: string; 
         <p className="mt-1 text-sm text-muted-foreground">{title}</p>
         <div className="mt-4 flex items-center justify-center gap-2">
           <Badge className="rounded-full bg-primary text-primary-foreground">
-            <Sparkles className="mr-1 h-3 w-3" /> +{xp} XP
+            <Sparkles className="mr-1 h-3 w-3" /> +{earned} XP
           </Badge>
         </div>
+        {award && (
+          <div className="mt-5 rounded-2xl border border-border/60 bg-background/50 p-4">
+            {leveledUp ? (
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: "spring", damping: 14 }}
+                className="mb-3"
+              >
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-primary">Level Up!</p>
+                <p className="mt-1 text-2xl font-black tracking-tight">
+                  <span className="text-muted-foreground">Lv {award.old_level}</span>
+                  <span className="mx-2 text-primary">→</span>
+                  <span className="bg-gradient-to-r from-primary via-fuchsia-500 to-amber-400 bg-clip-text text-transparent">
+                    Lv {award.new_level}
+                  </span>
+                </p>
+              </motion.div>
+            ) : (
+              <p className="text-xs font-semibold text-muted-foreground">Progress toward Level {award.new_level + 1}</p>
+            )}
+            <XpBar
+              level={award.new_level}
+              currentLevelXp={award.current_level_xp}
+              xpForNextLevel={award.xp_for_next}
+              variant="onLight"
+              className="mt-1"
+              compact
+            />
+          </div>
+        )}
         <Button className="mt-6 h-12 w-full rounded-2xl text-sm font-bold" onClick={onClose}>
           Continue
         </Button>
