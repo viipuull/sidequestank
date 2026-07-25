@@ -41,13 +41,17 @@ function CollectionDetailPage() {
     queryFn: () => (user ? mineFn({ data: { slug } }) : publicFn({ data: { slug } })),
   });
 
-  const detail = q.data;
-  const collection = detail && ("collection" in detail ? detail.collection : null);
-  const items = detail && ("items" in detail ? detail.items : []) || [];
-  const progress = detail && "progress" in detail ? detail.progress : null;
-  const completedIds = new Set(
-    detail && "completedQuestIds" in detail ? detail.completedQuestIds : [],
-  );
+  type DetailShape = {
+    collection: NonNullable<Awaited<ReturnType<typeof getCollectionBySlug>>>["collection"];
+    items: NonNullable<Awaited<ReturnType<typeof getCollectionBySlug>>>["items"];
+    progress?: NonNullable<Awaited<ReturnType<typeof getMyCollectionDetail>>>["progress"] | null;
+    completedQuestIds?: string[];
+  };
+  const detail = (q.data ?? null) as DetailShape | null;
+  const collection = detail?.collection ?? null;
+  const items = detail?.items ?? [];
+  const progress = detail?.progress ?? null;
+  const completedIds = new Set<string>(detail?.completedQuestIds ?? []);
 
   const percent = progress?.percent ?? 0;
   const done = progress?.completed ?? false;
