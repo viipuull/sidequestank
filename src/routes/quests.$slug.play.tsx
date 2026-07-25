@@ -21,6 +21,8 @@ import {
 } from "@/lib/gameplay.functions";
 import { getPublishedQuestBySlug } from "@/lib/quests.functions";
 import { OBJECTIVE_TYPES } from "@/lib/quests.types";
+import { XpBar } from "@/components/progression/XpBar";
+import { useQueryClient as useQC2 } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/quests/$slug/play")({
   head: ({ params }) => ({
@@ -72,6 +74,10 @@ function PlayPage() {
 
   const [activeObjectiveId, setActiveObjectiveId] = useState<string | null>(null);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [awardResult, setAwardResult] = useState<{
+    xp_earned: number; old_level: number; new_level: number; level_up: boolean;
+    lifetime_xp: number; current_level_xp: number; xp_for_next: number;
+  } | null>(null);
   const firedRef = useRef(false);
   const autoOpenedRef = useRef(false);
 
@@ -223,6 +229,7 @@ function PlayPage() {
           <CompletionOverlay
             xp={quest.reward_xp}
             title={quest.title}
+            award={awardResult}
             onClose={() => {
               setShowCelebration(false);
               navigate({ to: "/quests/$slug", params: { slug } });
