@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      objective_progress: {
+        Row: {
+          attempts: number
+          created_at: string
+          id: string
+          objective_id: string
+          session_id: string
+          status: Database["public"]["Enums"]["objective_progress_status"]
+          updated_at: string
+          user_id: string
+          verification_data: Json
+          verified_at: string | null
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          id?: string
+          objective_id: string
+          session_id: string
+          status?: Database["public"]["Enums"]["objective_progress_status"]
+          updated_at?: string
+          user_id: string
+          verification_data?: Json
+          verified_at?: string | null
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          id?: string
+          objective_id?: string
+          session_id?: string
+          status?: Database["public"]["Enums"]["objective_progress_status"]
+          updated_at?: string
+          user_id?: string
+          verification_data?: Json
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "objective_progress_objective_id_fkey"
+            columns: ["objective_id"]
+            isOneToOne: false
+            referencedRelation: "quest_objectives"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "objective_progress_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "quest_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -96,6 +150,50 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "quest_objectives_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quest_sessions: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          last_activity_at: string
+          quest_id: string
+          started_at: string
+          status: Database["public"]["Enums"]["session_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          last_activity_at?: string
+          quest_id: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["session_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          last_activity_at?: string
+          quest_id?: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["session_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quest_sessions_quest_id_fkey"
             columns: ["quest_id"]
             isOneToOne: false
             referencedRelation: "quests"
@@ -231,6 +329,7 @@ export type Database = {
     }
     Enums: {
       app_role: "player" | "founder"
+      objective_progress_status: "pending" | "completed" | "failed" | "skipped"
       objective_type:
         | "visit_location"
         | "gps_checkin"
@@ -262,6 +361,7 @@ export type Database = {
         | "event"
         | "limited_time"
       quest_visibility: "public" | "unlisted" | "private"
+      session_status: "active" | "paused" | "completed" | "abandoned"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -390,6 +490,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["player", "founder"],
+      objective_progress_status: ["pending", "completed", "failed", "skipped"],
       objective_type: [
         "visit_location",
         "gps_checkin",
@@ -424,6 +525,7 @@ export const Constants = {
         "limited_time",
       ],
       quest_visibility: ["public", "unlisted", "private"],
+      session_status: ["active", "paused", "completed", "abandoned"],
     },
   },
 } as const
