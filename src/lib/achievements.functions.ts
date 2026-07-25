@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
@@ -132,7 +133,7 @@ export const reorderFeaturedAchievements = createServerFn({ method: "POST" })
   });
 
 // ===================== FOUNDER =====================
-async function assertFounder(sb: Awaited<ReturnType<typeof requireSupabaseAuth.server>>["context"]["supabase"], userId: string) {
+async function assertFounder(sb: SupabaseClient<Database>, userId: string) {
   const { data } = await sb.rpc("has_role", { _user_id: userId, _role: "founder" });
   if (!data) throw new Error("Forbidden");
 }
