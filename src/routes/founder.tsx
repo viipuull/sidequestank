@@ -1,11 +1,12 @@
-import { createFileRoute, Link, useNavigate, useServerFn } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 import { ArrowLeft, CalendarDays, Loader2, Sparkles, TrendingUp, Users } from "lucide-react";
 import { AuthGate } from "@/components/layout/AuthGate";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { getFounderStats } from "@/lib/founder.functions";
+import { getFounderStats, type FounderUserRow } from "@/lib/founder.functions";
 
 const FOUNDER_EMAIL = "ankleshwarweb@gmail.com";
 
@@ -165,7 +166,7 @@ function FounderPage() {
                   {data.recent.length === 0 && (
                     <li className="px-4 py-6 text-center text-sm text-muted-foreground">No users yet.</li>
                   )}
-                  {data.recent.map((u) => (
+                  {data.recent.map((u: FounderUserRow) => (
                     <li
                       key={u.id}
                       className="grid grid-cols-1 gap-1 px-4 py-3 text-sm sm:grid-cols-[1.4fr_1fr_1.4fr_1fr_0.6fr] sm:items-center sm:gap-3"
