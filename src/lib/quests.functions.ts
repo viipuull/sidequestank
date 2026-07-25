@@ -152,6 +152,7 @@ const objectiveSchema = z.object({
   ]),
   completion_order: z.number().int().min(0).default(0),
   required: z.boolean().default(true),
+  config: z.record(z.string(), z.any()).default({}),
 });
 
 const questPayloadSchema = z.object({
@@ -224,6 +225,7 @@ export const createQuest = createServerFn({ method: "POST" })
           objective_type: o.objective_type,
           completion_order: o.completion_order ?? i,
           required: o.required,
+          config: o.config ?? {},
         })),
       );
       if (oErr) throw oErr;
@@ -290,6 +292,7 @@ export const updateQuest = createServerFn({ method: "POST" })
           objective_type: o.objective_type,
           completion_order: o.completion_order ?? i,
           required: o.required,
+          config: o.config ?? {},
         })),
       );
       if (iErr) throw iErr;

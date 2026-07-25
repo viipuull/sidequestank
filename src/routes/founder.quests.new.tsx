@@ -88,6 +88,7 @@ export function toPayload(v: QuestFormValues) {
       objective_type: o.objective_type,
       completion_order: i,
       required: o.required,
+      config: o.config ?? {},
     })).filter((o) => o.title.length > 0),
   };
 }
