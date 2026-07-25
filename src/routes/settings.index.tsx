@@ -1,8 +1,19 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 import { ChevronLeft, ChevronRight, FileText, LogOut, Moon, Shield, UserRound } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { AuthGate } from "@/components/layout/AuthGate";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { onboarding } from "@/lib/hooks/useOnboarding";
 
@@ -22,7 +33,10 @@ export const Route = createFileRoute("/settings/")({
 
 function SettingsInner() {
   const navigate = useNavigate();
-  const logout = async () => {
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+  const doLogout = async () => {
+    setSigningOut(true);
     await supabase.auth.signOut();
     onboarding.reset();
     navigate({ to: "/" });
@@ -30,7 +44,11 @@ function SettingsInner() {
   return (
     <AppShell>
       <div className="flex items-center gap-2">
-        <button onClick={() => history.back()} className="grid h-9 w-9 place-items-center rounded-full border border-border">
+        <button
+          onClick={() => history.back()}
+          aria-label="Go back"
+          className="grid h-11 w-11 place-items-center rounded-full border border-border"
+        >
           <ChevronLeft className="h-4 w-4" />
         </button>
         <h1 className="text-xl font-bold tracking-tight">Settings</h1>
@@ -44,9 +62,30 @@ function SettingsInner() {
         <Row icon={<FileText className="h-4 w-4" />} title="App version" value={APP_VERSION} />
       </section>
 
-      <Button variant="secondary" className="mt-6 w-full gap-2" onClick={logout}>
+      <Button
+        variant="secondary"
+        className="mt-6 w-full gap-2"
+        onClick={() => setConfirmOpen(true)}
+      >
         <LogOut className="h-4 w-4" /> Log out
       </Button>
+
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Log out of SideQuest?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You can sign back in any time with the same account. Your progress, quests and rewards are saved.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={signingOut}>Cancel</AlertDialogCancel>
+            <AlertDialogAction disabled={signingOut} onClick={doLogout}>
+              {signingOut ? "Logging out…" : "Log out"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AppShell>
   );
 }
