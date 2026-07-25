@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
-import { BarChart3, LogOut } from "lucide-react";
+import { BarChart3, LogOut, Shield, UserCircle } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -87,6 +87,22 @@ export function ProfileMenu({
               </div>
               <div className="h-px w-full bg-border" />
               <div className="py-1">
+                <button
+                  role="menuitem"
+                  onClick={() => { close(); navigate({ to: "/players/$username", params: { username } }); }}
+                  className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-primary/10"
+                >
+                  <UserCircle className="h-4 w-4 text-primary" />
+                  <span>Public profile</span>
+                </button>
+                <button
+                  role="menuitem"
+                  onClick={() => { close(); navigate({ to: "/settings/social" }); }}
+                  className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-primary/10"
+                >
+                  <Shield className="h-4 w-4 text-primary" />
+                  <span>Social & privacy</span>
+                </button>
                 {isFounder && (
                   <button
                     role="menuitem"
