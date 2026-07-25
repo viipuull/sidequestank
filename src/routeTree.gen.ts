@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as XpHistoryRouteImport } from './routes/xp-history'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as TutorialRouteImport } from './routes/tutorial'
+import { Route as TitlesRouteImport } from './routes/titles'
 import { Route as StarterRouteImport } from './routes/starter'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -45,6 +46,11 @@ const WelcomeRoute = WelcomeRouteImport.update({
 const TutorialRoute = TutorialRouteImport.update({
   id: '/tutorial',
   path: '/tutorial',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TitlesRoute = TitlesRouteImport.update({
+  id: '/titles',
+  path: '/titles',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StarterRoute = StarterRouteImport.update({
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
+  '/titles': typeof TitlesRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
   '/xp-history': typeof XpHistoryRoute
@@ -180,6 +187,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
+  '/titles': typeof TitlesRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
   '/xp-history': typeof XpHistoryRoute
@@ -205,6 +213,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
+  '/titles': typeof TitlesRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
   '/xp-history': typeof XpHistoryRoute
@@ -231,6 +240,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sitemap.xml'
     | '/starter'
+    | '/titles'
     | '/tutorial'
     | '/welcome'
     | '/xp-history'
@@ -255,6 +265,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sitemap.xml'
     | '/starter'
+    | '/titles'
     | '/tutorial'
     | '/welcome'
     | '/xp-history'
@@ -279,6 +290,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sitemap.xml'
     | '/starter'
+    | '/titles'
     | '/tutorial'
     | '/welcome'
     | '/xp-history'
@@ -304,6 +316,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StarterRoute: typeof StarterRoute
+  TitlesRoute: typeof TitlesRoute
   TutorialRoute: typeof TutorialRoute
   WelcomeRoute: typeof WelcomeRoute
   XpHistoryRoute: typeof XpHistoryRoute
@@ -336,6 +349,13 @@ declare module '@tanstack/react-router' {
       path: '/tutorial'
       fullPath: '/tutorial'
       preLoaderRoute: typeof TutorialRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/titles': {
+      id: '/titles'
+      path: '/titles'
+      fullPath: '/titles'
+      preLoaderRoute: typeof TitlesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/starter': {
@@ -499,6 +519,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StarterRoute: StarterRoute,
+  TitlesRoute: TitlesRoute,
   TutorialRoute: TutorialRoute,
   WelcomeRoute: WelcomeRoute,
   XpHistoryRoute: XpHistoryRoute,
