@@ -14,6 +14,78 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          active: boolean
+          badge_image_url: string | null
+          category: string
+          color: string | null
+          created_at: string
+          created_by: string | null
+          description: string
+          difficulty: string
+          display_order: number
+          goal_target: number
+          hidden: boolean
+          icon: string
+          id: string
+          name: string
+          rarity: Database["public"]["Enums"]["achievement_rarity"]
+          secret: boolean
+          slug: string
+          unlock_requirement: Json
+          unlock_type: string
+          updated_at: string
+          xp_bonus: number
+        }
+        Insert: {
+          active?: boolean
+          badge_image_url?: string | null
+          category?: string
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          difficulty?: string
+          display_order?: number
+          goal_target?: number
+          hidden?: boolean
+          icon?: string
+          id?: string
+          name: string
+          rarity?: Database["public"]["Enums"]["achievement_rarity"]
+          secret?: boolean
+          slug: string
+          unlock_requirement?: Json
+          unlock_type?: string
+          updated_at?: string
+          xp_bonus?: number
+        }
+        Update: {
+          active?: boolean
+          badge_image_url?: string | null
+          category?: string
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          difficulty?: string
+          display_order?: number
+          goal_target?: number
+          hidden?: boolean
+          icon?: string
+          id?: string
+          name?: string
+          rarity?: Database["public"]["Enums"]["achievement_rarity"]
+          secret?: boolean
+          slug?: string
+          unlock_requirement?: Json
+          unlock_type?: string
+          updated_at?: string
+          xp_bonus?: number
+        }
+        Relationships: []
+      }
       objective_progress: {
         Row: {
           attempts: number
@@ -64,6 +136,62 @@ export type Database = {
             columns: ["session_id"]
             isOneToOne: false
             referencedRelation: "quest_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      player_achievements: {
+        Row: {
+          achievement_id: string
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          featured: boolean
+          featured_order: number
+          id: string
+          progress: number
+          reward_granted: boolean
+          source: string
+          target: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          featured?: boolean
+          featured_order?: number
+          id?: string
+          progress?: number
+          reward_granted?: boolean
+          source?: string
+          target?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          achievement_id?: string
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          featured?: boolean
+          featured_order?: number
+          id?: string
+          progress?: number
+          reward_granted?: boolean
+          source?: string
+          target?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
             referencedColumns: ["id"]
           },
         ]
@@ -520,6 +648,10 @@ export type Database = {
         Returns: undefined
       }
       equip_title: { Args: { _title_id: string }; Returns: boolean }
+      evaluate_achievements_for_user: {
+        Args: { _user_id: string }
+        Returns: Json[]
+      }
       evaluate_titles_for_user: {
         Args: { _user_id: string }
         Returns: {
@@ -532,6 +664,10 @@ export type Database = {
           rarity: Database["public"]["Enums"]["title_rarity"]
           slug: string
         }[]
+      }
+      founder_assign_achievement: {
+        Args: { _achievement_id: string; _user_id: string }
+        Returns: Json
       }
       has_role: {
         Args: {
@@ -551,6 +687,13 @@ export type Database = {
       xp_required_for_level: { Args: { _level: number }; Returns: number }
     }
     Enums: {
+      achievement_rarity:
+        | "common"
+        | "uncommon"
+        | "rare"
+        | "epic"
+        | "legendary"
+        | "mythic"
       app_role: "player" | "founder"
       objective_progress_status: "pending" | "completed" | "failed" | "skipped"
       objective_type:
@@ -738,6 +881,14 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      achievement_rarity: [
+        "common",
+        "uncommon",
+        "rare",
+        "epic",
+        "legendary",
+        "mythic",
+      ],
       app_role: ["player", "founder"],
       objective_progress_status: ["pending", "completed", "failed", "skipped"],
       objective_type: [

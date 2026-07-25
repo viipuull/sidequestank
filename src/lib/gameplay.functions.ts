@@ -311,7 +311,22 @@ export const submitObjective = createServerFn({ method: "POST" })
       if (Array.isArray(titles)) unlockedTitles = titles as typeof unlockedTitles;
     }
 
-    return { ok: verified, reason, questCompleted, xpAward, unlockedTitles };
+    // Evaluate achievement unlocks after any successful verification. Progress
+    // for level/quest-count achievements updates automatically; only newly
+    // completed rows come back.
+    let unlockedAchievements: Array<{
+      id: string; slug: string; name: string; description: string;
+      icon: string; color: string | null; rarity: string; category: string;
+      badge_image_url: string | null; xp_bonus: number;
+    }> = [];
+    if (verified) {
+      const { data: ach } = await sb.rpc("evaluate_achievements_for_user", {
+        _user_id: context.userId,
+      });
+      if (Array.isArray(ach)) unlockedAchievements = ach as typeof unlockedAchievements;
+    }
+
+    return { ok: verified, reason, questCompleted, xpAward, unlockedTitles, unlockedAchievements };
   });
 
 // ---- Pause / abandon ----
