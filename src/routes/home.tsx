@@ -11,6 +11,8 @@ import { useProfile } from "@/lib/hooks/useProfile";
 import { useMyProgress, useMyXpHistory } from "@/lib/hooks/useProgression";
 import { XpBar } from "@/components/progression/XpBar";
 import { Link } from "@tanstack/react-router";
+import { useEquippedTitle } from "@/lib/hooks/useTitles";
+import { TitleBadge } from "@/components/titles/TitleBadge";
 
 export const Route = createFileRoute("/home")({
   head: () => ({
@@ -29,6 +31,7 @@ function HomeInner() {
   const { data: profile } = useProfile(user?.id);
   const { data: progress } = useMyProgress(!!user);
   const { data: recentXp } = useMyXpHistory(5, !!user);
+  const { data: equipped } = useEquippedTitle(!!user);
   // Home must render even if some optional profile fields are missing.
   const displayName = profile?.display_name?.trim() || user?.email?.split("@")[0] || "Explorer";
   const username = profile?.username || (user?.email?.split("@")[0] ?? "explorer");
@@ -55,8 +58,18 @@ function HomeInner() {
         <div>
           <p className="text-xs text-muted-foreground">Welcome back,</p>
           <h1 className="text-2xl font-bold tracking-tight">{p.display_name}</h1>
-          <div className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground">
-            <MapPin className="h-3 w-3 text-primary" /> {p.city}
+          <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3 text-primary" /> {p.city}</span>
+            {equipped?.titles && (
+              <Link to="/titles" aria-label="Change title">
+                <TitleBadge
+                  name={equipped.titles.name}
+                  icon={equipped.titles.icon}
+                  rarity={equipped.titles.rarity}
+                  color={equipped.titles.color}
+                />
+              </Link>
+            )}
           </div>
         </div>
         <ProfileMenu
