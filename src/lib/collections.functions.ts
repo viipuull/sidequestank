@@ -202,16 +202,16 @@ export const toggleCollectionFavorite = createServerFn({ method: "POST" })
 // FOUNDER STUDIO
 // ============================================================================
 
-async function assertFounder(context: { supabase: Awaited<ReturnType<typeof requireSupabaseAuth>>["supabase"] extends never ? never : ReturnType<typeof requireSupabaseAuth>["supabase"]; userId: string }) {
-  const { data } = await (context.supabase as unknown as { rpc: (n: string, args: Record<string, string>) => Promise<{ data: boolean | null }> })
-    .rpc("has_role", { _user_id: context.userId, _role: "founder" });
+async function assertFounder(sb: unknown, userId: string) {
+  const client = sb as { rpc: (n: string, args: Record<string, string>) => Promise<{ data: boolean | null }> };
+  const { data } = await client.rpc("has_role", { _user_id: userId, _role: "founder" });
   if (!data) throw new Error("Forbidden");
 }
 
 export const founderListCollections = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertFounder(context as never);
+    await assertFounder(context.supabase, context.userId);
     const sb = context.supabase;
     const { data, error } = await sb
       .from("collections")
@@ -259,7 +259,7 @@ export const founderSaveCollection = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw: unknown) => collectionInput.parse(raw))
   .handler(async ({ context, data }) => {
-    await assertFounder(context as never);
+    await assertFounder(context.supabase, context.userId);
     const sb = context.supabase;
     const { id, ...rest } = data;
     const payload = { ...rest, created_by: context.userId };
@@ -277,7 +277,7 @@ export const founderArchiveCollection = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw: unknown) => z.object({ id: z.string().uuid(), archive: z.boolean() }).parse(raw))
   .handler(async ({ context, data }) => {
-    await assertFounder(context as never);
+    await assertFounder(context.supabase, context.userId);
     await context.supabase
       .from("collections")
       .update({ status: data.archive ? "archived" : "draft" })
@@ -289,7 +289,7 @@ export const founderDuplicateCollection = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw: unknown) => z.object({ id: z.string().uuid() }).parse(raw))
   .handler(async ({ context, data }) => {
-    await assertFounder(context as never);
+    await assertFounder(context.supabase, context.userId);
     const sb = context.supabase;
     const { data: src, error } = await sb.from("collections").select("*").eq("id", data.id).single();
     if (error || !src) throw error ?? new Error("Not found");
@@ -322,7 +322,7 @@ export const founderSetCollectionItems = createServerFn({ method: "POST" })
     }).parse(raw),
   )
   .handler(async ({ context, data }) => {
-    await assertFounder(context as never);
+    await assertFounder(context.supabase, context.userId);
     const sb = context.supabase;
     await sb.from("collection_items").delete().eq("collection_id", data.collectionId);
     if (data.items.length > 0) {
@@ -343,7 +343,7 @@ export const founderSetCollectionItems = createServerFn({ method: "POST" })
 export const founderListQuestsForPicker = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertFounder(context as never);
+    await assertFounder(context.supabase, context.userId);
     const { data, error } = await context.supabase
       .from("quests")
       .select("id, slug, title, status, category, difficulty")
@@ -356,7 +356,7 @@ export const founderListQuestsForPicker = createServerFn({ method: "GET" })
 export const founderListTitlesForPicker = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertFounder(context as never);
+    await assertFounder(context.supabase, context.userId);
     const { data, error } = await context.supabase
       .from("titles")
       .select("id, name, icon, rarity")
@@ -369,7 +369,7 @@ export const founderListTitlesForPicker = createServerFn({ method: "GET" })
 export const founderListAchievementsForPicker = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertFounder(context as never);
+    await assertFounder(context.supabase, context.userId);
     const { data, error } = await context.supabase
       .from("achievements")
       .select("id, name, icon, rarity")
