@@ -26,6 +26,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as QuestsIndexRouteImport } from './routes/quests.index'
 import { Route as QuestsSlugRouteImport } from './routes/quests.$slug'
+import { Route as FounderQuestsIndexRouteImport } from './routes/founder.quests.index'
 
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
@@ -112,12 +113,17 @@ const QuestsSlugRoute = QuestsSlugRouteImport.update({
   path: '/quests/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FounderQuestsIndexRoute = FounderQuestsIndexRouteImport.update({
+  id: '/quests/',
+  path: '/quests/',
+  getParentRoute: () => FounderRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/collection': typeof CollectionRoute
-  '/founder': typeof FounderRoute
+  '/founder': typeof FounderRouteWithChildren
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
@@ -131,12 +137,13 @@ export interface FileRoutesByFullPath {
   '/welcome': typeof WelcomeRoute
   '/quests/$slug': typeof QuestsSlugRoute
   '/quests/': typeof QuestsIndexRoute
+  '/founder/quests/': typeof FounderQuestsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/collection': typeof CollectionRoute
-  '/founder': typeof FounderRoute
+  '/founder': typeof FounderRouteWithChildren
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
@@ -150,13 +157,14 @@ export interface FileRoutesByTo {
   '/welcome': typeof WelcomeRoute
   '/quests/$slug': typeof QuestsSlugRoute
   '/quests': typeof QuestsIndexRoute
+  '/founder/quests': typeof FounderQuestsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/collection': typeof CollectionRoute
-  '/founder': typeof FounderRoute
+  '/founder': typeof FounderRouteWithChildren
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
@@ -170,6 +178,7 @@ export interface FileRoutesById {
   '/welcome': typeof WelcomeRoute
   '/quests/$slug': typeof QuestsSlugRoute
   '/quests/': typeof QuestsIndexRoute
+  '/founder/quests/': typeof FounderQuestsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -191,6 +200,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/quests/$slug'
     | '/quests/'
+    | '/founder/quests/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -210,6 +220,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/quests/$slug'
     | '/quests'
+    | '/founder/quests'
   id:
     | '__root__'
     | '/'
@@ -229,13 +240,14 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/quests/$slug'
     | '/quests/'
+    | '/founder/quests/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   CollectionRoute: typeof CollectionRoute
-  FounderRoute: typeof FounderRoute
+  FounderRoute: typeof FounderRouteWithChildren
   HomeRoute: typeof HomeRoute
   LeaderboardRoute: typeof LeaderboardRoute
   OnboardingRoute: typeof OnboardingRoute
@@ -372,14 +384,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuestsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/founder/quests/': {
+      id: '/founder/quests/'
+      path: '/quests'
+      fullPath: '/founder/quests/'
+      preLoaderRoute: typeof FounderQuestsIndexRouteImport
+      parentRoute: typeof FounderRoute
+    }
   }
 }
+
+interface FounderRouteChildren {
+  FounderQuestsIndexRoute: typeof FounderQuestsIndexRoute
+}
+
+const FounderRouteChildren: FounderRouteChildren = {
+  FounderQuestsIndexRoute: FounderQuestsIndexRoute,
+}
+
+const FounderRouteWithChildren =
+  FounderRoute._addFileChildren(FounderRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   CollectionRoute: CollectionRoute,
-  FounderRoute: FounderRoute,
+  FounderRoute: FounderRouteWithChildren,
   HomeRoute: HomeRoute,
   LeaderboardRoute: LeaderboardRoute,
   OnboardingRoute: OnboardingRoute,
