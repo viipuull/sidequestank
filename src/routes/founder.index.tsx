@@ -10,7 +10,7 @@ import { getFounderStats, type FounderUserRow } from "@/lib/founder.functions";
 
 const FOUNDER_EMAIL = "ankleshwarweb@gmail.com";
 
-export const Route = createFileRoute("/founder")({
+export const Route = createFileRoute("/founder/")({
   head: () => ({
     meta: [
       { title: "Founder Dashboard — SideQuest" },
