@@ -39,7 +39,7 @@ export const getStudioHome = createServerFn({ method: "GET" })
     todayIso.setUTCHours(0, 0, 0, 0);
     const since = todayIso.toISOString();
 
-    const countExact = (q: any) => q.select("*", { count: "exact", head: true });
+    const cx = { count: "exact" as const, head: true };
 
     const [
       profTotal,
@@ -56,15 +56,15 @@ export const getStudioHome = createServerFn({ method: "GET" })
       recentNotifs,
       recentAudit,
     ] = await Promise.all([
-      countExact(sb.from("profiles")),
-      countExact(sb.from("profiles").gte("created_at", since)),
-      countExact(sb.from("quest_sessions").gte("last_activity_at", since)),
-      countExact(sb.from("quest_sessions").eq("status", "completed").gte("completed_at", since)),
+      sb.from("profiles").select("*", cx),
+      sb.from("profiles").select("*", cx).gte("created_at", since),
+      sb.from("quest_sessions").select("*", cx).gte("last_activity_at", since),
+      sb.from("quest_sessions").select("*", cx).eq("status", "completed").gte("completed_at", since),
       sb.from("xp_events").select("xp_earned").gte("created_at", since),
-      countExact(sb.from("player_collections").eq("completed", true).gte("completed_at", since)),
-      countExact(sb.from("player_achievements").eq("completed", true).gte("completed_at", since)),
-      countExact(sb.from("quests").eq("status", "published")),
-      countExact(sb.from("events").eq("status", "live")),
+      sb.from("player_collections").select("*", cx).eq("completed", true).gte("completed_at", since),
+      sb.from("player_achievements").select("*", cx).eq("completed", true).gte("completed_at", since),
+      sb.from("quests").select("*", cx).eq("status", "published"),
+      sb.from("events").select("*", cx).eq("status", "live"),
       sb.from("events").select("id, slug, name, icon, starts_at, ends_at, status, event_type")
         .in("status", ["scheduled", "live"]).order("starts_at", { ascending: true }).limit(6),
       sb.from("quests").select("id, slug, title, city, published_at, status")
