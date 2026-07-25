@@ -23,6 +23,7 @@ import { Route as PlayersRouteImport } from './routes/players'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as HomeRouteImport } from './routes/home'
+import { Route as EventsRouteImport } from './routes/events'
 import { Route as CollectionsRouteImport } from './routes/collections'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ActivityRouteImport } from './routes/activity'
@@ -115,6 +116,11 @@ const LeaderboardRoute = LeaderboardRouteImport.update({
 const HomeRoute = HomeRouteImport.update({
   id: '/home',
   path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CollectionsRoute = CollectionsRouteImport.update({
@@ -240,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/activity': typeof ActivityRoute
   '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRouteWithChildren
+  '/events': typeof EventsRoute
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
@@ -279,6 +286,7 @@ export interface FileRoutesByTo {
   '/activity': typeof ActivityRoute
   '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRouteWithChildren
+  '/events': typeof EventsRoute
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
@@ -319,6 +327,7 @@ export interface FileRoutesById {
   '/activity': typeof ActivityRoute
   '/auth': typeof AuthRoute
   '/collections': typeof CollectionsRouteWithChildren
+  '/events': typeof EventsRoute
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
@@ -360,6 +369,7 @@ export interface FileRouteTypes {
     | '/activity'
     | '/auth'
     | '/collections'
+    | '/events'
     | '/home'
     | '/leaderboard'
     | '/onboarding'
@@ -399,6 +409,7 @@ export interface FileRouteTypes {
     | '/activity'
     | '/auth'
     | '/collections'
+    | '/events'
     | '/home'
     | '/leaderboard'
     | '/onboarding'
@@ -438,6 +449,7 @@ export interface FileRouteTypes {
     | '/activity'
     | '/auth'
     | '/collections'
+    | '/events'
     | '/home'
     | '/leaderboard'
     | '/onboarding'
@@ -478,6 +490,7 @@ export interface RootRouteChildren {
   ActivityRoute: typeof ActivityRoute
   AuthRoute: typeof AuthRoute
   CollectionsRoute: typeof CollectionsRouteWithChildren
+  EventsRoute: typeof EventsRoute
   HomeRoute: typeof HomeRoute
   LeaderboardRoute: typeof LeaderboardRoute
   OnboardingRoute: typeof OnboardingRoute
@@ -603,6 +616,13 @@ declare module '@tanstack/react-router' {
       path: '/home'
       fullPath: '/home'
       preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/collections': {
@@ -857,6 +877,7 @@ const rootRouteChildren: RootRouteChildren = {
   ActivityRoute: ActivityRoute,
   AuthRoute: AuthRoute,
   CollectionsRoute: CollectionsRouteWithChildren,
+  EventsRoute: EventsRoute,
   HomeRoute: HomeRoute,
   LeaderboardRoute: LeaderboardRoute,
   OnboardingRoute: OnboardingRoute,
