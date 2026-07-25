@@ -86,6 +86,168 @@ export type Database = {
         }
         Relationships: []
       }
+      collection_items: {
+        Row: {
+          collection_id: string
+          completion_order: number
+          created_at: string
+          id: string
+          quest_id: string
+          required: boolean
+          unlock_requirement: Json
+        }
+        Insert: {
+          collection_id: string
+          completion_order?: number
+          created_at?: string
+          id?: string
+          quest_id: string
+          required?: boolean
+          unlock_requirement?: Json
+        }
+        Update: {
+          collection_id?: string
+          completion_order?: number
+          created_at?: string
+          id?: string
+          quest_id?: string
+          required?: boolean
+          unlock_requirement?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collection_items_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collection_items_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      collections: {
+        Row: {
+          banner_image_url: string | null
+          category: string
+          city: string
+          collection_type: string
+          cover_image_url: string | null
+          created_at: string
+          created_by: string | null
+          description: string
+          difficulty: Database["public"]["Enums"]["collection_difficulty"]
+          display_order: number
+          ends_at: string | null
+          estimated_minutes: number
+          featured: boolean
+          hidden: boolean
+          icon: string
+          id: string
+          name: string
+          published_at: string | null
+          repeatable: boolean
+          reward_achievement_id: string | null
+          reward_badge_image_url: string | null
+          reward_summary: string
+          reward_title_id: string | null
+          reward_xp: number
+          seasonal: boolean
+          slug: string
+          starts_at: string | null
+          status: Database["public"]["Enums"]["collection_status"]
+          tags: string[]
+          updated_at: string
+          visibility: Database["public"]["Enums"]["collection_visibility"]
+        }
+        Insert: {
+          banner_image_url?: string | null
+          category?: string
+          city?: string
+          collection_type?: string
+          cover_image_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          difficulty?: Database["public"]["Enums"]["collection_difficulty"]
+          display_order?: number
+          ends_at?: string | null
+          estimated_minutes?: number
+          featured?: boolean
+          hidden?: boolean
+          icon?: string
+          id?: string
+          name: string
+          published_at?: string | null
+          repeatable?: boolean
+          reward_achievement_id?: string | null
+          reward_badge_image_url?: string | null
+          reward_summary?: string
+          reward_title_id?: string | null
+          reward_xp?: number
+          seasonal?: boolean
+          slug: string
+          starts_at?: string | null
+          status?: Database["public"]["Enums"]["collection_status"]
+          tags?: string[]
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["collection_visibility"]
+        }
+        Update: {
+          banner_image_url?: string | null
+          category?: string
+          city?: string
+          collection_type?: string
+          cover_image_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          difficulty?: Database["public"]["Enums"]["collection_difficulty"]
+          display_order?: number
+          ends_at?: string | null
+          estimated_minutes?: number
+          featured?: boolean
+          hidden?: boolean
+          icon?: string
+          id?: string
+          name?: string
+          published_at?: string | null
+          repeatable?: boolean
+          reward_achievement_id?: string | null
+          reward_badge_image_url?: string | null
+          reward_summary?: string
+          reward_title_id?: string | null
+          reward_xp?: number
+          seasonal?: boolean
+          slug?: string
+          starts_at?: string | null
+          status?: Database["public"]["Enums"]["collection_status"]
+          tags?: string[]
+          updated_at?: string
+          visibility?: Database["public"]["Enums"]["collection_visibility"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collections_reward_achievement_id_fkey"
+            columns: ["reward_achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collections_reward_title_id_fkey"
+            columns: ["reward_title_id"]
+            isOneToOne: false
+            referencedRelation: "titles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       objective_progress: {
         Row: {
           attempts: number
@@ -192,6 +354,65 @@ export type Database = {
             columns: ["achievement_id"]
             isOneToOne: false
             referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      player_collections: {
+        Row: {
+          collection_id: string
+          completed: boolean
+          completed_at: string | null
+          completed_quests: number
+          created_at: string
+          favorite: boolean
+          id: string
+          last_progress_at: string
+          percent: number
+          pinned: boolean
+          reward_granted: boolean
+          total_required: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          collection_id: string
+          completed?: boolean
+          completed_at?: string | null
+          completed_quests?: number
+          created_at?: string
+          favorite?: boolean
+          id?: string
+          last_progress_at?: string
+          percent?: number
+          pinned?: boolean
+          reward_granted?: boolean
+          total_required?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          collection_id?: string
+          completed?: boolean
+          completed_at?: string | null
+          completed_quests?: number
+          created_at?: string
+          favorite?: boolean
+          id?: string
+          last_progress_at?: string
+          percent?: number
+          pinned?: boolean
+          reward_granted?: boolean
+          total_required?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_collections_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
             referencedColumns: ["id"]
           },
         ]
@@ -684,6 +905,19 @@ export type Database = {
         Returns: boolean
       }
       unequip_all_titles: { Args: never; Returns: boolean }
+      update_collection_progress_for_user: {
+        Args: { _quest_id: string; _user_id: string }
+        Returns: {
+          banner_image_url: string
+          cover_image_url: string
+          icon: string
+          id: string
+          name: string
+          reward_summary: string
+          reward_xp: number
+          slug: string
+        }[]
+      }
       xp_required_for_level: { Args: { _level: number }; Returns: number }
     }
     Enums: {
@@ -695,6 +929,9 @@ export type Database = {
         | "legendary"
         | "mythic"
       app_role: "player" | "founder"
+      collection_difficulty: "easy" | "medium" | "hard" | "expert"
+      collection_status: "draft" | "published" | "archived"
+      collection_visibility: "public" | "unlisted" | "private"
       objective_progress_status: "pending" | "completed" | "failed" | "skipped"
       objective_type:
         | "visit_location"
@@ -890,6 +1127,9 @@ export const Constants = {
         "mythic",
       ],
       app_role: ["player", "founder"],
+      collection_difficulty: ["easy", "medium", "hard", "expert"],
+      collection_status: ["draft", "published", "archived"],
+      collection_visibility: ["public", "unlisted", "private"],
       objective_progress_status: ["pending", "completed", "failed", "skipped"],
       objective_type: [
         "visit_location",
