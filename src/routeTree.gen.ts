@@ -30,6 +30,7 @@ import { Route as QuestsIndexRouteImport } from './routes/quests.index'
 import { Route as FounderIndexRouteImport } from './routes/founder.index'
 import { Route as QuestsSlugRouteImport } from './routes/quests.$slug'
 import { Route as FounderTitlesRouteImport } from './routes/founder.titles'
+import { Route as FounderCollectionsRouteImport } from './routes/founder.collections'
 import { Route as FounderAchievementsRouteImport } from './routes/founder.achievements'
 import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
 import { Route as AchievementsSlugRouteImport } from './routes/achievements.$slug'
@@ -143,6 +144,11 @@ const FounderTitlesRoute = FounderTitlesRouteImport.update({
   path: '/founder/titles',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FounderCollectionsRoute = FounderCollectionsRouteImport.update({
+  id: '/founder/collections',
+  path: '/founder/collections',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FounderAchievementsRoute = FounderAchievementsRouteImport.update({
   id: '/founder/achievements',
   path: '/founder/achievements',
@@ -200,6 +206,7 @@ export interface FileRoutesByFullPath {
   '/achievements/$slug': typeof AchievementsSlugRoute
   '/collections/$slug': typeof CollectionsSlugRoute
   '/founder/achievements': typeof FounderAchievementsRoute
+  '/founder/collections': typeof FounderCollectionsRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/founder/': typeof FounderIndexRoute
@@ -230,6 +237,7 @@ export interface FileRoutesByTo {
   '/achievements/$slug': typeof AchievementsSlugRoute
   '/collections/$slug': typeof CollectionsSlugRoute
   '/founder/achievements': typeof FounderAchievementsRoute
+  '/founder/collections': typeof FounderCollectionsRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/founder': typeof FounderIndexRoute
@@ -261,6 +269,7 @@ export interface FileRoutesById {
   '/achievements/$slug': typeof AchievementsSlugRoute
   '/collections/$slug': typeof CollectionsSlugRoute
   '/founder/achievements': typeof FounderAchievementsRoute
+  '/founder/collections': typeof FounderCollectionsRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/founder/': typeof FounderIndexRoute
@@ -293,6 +302,7 @@ export interface FileRouteTypes {
     | '/achievements/$slug'
     | '/collections/$slug'
     | '/founder/achievements'
+    | '/founder/collections'
     | '/founder/titles'
     | '/quests/$slug'
     | '/founder/'
@@ -323,6 +333,7 @@ export interface FileRouteTypes {
     | '/achievements/$slug'
     | '/collections/$slug'
     | '/founder/achievements'
+    | '/founder/collections'
     | '/founder/titles'
     | '/quests/$slug'
     | '/founder'
@@ -353,6 +364,7 @@ export interface FileRouteTypes {
     | '/achievements/$slug'
     | '/collections/$slug'
     | '/founder/achievements'
+    | '/founder/collections'
     | '/founder/titles'
     | '/quests/$slug'
     | '/founder/'
@@ -382,6 +394,7 @@ export interface RootRouteChildren {
   WelcomeRoute: typeof WelcomeRoute
   XpHistoryRoute: typeof XpHistoryRoute
   FounderAchievementsRoute: typeof FounderAchievementsRoute
+  FounderCollectionsRoute: typeof FounderCollectionsRoute
   FounderTitlesRoute: typeof FounderTitlesRoute
   QuestsSlugRoute: typeof QuestsSlugRouteWithChildren
   FounderIndexRoute: typeof FounderIndexRoute
@@ -540,6 +553,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FounderTitlesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/founder/collections': {
+      id: '/founder/collections'
+      path: '/founder/collections'
+      fullPath: '/founder/collections'
+      preLoaderRoute: typeof FounderCollectionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/founder/achievements': {
       id: '/founder/achievements'
       path: '/founder/achievements'
@@ -647,6 +667,7 @@ const rootRouteChildren: RootRouteChildren = {
   WelcomeRoute: WelcomeRoute,
   XpHistoryRoute: XpHistoryRoute,
   FounderAchievementsRoute: FounderAchievementsRoute,
+  FounderCollectionsRoute: FounderCollectionsRoute,
   FounderTitlesRoute: FounderTitlesRoute,
   QuestsSlugRoute: QuestsSlugRouteWithChildren,
   FounderIndexRoute: FounderIndexRoute,
