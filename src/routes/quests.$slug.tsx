@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Clock, MapPin, Loader2, Sparkles, Star, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { getPublishedQuestBySlug } from "@/lib/quests.functions";
+import { startOrResumeSession, getActiveSessionForQuest } from "@/lib/gameplay.functions";
 import { QUEST_CATEGORIES, QUEST_DIFFICULTIES, QUEST_TYPES, OBJECTIVE_TYPES } from "@/lib/quests.types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -33,6 +34,14 @@ function QuestDetailPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["quest", slug],
     queryFn: () => fetchQuest({ data: { slug } }),
+  });
+
+  const fetchActive = useServerFn(getActiveSessionForQuest);
+  const startFn = useServerFn(startOrResumeSession);
+  const { data: activeSession } = useQuery({
+    queryKey: ["quest-active-session", data?.id],
+    enabled: !!data?.id && !!user,
+    queryFn: () => fetchActive({ data: { questId: data!.id } }),
   });
 
   if (isLoading) {
@@ -66,10 +75,14 @@ function QuestDetailPage() {
       return;
     }
     setStarting(true);
-    // Verification/rewards system arrives in the next milestone.
-    await new Promise((r) => setTimeout(r, 350));
-    toast.success("Quest accepted — verification launches in the next update!");
-    setStarting(false);
+    try {
+      await startFn({ data: { questId: data!.id } });
+      navigate({ to: "/quests/$slug/play", params: { slug } });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not start quest");
+    } finally {
+      setStarting(false);
+    }
   }
 
   return (
@@ -207,7 +220,7 @@ function QuestDetailPage() {
             disabled={starting}
           >
             {starting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-2 h-4 w-4" />}
-            Start Quest
+            {activeSession && activeSession.status !== "completed" ? "Resume Quest" : activeSession?.status === "completed" ? "Play Again" : "Start Quest"}
           </Button>
         </div>
       </div>
