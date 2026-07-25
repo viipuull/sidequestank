@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Loader2, Plus, Trash2, GripVertical } from "lucide-react";
+import { Loader2, Plus, Trash2, ChevronUp, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -41,6 +41,7 @@ export type QuestFormValues = {
     objective_type: ObjectiveType;
     completion_order: number;
     required: boolean;
+    config: Record<string, unknown>;
   }[];
 };
 
@@ -93,6 +94,7 @@ export function QuestForm({ value, onChange, onSubmit, submitting, submitLabel =
           objective_type: "visit_location",
           completion_order: value.objectives.length,
           required: true,
+          config: {},
         },
       ],
     });
@@ -106,6 +108,18 @@ export function QuestForm({ value, onChange, onSubmit, submitting, submitLabel =
 
   function removeObjective(i: number) {
     patch({ objectives: value.objectives.filter((_, idx) => idx !== i) });
+  }
+
+  function moveObjective(i: number, dir: -1 | 1) {
+    const j = i + dir;
+    if (j < 0 || j >= value.objectives.length) return;
+    const next = value.objectives.slice();
+    [next[i], next[j]] = [next[j], next[i]];
+    patch({ objectives: next.map((o, idx) => ({ ...o, completion_order: idx })) });
+  }
+
+  function updateObjectiveConfig(i: number, cfg: Record<string, unknown>) {
+    updateObjective(i, { config: { ...value.objectives[i].config, ...cfg } });
   }
 
   function addTag() {
@@ -255,9 +269,14 @@ export function QuestForm({ value, onChange, onSubmit, submitting, submitLabel =
           {value.objectives.map((o, i) => (
             <div key={i} className="rounded-2xl border border-border/60 bg-background/40 p-3 space-y-2">
               <div className="flex items-center gap-2">
-                <GripVertical className="h-4 w-4 text-muted-foreground" />
                 <span className="text-xs font-semibold text-muted-foreground">#{i + 1}</span>
                 <div className="flex-1" />
+                <Button type="button" size="icon" variant="ghost" onClick={() => moveObjective(i, -1)} disabled={i === 0}>
+                  <ChevronUp className="h-4 w-4" />
+                </Button>
+                <Button type="button" size="icon" variant="ghost" onClick={() => moveObjective(i, 1)} disabled={i === value.objectives.length - 1}>
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
                 <Button type="button" size="icon" variant="ghost" onClick={() => removeObjective(i)}>
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
@@ -281,6 +300,11 @@ export function QuestForm({ value, onChange, onSubmit, submitting, submitLabel =
                   <Switch checked={o.required} onCheckedChange={(c) => updateObjective(i, { required: c })} />
                 </div>
               </div>
+              <ObjectiveConfigEditor
+                type={o.objective_type}
+                config={o.config ?? {}}
+                onChange={(cfg) => updateObjectiveConfig(i, cfg)}
+              />
             </div>
           ))}
           <Button type="button" variant="outline" onClick={addObjective} className="w-full">
@@ -338,4 +362,88 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       {children}
     </div>
   );
+}
+
+function ObjectiveConfigEditor({
+  type, config, onChange,
+}: { type: ObjectiveType; config: Record<string, unknown>; onChange: (c: Record<string, unknown>) => void }) {
+  if (type === "gps_checkin" || type === "visit_location") {
+    return (
+      <div className="rounded-xl border border-dashed border-border/60 bg-background/30 p-2.5 space-y-2">
+        <div className="text-[10px] font-semibold uppercase tracking-widest text-primary">GPS target</div>
+        <div className="grid grid-cols-2 gap-2">
+          <Input placeholder="Latitude" value={String(config.latitude ?? "")}
+            onChange={(e) => onChange({ latitude: e.target.value ? Number(e.target.value) : undefined })} />
+          <Input placeholder="Longitude" value={String(config.longitude ?? "")}
+            onChange={(e) => onChange({ longitude: e.target.value ? Number(e.target.value) : undefined })} />
+          <Input placeholder="Radius (m)" value={String(config.radius_m ?? 60)}
+            onChange={(e) => onChange({ radius_m: Number(e.target.value) || 60 })} />
+          <Input placeholder="Min accuracy (m)" value={String(config.min_accuracy_m ?? 200)}
+            onChange={(e) => onChange({ min_accuracy_m: Number(e.target.value) || 200 })} />
+        </div>
+        <p className="text-[10px] text-muted-foreground">Leave lat/lng blank to accept any location (manual visit).</p>
+      </div>
+    );
+  }
+  if (type === "scan_qr") {
+    return (
+      <div className="rounded-xl border border-dashed border-border/60 bg-background/30 p-2.5 space-y-2">
+        <div className="text-[10px] font-semibold uppercase tracking-widest text-primary">QR code</div>
+        <Input placeholder="Expected QR payload (leave blank to accept any)" value={String(config.code ?? "")}
+          onChange={(e) => onChange({ code: e.target.value })} />
+      </div>
+    );
+  }
+  if (type === "answer_trivia") {
+    const choices = Array.isArray(config.choices) ? (config.choices as string[]) : ["", ""];
+    const correct = Number(config.correct_index ?? 0);
+    return (
+      <div className="rounded-xl border border-dashed border-border/60 bg-background/30 p-2.5 space-y-2">
+        <div className="text-[10px] font-semibold uppercase tracking-widest text-primary">Trivia</div>
+        <Input placeholder="Question" value={String(config.question ?? "")}
+          onChange={(e) => onChange({ question: e.target.value })} />
+        {choices.map((c, idx) => (
+          <div key={idx} className="flex items-center gap-2">
+            <button type="button"
+              onClick={() => onChange({ correct_index: idx })}
+              className={`grid h-7 w-7 shrink-0 place-items-center rounded-full border text-[10px] font-bold ${
+                correct === idx ? "border-primary bg-primary text-primary-foreground" : "border-border"
+              }`}
+            >{String.fromCharCode(65 + idx)}</button>
+            <Input value={c} placeholder={`Choice ${idx + 1}`}
+              onChange={(e) => {
+                const next = choices.slice(); next[idx] = e.target.value;
+                onChange({ choices: next });
+              }} />
+            {choices.length > 2 && (
+              <Button type="button" size="icon" variant="ghost" onClick={() => {
+                const next = choices.filter((_, i2) => i2 !== idx);
+                onChange({ choices: next, correct_index: Math.min(correct, next.length - 1) });
+              }}>
+                <Trash2 className="h-3.5 w-3.5 text-destructive" />
+              </Button>
+            )}
+          </div>
+        ))}
+        {choices.length < 6 && (
+          <Button type="button" size="sm" variant="outline" onClick={() => onChange({ choices: [...choices, ""] })}>
+            <Plus className="mr-1 h-3 w-3" /> Add choice
+          </Button>
+        )}
+        <Input placeholder="Explanation (optional)" value={String(config.explanation ?? "")}
+          onChange={(e) => onChange({ explanation: e.target.value })} />
+        <p className="text-[10px] text-muted-foreground">Tap A/B/C… to mark the correct answer.</p>
+      </div>
+    );
+  }
+  if (type === "take_photo") {
+    return (
+      <div className="rounded-xl border border-dashed border-border/60 bg-background/30 p-2.5 space-y-2">
+        <div className="text-[10px] font-semibold uppercase tracking-widest text-primary">Photo</div>
+        <Input placeholder="Prompt (what to capture)" value={String(config.prompt ?? "")}
+          onChange={(e) => onChange({ prompt: e.target.value })} />
+      </div>
+    );
+  }
+  return null;
 }
