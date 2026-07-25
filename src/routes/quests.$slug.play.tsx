@@ -82,6 +82,9 @@ function PlayPage() {
   } | null>(null);
   const [unlockedTitles, setUnlockedTitles] = useState<UnlockedTitle[]>([]);
   const [unlockedAchievements, setUnlockedAchievements] = useState<UnlockedAchievement[]>([]);
+  const [completedCollections, setCompletedCollections] = useState<
+    import("@/components/collections/CollectionCompletionOverlay").CompletedCollectionData[]
+  >([]);
   const firedRef = useRef(false);
   const autoOpenedRef = useRef(false);
 
@@ -243,6 +246,13 @@ function PlayPage() {
                 qc.invalidateQueries({ queryKey: ["achievements-catalog"] });
               }
             }}
+            onCompletedCollections={(c) => {
+              if (c.length > 0) {
+                setCompletedCollections((prev) => [...prev, ...c]);
+                qc.invalidateQueries({ queryKey: ["collections-mine"] });
+                qc.invalidateQueries({ queryKey: ["collection"] });
+              }
+            }}
           />
         )}
       </AnimatePresence>
@@ -261,6 +271,15 @@ function PlayPage() {
           <AchievementUnlockOverlay
             achievements={unlockedAchievements}
             onDismiss={() => setUnlockedAchievements((prev) => prev.slice(1))}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {completedCollections.length > 0 && (
+          <CollectionCompletionOverlay
+            collections={completedCollections}
+            onDismiss={() => setCompletedCollections((prev) => prev.slice(1))}
           />
         )}
       </AnimatePresence>
