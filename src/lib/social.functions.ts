@@ -239,7 +239,7 @@ export const founderModerateVisibility = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw: unknown) => z.object({ user_id: z.string().uuid(), hidden: z.boolean() }).parse(raw))
   .handler(async ({ context, data }) => {
-    await assertFounder(context.supabase, context.userId);
+    await assertFounder(context);
     const { error } = await context.supabase.from("player_social_settings")
       .update({ moderation_hidden: data.hidden }).eq("user_id", data.user_id);
     if (error) throw error;
@@ -253,7 +253,7 @@ export const founderSetFeatured = createServerFn({ method: "POST" })
     priority: z.number().int().min(0).max(1000).default(0), active: z.boolean().default(true),
   }).parse(raw))
   .handler(async ({ context, data }) => {
-    await assertFounder(context.supabase, context.userId);
+    await assertFounder(context);
     const { error } = await context.supabase.from("featured_players")
       .upsert({ user_id: data.user_id, blurb: data.blurb, priority: data.priority, active: data.active, created_by: context.userId },
         { onConflict: "user_id" });
@@ -265,7 +265,7 @@ export const founderRemoveFeatured = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw: unknown) => z.object({ user_id: z.string().uuid() }).parse(raw))
   .handler(async ({ context, data }) => {
-    await assertFounder(context.supabase, context.userId);
+    await assertFounder(context);
     const { error } = await context.supabase.from("featured_players").delete().eq("user_id", data.user_id);
     if (error) throw error;
     return { ok: true };
@@ -275,7 +275,7 @@ export const founderSearchUsers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw: unknown) => z.object({ query: z.string().min(1).max(60) }).parse(raw))
   .handler(async ({ context, data }) => {
-    await assertFounder(context.supabase, context.userId);
+    await assertFounder(context);
     const { data: rows } = await context.supabase.from("profiles")
       .select("id, username, display_name, avatar_url, city")
       .or(`username.ilike.%${data.query}%,display_name.ilike.%${data.query}%`)
@@ -286,7 +286,7 @@ export const founderSearchUsers = createServerFn({ method: "GET" })
 export const founderRecomputeLeaderboards = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertFounder(context.supabase, context.userId);
+    await assertFounder(context);
     const { error } = await context.supabase.rpc("recompute_default_leaderboards" as never);
     if (error) throw error;
     return { ok: true };
@@ -305,7 +305,7 @@ export const founderCreateSeason = createServerFn({ method: "POST" })
     starts_at: z.string().optional(), ends_at: z.string().nullable().optional(),
   }).parse(raw))
   .handler(async ({ context, data }) => {
-    await assertFounder(context.supabase, context.userId);
+    await assertFounder(context);
     await context.supabase.from("leaderboard_seasons").update({ active: false }).eq("active", true);
     const { error } = await context.supabase.from("leaderboard_seasons").insert({
       name: data.name, slug: data.slug,
