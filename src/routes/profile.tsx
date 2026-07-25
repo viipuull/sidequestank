@@ -8,8 +8,9 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { useProfile } from "@/lib/hooks/useProfile";
 import { useMyProgress, useMyXpHistory } from "@/lib/hooks/useProgression";
 import { XpBar } from "@/components/progression/XpBar";
-import { useEquippedTitle, useMyTitles } from "@/lib/hooks/useTitles";
+import { useEquippedTitle, useMyTitles, RARITY_STYLES } from "@/lib/hooks/useTitles";
 import { TitleBadge } from "@/components/titles/TitleBadge";
+import { useMyAchievements } from "@/lib/hooks/useAchievements";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({
@@ -30,6 +31,16 @@ function ProfileInner() {
   const { data: recentXp } = useMyXpHistory(8, !!user);
   const { data: equipped } = useEquippedTitle(!!user);
   const { data: myTitles } = useMyTitles(!!user);
+  const { data: myAch } = useMyAchievements(!!user);
+  const unlockedAch = (myAch ?? []).filter((r) => r.completed);
+  const featured = unlockedAch.filter((r) => r.featured).sort((a, b) => b.featured_order - a.featured_order);
+  const showcase = (featured.length > 0 ? featured : unlockedAch).slice(0, 6);
+  const highestRarity = (() => {
+    const order = ["common", "uncommon", "rare", "epic", "legendary", "mythic"];
+    return unlockedAch
+      .map((r) => r.achievements.rarity as string)
+      .sort((a, b) => order.indexOf(b) - order.indexOf(a))[0];
+  })();
   const p = profile ?? {
     display_name: user?.user_metadata?.full_name || user?.user_metadata?.name || "Explorer",
     username: "explorer",
@@ -126,6 +137,41 @@ function ProfileInner() {
           {progress?.level_up_date ? ` · last level up ${new Date(progress.level_up_date).toLocaleDateString()}` : ""}
         </p>
       </motion.section>
+
+      <section className="mt-5 rounded-3xl border border-border bg-card/70 p-5 backdrop-blur">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold">Badges</h3>
+          <Link to="/achievements" className="text-xs font-semibold text-primary">Gallery →</Link>
+        </div>
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          {unlockedAch.length} unlocked
+          {highestRarity ? ` · Highest: ${RARITY_STYLES[highestRarity]?.label ?? highestRarity}` : ""}
+          {featured.length > 0 ? ` · ${featured.length} pinned` : ""}
+        </p>
+        {showcase.length === 0 ? (
+          <p className="mt-3 rounded-2xl border border-dashed border-border p-3 text-center text-[11px] text-muted-foreground">
+            Complete a quest to earn your first badge.
+          </p>
+        ) : (
+          <div className="mt-3 grid grid-cols-6 gap-2">
+            {showcase.map((row) => {
+              const s = RARITY_STYLES[row.achievements.rarity] ?? RARITY_STYLES.common;
+              return (
+                <Link
+                  key={row.id}
+                  to="/achievements/$slug"
+                  params={{ slug: row.achievements.slug }}
+                  className={`grid aspect-square place-items-center rounded-xl border text-2xl active:scale-95 ${s.ring}`}
+                  style={{ background: s.bg, boxShadow: s.glow }}
+                  aria-label={row.achievements.name}
+                >
+                  {row.achievements.icon}
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </section>
 
       <section className="mt-5 rounded-3xl border border-border bg-card/70 p-5 backdrop-blur">
         <div className="flex items-center justify-between">
