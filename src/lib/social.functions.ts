@@ -229,8 +229,9 @@ export const comparePlayers = createServerFn({ method: "GET" })
   });
 
 // -------- Founder: moderation & featured --------
-async function assertFounder(sb: { rpc: (name: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: unknown }> }, userId: string) {
-  const { data } = await sb.rpc("has_role", { _user_id: userId, _role: "founder" });
+type Ctx = { supabase: { rpc: (name: "has_role", args: { _user_id: string; _role: "founder" }) => Promise<{ data: unknown }> } };
+async function assertFounder(context: { supabase: any; userId: string }) {
+  const { data } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "founder" });
   if (!data) throw new Error("Forbidden");
 }
 
