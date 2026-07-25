@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Award, Bell, CalendarDays, Compass, MapPin, Sparkles, Star, Trophy } from "lucide-react";
+import { Award, Bell, CalendarDays, Compass, FlaskConical, MapPin, Sparkles, Star, Trophy } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { AuthGate } from "@/components/layout/AuthGate";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ProfileMenu } from "@/components/home/ProfileMenu";
+import { WelcomePopup } from "@/components/home/WelcomePopup";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useProfile } from "@/lib/hooks/useProfile";
 
@@ -24,6 +25,7 @@ function HomeInner() {
   const { data: profile } = useProfile(user?.id);
   // Home must render even if some optional profile fields are missing.
   const displayName = profile?.display_name?.trim() || user?.email?.split("@")[0] || "Explorer";
+  const username = profile?.username || (user?.email?.split("@")[0] ?? "explorer");
   const city = profile?.city || "Ankleshwar";
   const level = profile?.level ?? 1;
   const xp = profile?.xp ?? 0;
@@ -40,6 +42,7 @@ function HomeInner() {
 
   return (
     <AppShell>
+      <WelcomePopup userId={user?.id} />
       <header className="flex items-start justify-between">
         <div>
           <p className="text-xs text-muted-foreground">Welcome back,</p>
@@ -48,11 +51,25 @@ function HomeInner() {
             <MapPin className="h-3 w-3 text-primary" /> {p.city}
           </div>
         </div>
-        <Avatar className="h-12 w-12 border-2 border-primary/40">
-          {p.avatar_url && <AvatarImage src={p.avatar_url} alt={p.display_name} />}
-          <AvatarFallback className="bg-primary/20 text-sm font-semibold text-primary">{initials}</AvatarFallback>
-        </Avatar>
+        <ProfileMenu
+          displayName={p.display_name}
+          username={username}
+          email={user?.email}
+          avatarUrl={p.avatar_url}
+          initials={initials}
+        />
       </header>
+
+      <motion.div
+        className="mt-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-[11px] font-semibold text-primary"
+        initial={{ opacity: 0, y: 4 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        <FlaskConical className="h-3.5 w-3.5" />
+        <span>🧪 Beta Tester</span>
+        <span className="font-normal text-muted-foreground">· Thanks for helping build SideQuest.</span>
+      </motion.div>
 
       <motion.section
         className="mt-5 overflow-hidden rounded-3xl border border-border p-5"
