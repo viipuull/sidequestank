@@ -20,7 +20,7 @@ const SORTS: { key: Sort; label: string }[] = [
   { key: "newest", label: "New" },
 ];
 
-export const Route = createFileRoute("/players")({
+export const Route = createFileRoute("/players/")({
   head: () => ({
     meta: [
       { title: "Discover Players — SideQuest" },

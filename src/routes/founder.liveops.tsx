@@ -22,7 +22,7 @@ export const Route = createFileRoute("/founder/liveops")({
 type Tab = "events" | "challenges" | "announcements";
 
 function LiveOpsManager() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const nav = useNavigate();
   const isFounder = (user?.email ?? "").toLowerCase() === FOUNDER_EMAIL;
   const [tab, setTab] = useState<Tab>("events");
@@ -34,6 +34,7 @@ function LiveOpsManager() {
   });
   const tick = useMutation({ mutationFn: () => tickFn(), onSuccess: () => refetchMetrics() });
 
+  if (loading) return null;
   if (!isFounder) { setTimeout(() => nav({ to: "/home" }), 0); return null; }
 
   return (

@@ -3,7 +3,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Award, ArrowLeft, MapPin, Sparkles, Trophy, Users, Layers, Compass } from "lucide-react";
-import { AuthGate } from "@/components/layout/AuthGate";
 import { AppShell } from "@/components/layout/AppShell";
 import { PlayerAvatar } from "@/components/social/PlayerAvatar";
 import { ActivityItem } from "@/components/social/ActivityItem";
@@ -20,11 +19,7 @@ export const Route = createFileRoute("/players/$username")({
       { property: "og:description", content: `Explorer profile of @${params.username}.` },
     ],
   }),
-  component: () => (
-    <AuthGate>
-      <PublicProfilePage />
-    </AuthGate>
-  ),
+  component: PublicProfilePage,
 });
 
 function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string | number }) {
@@ -144,6 +139,14 @@ function PublicProfilePage() {
       </section>
 
       <p className="mt-6 text-center text-[10px] text-muted-foreground">Member since {new Date(profile.created_at).toLocaleDateString()}</p>
+
+      {!user && (
+        <div className="mt-6 rounded-2xl border border-primary/40 bg-primary/10 p-4 text-center">
+          <p className="text-sm font-semibold">Join SideQuest</p>
+          <p className="mt-1 text-xs text-muted-foreground">Sign in to compare, follow, and start your own adventure.</p>
+          <Link to="/auth" className="mt-3 inline-block rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground">Sign in</Link>
+        </div>
+      )}
     </AppShell>
   );
 }
