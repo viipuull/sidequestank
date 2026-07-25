@@ -174,6 +174,21 @@ function FounderPage() {
                 </div>
                 <span className="text-lg text-emerald-300">→</span>
               </Link>
+              <Link
+                to="/founder/liveops"
+                className="col-span-2 flex items-center justify-between rounded-2xl border border-rose-400/40 bg-rose-500/10 p-4 shadow-md transition active:scale-[0.99]"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-rose-500/20 text-rose-300">
+                    <CalendarDays className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-rose-300">LiveOps Manager</p>
+                    <p className="text-sm font-semibold text-foreground">Events, challenges & announcements</p>
+                  </div>
+                </div>
+                <span className="text-lg text-rose-300">→</span>
+              </Link>
               <StatCard
                 icon={<Users className="h-5 w-5 text-primary" />}
                 label="Total users"
