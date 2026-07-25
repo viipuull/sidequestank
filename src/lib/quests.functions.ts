@@ -378,11 +378,8 @@ export const duplicateQuest = createServerFn({ method: "POST" })
     return { id: copy.id };
   });
 
-async function ensureUniqueSlug(
-  sb: { from: (t: "quests") => { select: (s: string) => { eq: (c: string, v: string) => { maybeSingle: () => Promise<{ data: { id: string } | null }> } } } },
-  base: string,
-  excludeId?: string,
-): Promise<string> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function ensureUniqueSlug(sb: any, base: string, excludeId?: string): Promise<string> {
   let candidate = base || `quest-${Date.now()}`;
   let i = 1;
   // Try up to 30 times
