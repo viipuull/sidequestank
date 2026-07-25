@@ -15,7 +15,6 @@ import { Route as StarterRouteImport } from './routes/starter'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RulesRouteImport } from './routes/rules'
-import { Route as QuestsRouteImport } from './routes/quests'
 import { Route as ProfileSetupRouteImport } from './routes/profile-setup'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
@@ -25,6 +24,11 @@ import { Route as FounderRouteImport } from './routes/founder'
 import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as QuestsIndexRouteImport } from './routes/quests.index'
+import { Route as QuestsSlugRouteImport } from './routes/quests.$slug'
+import { Route as FounderQuestsIndexRouteImport } from './routes/founder.quests.index'
+import { Route as FounderQuestsNewRouteImport } from './routes/founder.quests.new'
+import { Route as FounderQuestsIdRouteImport } from './routes/founder.quests.$id'
 
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
@@ -54,11 +58,6 @@ const SettingsRoute = SettingsRouteImport.update({
 const RulesRoute = RulesRouteImport.update({
   id: '/rules',
   path: '/rules',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const QuestsRoute = QuestsRouteImport.update({
-  id: '/quests',
-  path: '/quests',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileSetupRoute = ProfileSetupRouteImport.update({
@@ -106,61 +105,98 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const QuestsIndexRoute = QuestsIndexRouteImport.update({
+  id: '/quests/',
+  path: '/quests/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuestsSlugRoute = QuestsSlugRouteImport.update({
+  id: '/quests/$slug',
+  path: '/quests/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FounderQuestsIndexRoute = FounderQuestsIndexRouteImport.update({
+  id: '/quests/',
+  path: '/quests/',
+  getParentRoute: () => FounderRoute,
+} as any)
+const FounderQuestsNewRoute = FounderQuestsNewRouteImport.update({
+  id: '/quests/new',
+  path: '/quests/new',
+  getParentRoute: () => FounderRoute,
+} as any)
+const FounderQuestsIdRoute = FounderQuestsIdRouteImport.update({
+  id: '/quests/$id',
+  path: '/quests/$id',
+  getParentRoute: () => FounderRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/collection': typeof CollectionRoute
-  '/founder': typeof FounderRoute
+  '/founder': typeof FounderRouteWithChildren
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/profile-setup': typeof ProfileSetupRoute
-  '/quests': typeof QuestsRoute
   '/rules': typeof RulesRoute
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
+  '/quests/$slug': typeof QuestsSlugRoute
+  '/quests/': typeof QuestsIndexRoute
+  '/founder/quests/$id': typeof FounderQuestsIdRoute
+  '/founder/quests/new': typeof FounderQuestsNewRoute
+  '/founder/quests/': typeof FounderQuestsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/collection': typeof CollectionRoute
-  '/founder': typeof FounderRoute
+  '/founder': typeof FounderRouteWithChildren
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/profile-setup': typeof ProfileSetupRoute
-  '/quests': typeof QuestsRoute
   '/rules': typeof RulesRoute
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
+  '/quests/$slug': typeof QuestsSlugRoute
+  '/quests': typeof QuestsIndexRoute
+  '/founder/quests/$id': typeof FounderQuestsIdRoute
+  '/founder/quests/new': typeof FounderQuestsNewRoute
+  '/founder/quests': typeof FounderQuestsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/collection': typeof CollectionRoute
-  '/founder': typeof FounderRoute
+  '/founder': typeof FounderRouteWithChildren
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/profile-setup': typeof ProfileSetupRoute
-  '/quests': typeof QuestsRoute
   '/rules': typeof RulesRoute
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/starter': typeof StarterRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
+  '/quests/$slug': typeof QuestsSlugRoute
+  '/quests/': typeof QuestsIndexRoute
+  '/founder/quests/$id': typeof FounderQuestsIdRoute
+  '/founder/quests/new': typeof FounderQuestsNewRoute
+  '/founder/quests/': typeof FounderQuestsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -174,13 +210,17 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/profile-setup'
-    | '/quests'
     | '/rules'
     | '/settings'
     | '/sitemap.xml'
     | '/starter'
     | '/tutorial'
     | '/welcome'
+    | '/quests/$slug'
+    | '/quests/'
+    | '/founder/quests/$id'
+    | '/founder/quests/new'
+    | '/founder/quests/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -192,13 +232,17 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/profile-setup'
-    | '/quests'
     | '/rules'
     | '/settings'
     | '/sitemap.xml'
     | '/starter'
     | '/tutorial'
     | '/welcome'
+    | '/quests/$slug'
+    | '/quests'
+    | '/founder/quests/$id'
+    | '/founder/quests/new'
+    | '/founder/quests'
   id:
     | '__root__'
     | '/'
@@ -210,32 +254,37 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/profile-setup'
-    | '/quests'
     | '/rules'
     | '/settings'
     | '/sitemap.xml'
     | '/starter'
     | '/tutorial'
     | '/welcome'
+    | '/quests/$slug'
+    | '/quests/'
+    | '/founder/quests/$id'
+    | '/founder/quests/new'
+    | '/founder/quests/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   CollectionRoute: typeof CollectionRoute
-  FounderRoute: typeof FounderRoute
+  FounderRoute: typeof FounderRouteWithChildren
   HomeRoute: typeof HomeRoute
   LeaderboardRoute: typeof LeaderboardRoute
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
   ProfileSetupRoute: typeof ProfileSetupRoute
-  QuestsRoute: typeof QuestsRoute
   RulesRoute: typeof RulesRoute
   SettingsRoute: typeof SettingsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StarterRoute: typeof StarterRoute
   TutorialRoute: typeof TutorialRoute
   WelcomeRoute: typeof WelcomeRoute
+  QuestsSlugRoute: typeof QuestsSlugRoute
+  QuestsIndexRoute: typeof QuestsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -280,13 +329,6 @@ declare module '@tanstack/react-router' {
       path: '/rules'
       fullPath: '/rules'
       preLoaderRoute: typeof RulesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/quests': {
-      id: '/quests'
-      path: '/quests'
-      fullPath: '/quests'
-      preLoaderRoute: typeof QuestsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile-setup': {
@@ -352,26 +394,77 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/quests/': {
+      id: '/quests/'
+      path: '/quests'
+      fullPath: '/quests/'
+      preLoaderRoute: typeof QuestsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quests/$slug': {
+      id: '/quests/$slug'
+      path: '/quests/$slug'
+      fullPath: '/quests/$slug'
+      preLoaderRoute: typeof QuestsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/founder/quests/': {
+      id: '/founder/quests/'
+      path: '/quests'
+      fullPath: '/founder/quests/'
+      preLoaderRoute: typeof FounderQuestsIndexRouteImport
+      parentRoute: typeof FounderRoute
+    }
+    '/founder/quests/new': {
+      id: '/founder/quests/new'
+      path: '/quests/new'
+      fullPath: '/founder/quests/new'
+      preLoaderRoute: typeof FounderQuestsNewRouteImport
+      parentRoute: typeof FounderRoute
+    }
+    '/founder/quests/$id': {
+      id: '/founder/quests/$id'
+      path: '/quests/$id'
+      fullPath: '/founder/quests/$id'
+      preLoaderRoute: typeof FounderQuestsIdRouteImport
+      parentRoute: typeof FounderRoute
+    }
   }
 }
+
+interface FounderRouteChildren {
+  FounderQuestsIdRoute: typeof FounderQuestsIdRoute
+  FounderQuestsNewRoute: typeof FounderQuestsNewRoute
+  FounderQuestsIndexRoute: typeof FounderQuestsIndexRoute
+}
+
+const FounderRouteChildren: FounderRouteChildren = {
+  FounderQuestsIdRoute: FounderQuestsIdRoute,
+  FounderQuestsNewRoute: FounderQuestsNewRoute,
+  FounderQuestsIndexRoute: FounderQuestsIndexRoute,
+}
+
+const FounderRouteWithChildren =
+  FounderRoute._addFileChildren(FounderRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   CollectionRoute: CollectionRoute,
-  FounderRoute: FounderRoute,
+  FounderRoute: FounderRouteWithChildren,
   HomeRoute: HomeRoute,
   LeaderboardRoute: LeaderboardRoute,
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
   ProfileSetupRoute: ProfileSetupRoute,
-  QuestsRoute: QuestsRoute,
   RulesRoute: RulesRoute,
   SettingsRoute: SettingsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StarterRoute: StarterRoute,
   TutorialRoute: TutorialRoute,
   WelcomeRoute: WelcomeRoute,
+  QuestsSlugRoute: QuestsSlugRoute,
+  QuestsIndexRoute: QuestsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
