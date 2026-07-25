@@ -19,6 +19,7 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RulesRouteImport } from './routes/rules'
 import { Route as ProfileSetupRouteImport } from './routes/profile-setup'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PlayersRouteImport } from './routes/players'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as HomeRouteImport } from './routes/home'
@@ -88,6 +89,11 @@ const ProfileSetupRoute = ProfileSetupRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlayersRoute = PlayersRouteImport.update({
+  id: '/players',
+  path: '/players',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -199,6 +205,7 @@ export interface FileRoutesByFullPath {
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/players': typeof PlayersRoute
   '/profile': typeof ProfileRoute
   '/profile-setup': typeof ProfileSetupRoute
   '/rules': typeof RulesRoute
@@ -231,6 +238,7 @@ export interface FileRoutesByTo {
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/players': typeof PlayersRoute
   '/profile': typeof ProfileRoute
   '/profile-setup': typeof ProfileSetupRoute
   '/rules': typeof RulesRoute
@@ -264,6 +272,7 @@ export interface FileRoutesById {
   '/home': typeof HomeRoute
   '/leaderboard': typeof LeaderboardRoute
   '/onboarding': typeof OnboardingRoute
+  '/players': typeof PlayersRoute
   '/profile': typeof ProfileRoute
   '/profile-setup': typeof ProfileSetupRoute
   '/rules': typeof RulesRoute
@@ -298,6 +307,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/leaderboard'
     | '/onboarding'
+    | '/players'
     | '/profile'
     | '/profile-setup'
     | '/rules'
@@ -330,6 +340,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/leaderboard'
     | '/onboarding'
+    | '/players'
     | '/profile'
     | '/profile-setup'
     | '/rules'
@@ -362,6 +373,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/leaderboard'
     | '/onboarding'
+    | '/players'
     | '/profile'
     | '/profile-setup'
     | '/rules'
@@ -395,6 +407,7 @@ export interface RootRouteChildren {
   HomeRoute: typeof HomeRoute
   LeaderboardRoute: typeof LeaderboardRoute
   OnboardingRoute: typeof OnboardingRoute
+  PlayersRoute: typeof PlayersRoute
   ProfileRoute: typeof ProfileRoute
   ProfileSetupRoute: typeof ProfileSetupRoute
   RulesRoute: typeof RulesRoute
@@ -486,6 +499,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/players': {
+      id: '/players'
+      path: '/players'
+      fullPath: '/players'
+      preLoaderRoute: typeof PlayersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -686,6 +706,7 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRoute,
   LeaderboardRoute: LeaderboardRoute,
   OnboardingRoute: OnboardingRoute,
+  PlayersRoute: PlayersRoute,
   ProfileRoute: ProfileRoute,
   ProfileSetupRoute: ProfileSetupRoute,
   RulesRoute: RulesRoute,
