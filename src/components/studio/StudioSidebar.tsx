@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  LayoutDashboard, BarChart3, Users, ShieldCheck, Boxes, Radio, Image as ImageIcon,
-  Trophy, ListChecks, History, Settings, Sparkles,
+  LayoutDashboard, Users, Radio, Trophy, ListChecks, History, Sparkles,
+  Compass, Award,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -10,27 +10,23 @@ import {
 
 type Item = { title: string; url: string; icon: any; badge?: string };
 
+// Sprint A: only shipped routes appear. Unfinished features are hidden
+// rather than surfaced as "Coming soon" placeholders.
 const overview: Item[] = [
   { title: "Home", url: "/studio", icon: LayoutDashboard },
-  { title: "Analytics", url: "/studio/analytics", icon: BarChart3, badge: "Soon" },
-];
-
-const community: Item[] = [
-  { title: "Players", url: "/studio/players", icon: Users, badge: "Soon" },
-  { title: "Moderation", url: "/studio/moderation", icon: ShieldCheck, badge: "Soon" },
+  { title: "Audit Log", url: "/studio/audit", icon: History },
 ];
 
 const content: Item[] = [
-  { title: "Content", url: "/studio/content", icon: Boxes, badge: "Soon" },
-  { title: "Media Library", url: "/studio/media", icon: ImageIcon, badge: "Soon" },
-  { title: "Rewards", url: "/studio/rewards", icon: Trophy, badge: "Soon" },
+  { title: "Quests", url: "/founder/quests", icon: ListChecks },
+  { title: "Collections", url: "/founder/collections", icon: Compass },
+  { title: "Achievements", url: "/founder/achievements", icon: Trophy },
+  { title: "Titles", url: "/founder/titles", icon: Award },
 ];
 
 const ops: Item[] = [
   { title: "LiveOps", url: "/founder/liveops", icon: Radio },
-  { title: "Quests", url: "/founder/quests", icon: ListChecks },
-  { title: "Audit Log", url: "/studio/audit", icon: History },
-  { title: "Settings", url: "/studio/settings", icon: Settings, badge: "Soon" },
+  { title: "Social", url: "/founder/social", icon: Users },
 ];
 
 function Section({ label, items, currentPath }: { label: string; items: Item[]; currentPath: string }) {
@@ -90,7 +86,6 @@ export function StudioSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <Section label="Overview" items={overview} currentPath={currentPath} />
-        <Section label="Community" items={community} currentPath={currentPath} />
         <Section label="Content" items={content} currentPath={currentPath} />
         <Section label="Operations" items={ops} currentPath={currentPath} />
       </SidebarContent>
