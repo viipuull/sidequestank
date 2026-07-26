@@ -1,55 +1,78 @@
-# SideQuest — Production Stabilization Plan
+# Founder Studio – Final Completion Sprint
 
-This is a massive scope (auth, gameplay, progression, social, LiveOps, Studio, DB, security, a11y, perf, docs). Landing it in one turn would be reckless — hundreds of files could churn without you being able to verify each area. I'll break it into **6 focused phases**, each shippable and reviewable on its own. You approve the plan, then say "continue phase N" between phases.
+This is a very large scope (15 workstreams). To ship it reliably without breaking existing player/founder flows, I'll execute it in **6 sequential phases**, each self-contained, tested, and shippable. After each phase I'll pause briefly so you can sanity-check before I move on.
 
-No new gameplay systems will be added — only fixes, hardening, and polish on what exists.
+If you'd rather I run straight through all 6 phases without pausing, say "run all phases".
 
-## Phase 1 — Foundations: Errors, Loading, Routing, 404/500
-- Global `errorComponent` + `notFoundComponent` on root route with retry + home actions.
-- Consistent `LoadingScreen`, `EmptyState`, `ErrorState` primitives; adopt across routes that currently render blank/`null` during loads.
-- Fix known route edges: back-button on gameplay, resume-quest race, tutorial→home transition, deep-link redirects preserving `redirect` param.
-- Route audit: verify every `createFileRoute` path matches filename; kill dead routes.
+---
 
-## Phase 2 — Data Layer: RLS, Indexes, Constraints, Storage
-- Audit every table's RLS (run linter). Tighten `anon` grants; ensure `service_role` grants everywhere edge/admin touches.
-- Add missing indexes: `quest_sessions(user_id,status)`, `xp_events(user_id,created_at desc)`, `notifications(user_id,read_at)`, `player_collections(user_id)`, `activity_events(user_id,created_at desc)`, `leaderboard_snapshots(scope,scope_key,period,period_key,rank)`.
-- Storage: verify `quest-media` policies (founder write, public read of published), add `avatars` bucket if missing with per-user path policies, size/type validation client-side.
-- Foreign keys / ON DELETE review to prevent orphans.
+## Phase 1 — Player Management (Section 1)
 
-## Phase 3 — Gameplay & Progression Reliability
-- Start/Resume quest: idempotent session creation, resume from last incomplete objective.
-- Objective verifiers: GPS (timeout, permission-denied UX), QR (camera fallback, torch), Photo (camera-only vs gallery config honored, size limit, HEIC handling), Trivia (single-answer lock).
-- XP/Level: guard against double-award (already partially handled via `xp_events` unique-ish check — verify), level-up overlay dedupe.
-- Achievement/Title/Collection evaluators called after every completion path; consolidate into one post-completion hook.
+**Backend (migration)**
+- Add `profiles.suspended_at`, `profiles.suspended_reason`.
+- SECURITY DEFINER RPCs (founder-only, all call `record_audit`):
+  `admin_suspend_player`, `admin_restore_player`, `admin_set_profile_hidden`,
+  `admin_grant_xp(_user, _amount, _reason)`, `admin_remove_xp`,
+  `admin_grant_title`, `admin_revoke_title`,
+  `admin_grant_achievement`, `admin_revoke_achievement`,
+  `admin_reset_quest_session(_session_id)`, `admin_reset_event_progress(_user, _event)`.
+- Gate authenticated access to suspended users in `AuthGate` (soft block screen).
 
-## Phase 4 — Performance & Rendering
-- React Query defaults: `staleTime`, `gcTime`, retry policy per query family.
-- Route-level code splitting review (Studio, Founder, gameplay in separate chunks).
-- Image handling: `loading="lazy"`, `decoding="async"`, `aspect-*` wrappers, `object-cover`.
-- Memoize heavy lists (leaderboard, discovery); virtualize if >100 items.
-- Framer Motion: respect `prefers-reduced-motion`, drop layout animations from long lists.
+**Studio UI** — `src/routes/studio.players.index.tsx`, `studio.players.$userId.tsx`
+- Search + filter (city, level range, suspended, hidden, pioneer, founder).
+- Player detail: progression, XP, titles, achievements, collections, quest history, event progress, recent logins (from `auth.users.last_sign_in_at` via admin RPC).
+- Action rail with confirmation dialogs; each action toasts + refetches.
 
-## Phase 5 — UX Polish, Accessibility, Responsive
-- A11y sweep: icon-only buttons get `aria-label`, single `<main>` per route, focus rings, `h-dvh` for full-height, form labels.
-- Toast system consistency (success/error/info) — one provider, one API.
-- Empty states with clear CTAs on all list screens.
-- Responsive audit at 360/414/768/1280; fix overflows, tap targets ≥44px.
-- Reduced-motion + high-contrast fallback tokens.
+## Phase 2 — Notifications, Announcements, Role Manager (Sections 2, 4)
 
-## Phase 6 — Security, SEO, Docs, Launch Prep
-- Founder-only server functions: verify role check inside handler (not just RLS).
-- Input validation via Zod on every `createServerFn` `.inputValidator`.
-- Per-route `head()` meta on every public route (unique title/desc/og).
-- `robots.txt`, sitemap, canonical.
-- `docs/` folder: ARCHITECTURE.md, DATABASE.md, ROLES.md, DEPLOYMENT.md, RUNBOOK.md.
-- Run security scanner + linter; resolve or document findings.
+**Backend**
+- `admin_broadcast_notification(_audience jsonb, _kind, _title, _body, _icon, _deep_link, _priority, _metadata, _scheduled_at)` — fan-out to matching users; if `_scheduled_at` future, insert into new `scheduled_notifications` table processed by liveops tick.
+- `admin_create_announcement(...)` + edit/delete RPCs (already have table).
+- `admin_grant_role(_user, _role)`, `admin_revoke_role` — cannot remove self as founder.
+
+**UI**
+- `studio.notifications.tsx`: composer (audience picker, preview, send/schedule), history table with delivery counts, unread aggregate.
+- `studio.announcements.tsx`: CRUD list.
+- `studio.roles.tsx`: founder list, grant/revoke with confirm.
+
+## Phase 3 — Analytics + Audit Log v2 (Sections 3, 5)
+
+**Backend**
+- Read-only aggregate RPCs: `analytics_overview(_from, _to)` returning DAU/WAU/MAU, new/returning, quest funnel, XP totals, top/bottom quests, collection completion, achievements/titles earned, leaderboard growth, event participation, notification delivery.
+- Audit list RPC with search/filter/pagination.
+
+**UI**
+- `studio.analytics.tsx`: KPI tiles + Recharts line/bar (7/30/90/custom range, refresh, PNG export via html-to-image).
+- `studio.audit.tsx`: search, filter (action, actor email, target kind, date range), pagination, CSV export.
+
+## Phase 4 — LiveOps polish + Content bulk actions (Sections 6, 7)
+
+- LiveOps event editor: pause/resume/visibility, banner+cover via MediaField, scheduled publish/end, timezone helper, countdown preview.
+- Add duplicate/archive/restore/delete/(un)publish + bulk actions to Quests, Collections, Achievements, Titles, Events list pages. Confirmation dialogs, toasts, undo where safe.
+
+## Phase 5 — Editor safety, search, import/export (Sections 8, 9, 10, 11)
+
+- `useUnsavedChanges` hook: TanStack Router `blocker` + `beforeunload`. Wire into all editors.
+- Concurrent-edit detection: compare `updated_at` on save; conflict dialog (Reload / Overwrite / Cancel).
+- Extend `StudioCommandPalette` to search Players, Media, Announcements, Audit alongside existing content.
+- Import/Export: per-entity JSON export button; JSON import with Zod validation + dry-run preview.
+
+## Phase 6 — A11y / performance / security / QA (Sections 12–15)
+
+- A11y pass on new Studio surfaces: ARIA labels, focus trap in dialogs, keyboard nav on tables, 44px targets, contrast.
+- Perf: query keys + `staleTime` review, paginate players/audit/notifications, lazy-load charts, image `loading="lazy"`.
+- Security: run `supabase--linter`, verify every new RPC has `is_founder()` check and `record_audit`, confirm RLS unchanged on player tables.
+- Internal QA sweep with Playwright across all Studio routes; fix any regressions.
+- Final report with production-readiness score.
+
+---
 
 ## Technical notes
-- Each phase ends with: build check, linter, targeted Playwright smoke on 2–3 critical flows (auth, start quest, complete quest → XP).
-- Migrations only in Phase 2 and Phase 6 (indexes, then any policy tightening).
-- No breaking API changes to existing server functions — signatures stable.
 
-## What I need from you
-1. Approve this phased approach (vs one giant turn).
-2. Confirm priority order — default is 1→6, but if you want (e.g.) security first, say so.
-3. Any specific bugs you've already noticed I should treat as P0 in Phase 1?
+- All privileged mutations go through SECURITY DEFINER RPCs guarded by `is_founder()` and call `record_audit(...)`; no service-role client on client paths.
+- No changes to auto-generated Supabase files.
+- No changes to player-facing routes beyond the suspended-user soft block.
+- Recharts and html-to-image are the only new deps (both worker-safe / client-only).
+- Migrations grouped one per phase to keep review small.
+
+**Ready to start Phase 1 on approval.**
