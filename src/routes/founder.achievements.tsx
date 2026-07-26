@@ -68,6 +68,7 @@ type AchForm = {
   rarity: (typeof RARITIES)[number];
   icon: string;
   color: string;
+  badge_image_url: string;
   unlock_type: string;
   unlock_requirement: Record<string, string | number | boolean | null>;
   goal_target: number;
@@ -87,6 +88,7 @@ const emptyForm: AchForm = {
   rarity: "common",
   icon: "🏅",
   color: "",
+  badge_image_url: "",
   unlock_type: "level_reached",
   unlock_requirement: { level: 5 },
   goal_target: 5,
@@ -249,6 +251,7 @@ function toForm(a: AchievementRow): AchForm {
     rarity: a.rarity,
     icon: a.icon,
     color: a.color ?? "",
+    badge_image_url: a.badge_image_url ?? "",
     unlock_type: a.unlock_type,
     unlock_requirement: (a.unlock_requirement as AchForm["unlock_requirement"]) ?? {},
     goal_target: a.goal_target,
