@@ -321,6 +321,10 @@ function EditSheet({
               <Input type="number" value={form.display_order} onChange={(e) => set("display_order", Number(e.target.value))} />
             </div>
           </div>
+          <div>
+            <Label>Badge image</Label>
+            <MediaField value={form.badge_image_url} onChange={(url) => set("badge_image_url", url)} />
+          </div>
           <div className="grid grid-cols-3 gap-3">
             <Select label="Rarity" value={form.rarity} onChange={(v) => set("rarity", v as AchForm["rarity"])} options={RARITIES as unknown as string[]} />
             <Select label="Difficulty" value={form.difficulty} onChange={(v) => set("difficulty", v)} options={DIFFICULTIES} />
