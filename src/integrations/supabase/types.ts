@@ -1431,6 +1431,8 @@ export type Database = {
           is_pioneer: boolean
           level: number
           pioneer_number: number | null
+          suspended_at: string | null
+          suspended_reason: string | null
           updated_at: string
           username: string
           xp: number
@@ -1444,6 +1446,8 @@ export type Database = {
           is_pioneer?: boolean
           level?: number
           pioneer_number?: number | null
+          suspended_at?: string | null
+          suspended_reason?: string | null
           updated_at?: string
           username: string
           xp?: number
@@ -1457,6 +1461,8 @@ export type Database = {
           is_pioneer?: boolean
           level?: number
           pioneer_number?: number | null
+          suspended_at?: string | null
+          suspended_reason?: string | null
           updated_at?: string
           username?: string
           xp?: number
@@ -1775,6 +1781,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _assert_founder: { Args: never; Returns: undefined }
       _grant_challenge_reward: { Args: { _pc_id: string }; Returns: undefined }
       _grant_event_rewards: {
         Args: { _event_id: string; _user_id: string }
@@ -1786,6 +1793,74 @@ export type Database = {
           _title_id: string
           _user_id: string
         }
+        Returns: boolean
+      }
+      admin_adjust_xp: {
+        Args: { _delta: number; _reason: string; _user_id: string }
+        Returns: Json
+      }
+      admin_get_player: { Args: { _user_id: string }; Returns: Json }
+      admin_grant_achievement: {
+        Args: { _achievement_id: string; _user_id: string }
+        Returns: boolean
+      }
+      admin_grant_title: {
+        Args: { _title_id: string; _user_id: string }
+        Returns: boolean
+      }
+      admin_list_players: {
+        Args: {
+          _city?: string
+          _limit?: number
+          _min_level?: number
+          _offset?: number
+          _only_founder?: boolean
+          _only_hidden?: boolean
+          _only_pioneer?: boolean
+          _only_suspended?: boolean
+          _search?: string
+        }
+        Returns: {
+          avatar_url: string
+          city: string
+          created_at: string
+          display_name: string
+          id: string
+          is_founder: boolean
+          is_pioneer: boolean
+          last_active_at: string
+          level: number
+          moderation_hidden: boolean
+          pioneer_number: number
+          quests_completed: number
+          suspended_at: string
+          username: string
+          xp: number
+        }[]
+      }
+      admin_reset_event_progress: {
+        Args: { _event_id: string; _user_id: string }
+        Returns: boolean
+      }
+      admin_reset_quest_session: {
+        Args: { _session_id: string }
+        Returns: boolean
+      }
+      admin_restore_player: { Args: { _user_id: string }; Returns: boolean }
+      admin_revoke_achievement: {
+        Args: { _achievement_id: string; _user_id: string }
+        Returns: boolean
+      }
+      admin_revoke_title: {
+        Args: { _title_id: string; _user_id: string }
+        Returns: boolean
+      }
+      admin_set_profile_hidden: {
+        Args: { _hidden: boolean; _user_id: string }
+        Returns: boolean
+      }
+      admin_suspend_player: {
+        Args: { _reason: string; _user_id: string }
         Returns: boolean
       }
       assign_title: {
