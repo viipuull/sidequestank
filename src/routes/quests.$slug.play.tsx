@@ -177,6 +177,7 @@ function PlayPage() {
           const p = progressById.get(o.id);
           const done = p?.status === "completed";
           const failed = p?.status === "failed";
+          const pendingReview = p?.status === "pending_review";
           const t = OBJECTIVE_TYPES.find((x) => x.value === o.objective_type);
           const isActive = activeObjective?.id === o.id;
           return (
@@ -197,11 +198,17 @@ function PlayPage() {
                     <span className="text-[10px] uppercase text-muted-foreground">{t?.emoji} {t?.label}</span>
                   </div>
                   {o.description && <p className="mt-0.5 text-xs text-muted-foreground">{o.description}</p>}
+                  {pendingReview && (
+                    <p className="mt-1 text-[11px] font-semibold text-amber-500">⏳ Awaiting founder review</p>
+                  )}
                   {failed && p?.verification_data && typeof (p.verification_data as { verifiedReason?: string }).verifiedReason === "string" && (
                     <p className="mt-1 text-[11px] text-destructive">{(p.verification_data as { verifiedReason?: string }).verifiedReason}</p>
                   )}
+                  {p?.status === "pending" && p.review_notes && (
+                    <p className="mt-1 text-[11px] text-destructive">Rejected: {p.review_notes}</p>
+                  )}
                 </div>
-                {!done && (
+                {!done && !pendingReview && (
                   <Button size="sm" variant={isActive ? "default" : "outline"} className="rounded-full" onClick={() => setActiveObjectiveId(o.id)}>
                     Verify
                   </Button>
@@ -215,7 +222,9 @@ function PlayPage() {
       </main>
 
       <AnimatePresence>
-        {activeObjective && progressById.get(activeObjective.id)?.status !== "completed" && (
+        {activeObjective &&
+          progressById.get(activeObjective.id)?.status !== "completed" &&
+          progressById.get(activeObjective.id)?.status !== "pending_review" && (
           <VerificationSheet
             key={activeObjective.id}
             sessionId={sessionId}

@@ -36,6 +36,7 @@ import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as QuestsIndexRouteImport } from './routes/quests.index'
 import { Route as PlayersIndexRouteImport } from './routes/players.index'
 import { Route as FounderIndexRouteImport } from './routes/founder.index'
+import { Route as StudioReviewsRouteImport } from './routes/studio.reviews'
 import { Route as StudioMediaRouteImport } from './routes/studio.media'
 import { Route as StudioAuditRouteImport } from './routes/studio.audit'
 import { Route as SettingsSocialRouteImport } from './routes/settings.social'
@@ -195,6 +196,11 @@ const FounderIndexRoute = FounderIndexRouteImport.update({
   path: '/',
   getParentRoute: () => FounderRoute,
 } as any)
+const StudioReviewsRoute = StudioReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => StudioRoute,
+} as any)
 const StudioMediaRoute = StudioMediaRouteImport.update({
   id: '/media',
   path: '/media',
@@ -348,6 +354,7 @@ export interface FileRoutesByFullPath {
   '/settings/social': typeof SettingsSocialRoute
   '/studio/audit': typeof StudioAuditRoute
   '/studio/media': typeof StudioMediaRoute
+  '/studio/reviews': typeof StudioReviewsRoute
   '/founder/': typeof FounderIndexRoute
   '/players/': typeof PlayersIndexRoute
   '/quests/': typeof QuestsIndexRoute
@@ -398,6 +405,7 @@ export interface FileRoutesByTo {
   '/settings/social': typeof SettingsSocialRoute
   '/studio/audit': typeof StudioAuditRoute
   '/studio/media': typeof StudioMediaRoute
+  '/studio/reviews': typeof StudioReviewsRoute
   '/founder': typeof FounderIndexRoute
   '/players': typeof PlayersIndexRoute
   '/quests': typeof QuestsIndexRoute
@@ -451,6 +459,7 @@ export interface FileRoutesById {
   '/settings/social': typeof SettingsSocialRoute
   '/studio/audit': typeof StudioAuditRoute
   '/studio/media': typeof StudioMediaRoute
+  '/studio/reviews': typeof StudioReviewsRoute
   '/founder/': typeof FounderIndexRoute
   '/players/': typeof PlayersIndexRoute
   '/quests/': typeof QuestsIndexRoute
@@ -505,6 +514,7 @@ export interface FileRouteTypes {
     | '/settings/social'
     | '/studio/audit'
     | '/studio/media'
+    | '/studio/reviews'
     | '/founder/'
     | '/players/'
     | '/quests/'
@@ -555,6 +565,7 @@ export interface FileRouteTypes {
     | '/settings/social'
     | '/studio/audit'
     | '/studio/media'
+    | '/studio/reviews'
     | '/founder'
     | '/players'
     | '/quests'
@@ -607,6 +618,7 @@ export interface FileRouteTypes {
     | '/settings/social'
     | '/studio/audit'
     | '/studio/media'
+    | '/studio/reviews'
     | '/founder/'
     | '/players/'
     | '/quests/'
@@ -849,6 +861,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FounderIndexRouteImport
       parentRoute: typeof FounderRoute
     }
+    '/studio/reviews': {
+      id: '/studio/reviews'
+      path: '/reviews'
+      fullPath: '/studio/reviews'
+      preLoaderRoute: typeof StudioReviewsRouteImport
+      parentRoute: typeof StudioRoute
+    }
     '/studio/media': {
       id: '/studio/media'
       path: '/media'
@@ -1089,6 +1108,7 @@ const FounderRouteWithChildren =
 interface StudioRouteChildren {
   StudioAuditRoute: typeof StudioAuditRoute
   StudioMediaRoute: typeof StudioMediaRoute
+  StudioReviewsRoute: typeof StudioReviewsRoute
   StudioIndexRoute: typeof StudioIndexRoute
   StudioPlayersUserIdRoute: typeof StudioPlayersUserIdRoute
   StudioPlayersIndexRoute: typeof StudioPlayersIndexRoute
@@ -1097,6 +1117,7 @@ interface StudioRouteChildren {
 const StudioRouteChildren: StudioRouteChildren = {
   StudioAuditRoute: StudioAuditRoute,
   StudioMediaRoute: StudioMediaRoute,
+  StudioReviewsRoute: StudioReviewsRoute,
   StudioIndexRoute: StudioIndexRoute,
   StudioPlayersUserIdRoute: StudioPlayersUserIdRoute,
   StudioPlayersIndexRoute: StudioPlayersIndexRoute,

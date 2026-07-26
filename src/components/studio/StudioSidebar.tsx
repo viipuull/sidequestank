@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard, Users, Radio, Trophy, ListChecks, History, Sparkles, UserCog,
-  Compass, Award, Image as ImageIcon,
+  Compass, Award, Image as ImageIcon, Camera,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -24,6 +24,7 @@ const content: Item[] = [
   { title: "Collections", url: "/founder/collections", icon: Compass },
   { title: "Achievements", url: "/founder/achievements", icon: Trophy },
   { title: "Titles", url: "/founder/titles", icon: Award },
+  { title: "Photo Reviews", url: "/studio/reviews", icon: Camera },
 ];
 
 const ops: Item[] = [
