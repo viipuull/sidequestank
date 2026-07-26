@@ -973,6 +973,9 @@ export type Database = {
           created_at: string
           id: string
           objective_id: string
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
           session_id: string
           status: Database["public"]["Enums"]["objective_progress_status"]
           updated_at: string
@@ -985,6 +988,9 @@ export type Database = {
           created_at?: string
           id?: string
           objective_id: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           session_id: string
           status?: Database["public"]["Enums"]["objective_progress_status"]
           updated_at?: string
@@ -997,6 +1003,9 @@ export type Database = {
           created_at?: string
           id?: string
           objective_id?: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           session_id?: string
           status?: Database["public"]["Enums"]["objective_progress_status"]
           updated_at?: string
@@ -1907,8 +1916,16 @@ export type Database = {
           slug: string
         }[]
       }
+      founder_approve_photo: {
+        Args: { _notes?: string; _progress_id: string }
+        Returns: Json
+      }
       founder_assign_achievement: {
         Args: { _achievement_id: string; _user_id: string }
+        Returns: Json
+      }
+      founder_reject_photo: {
+        Args: { _progress_id: string; _reason: string }
         Returns: Json
       }
       has_role: {
@@ -2057,7 +2074,12 @@ export type Database = {
         | "announcement"
         | "leaderboard"
         | "system"
-      objective_progress_status: "pending" | "completed" | "failed" | "skipped"
+      objective_progress_status:
+        | "pending"
+        | "completed"
+        | "failed"
+        | "skipped"
+        | "pending_review"
       objective_type:
         | "visit_location"
         | "gps_checkin"
@@ -2319,7 +2341,13 @@ export const Constants = {
         "leaderboard",
         "system",
       ],
-      objective_progress_status: ["pending", "completed", "failed", "skipped"],
+      objective_progress_status: [
+        "pending",
+        "completed",
+        "failed",
+        "skipped",
+        "pending_review",
+      ],
       objective_type: [
         "visit_location",
         "gps_checkin",
