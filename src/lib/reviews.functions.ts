@@ -101,7 +101,7 @@ export const approvePhotoSubmission = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const { data: result, error } = await context.supabase.rpc("founder_approve_photo", {
       _progress_id: data.progressId,
-      _notes: data.notes ?? null,
+      _notes: data.notes ?? undefined,
     });
     if (error) throw error;
     return result;
