@@ -50,6 +50,7 @@ import { Route as FounderAchievementsRouteImport } from './routes/founder.achiev
 import { Route as EventsSlugRouteImport } from './routes/events.$slug'
 import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
 import { Route as AchievementsSlugRouteImport } from './routes/achievements.$slug'
+import { Route as StudioPlayersIndexRouteImport } from './routes/studio.players.index'
 import { Route as FounderQuestsIndexRouteImport } from './routes/founder.quests.index'
 import { Route as QuestsSlugPlayRouteImport } from './routes/quests.$slug.play'
 import { Route as PlayersUsernameCompareRouteImport } from './routes/players.$username.compare'
@@ -263,6 +264,11 @@ const AchievementsSlugRoute = AchievementsSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => AchievementsRoute,
 } as any)
+const StudioPlayersIndexRoute = StudioPlayersIndexRouteImport.update({
+  id: '/players/',
+  path: '/players/',
+  getParentRoute: () => StudioRoute,
+} as any)
 const FounderQuestsIndexRoute = FounderQuestsIndexRouteImport.update({
   id: '/quests/',
   path: '/quests/',
@@ -348,6 +354,7 @@ export interface FileRoutesByFullPath {
   '/players/$username/compare': typeof PlayersUsernameCompareRoute
   '/quests/$slug/play': typeof QuestsSlugPlayRoute
   '/founder/quests/': typeof FounderQuestsIndexRoute
+  '/studio/players/': typeof StudioPlayersIndexRoute
   '/api/public/hooks/liveops-tick': typeof ApiPublicHooksLiveopsTickRoute
 }
 export interface FileRoutesByTo {
@@ -396,6 +403,7 @@ export interface FileRoutesByTo {
   '/players/$username/compare': typeof PlayersUsernameCompareRoute
   '/quests/$slug/play': typeof QuestsSlugPlayRoute
   '/founder/quests': typeof FounderQuestsIndexRoute
+  '/studio/players': typeof StudioPlayersIndexRoute
   '/api/public/hooks/liveops-tick': typeof ApiPublicHooksLiveopsTickRoute
 }
 export interface FileRoutesById {
@@ -447,6 +455,7 @@ export interface FileRoutesById {
   '/players/$username/compare': typeof PlayersUsernameCompareRoute
   '/quests/$slug/play': typeof QuestsSlugPlayRoute
   '/founder/quests/': typeof FounderQuestsIndexRoute
+  '/studio/players/': typeof StudioPlayersIndexRoute
   '/api/public/hooks/liveops-tick': typeof ApiPublicHooksLiveopsTickRoute
 }
 export interface FileRouteTypes {
@@ -499,6 +508,7 @@ export interface FileRouteTypes {
     | '/players/$username/compare'
     | '/quests/$slug/play'
     | '/founder/quests/'
+    | '/studio/players/'
     | '/api/public/hooks/liveops-tick'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -547,6 +557,7 @@ export interface FileRouteTypes {
     | '/players/$username/compare'
     | '/quests/$slug/play'
     | '/founder/quests'
+    | '/studio/players'
     | '/api/public/hooks/liveops-tick'
   id:
     | '__root__'
@@ -597,6 +608,7 @@ export interface FileRouteTypes {
     | '/players/$username/compare'
     | '/quests/$slug/play'
     | '/founder/quests/'
+    | '/studio/players/'
     | '/api/public/hooks/liveops-tick'
   fileRoutesById: FileRoutesById
 }
@@ -922,6 +934,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AchievementsSlugRouteImport
       parentRoute: typeof AchievementsRoute
     }
+    '/studio/players/': {
+      id: '/studio/players/'
+      path: '/players'
+      fullPath: '/studio/players/'
+      preLoaderRoute: typeof StudioPlayersIndexRouteImport
+      parentRoute: typeof StudioRoute
+    }
     '/founder/quests/': {
       id: '/founder/quests/'
       path: '/quests'
@@ -1051,12 +1070,14 @@ interface StudioRouteChildren {
   StudioAuditRoute: typeof StudioAuditRoute
   StudioMediaRoute: typeof StudioMediaRoute
   StudioIndexRoute: typeof StudioIndexRoute
+  StudioPlayersIndexRoute: typeof StudioPlayersIndexRoute
 }
 
 const StudioRouteChildren: StudioRouteChildren = {
   StudioAuditRoute: StudioAuditRoute,
   StudioMediaRoute: StudioMediaRoute,
   StudioIndexRoute: StudioIndexRoute,
+  StudioPlayersIndexRoute: StudioPlayersIndexRoute,
 }
 
 const StudioRouteWithChildren =

@@ -72,7 +72,7 @@ function PlayersIndex() {
         {isLoading ? (
           <div className="p-12 grid place-items-center"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
         ) : (data ?? []).length === 0 ? (
-          <EmptyState title="No players found" body="Try adjusting search or filters." />
+          <EmptyState title="No players found" description="Try adjusting search or filters." />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
