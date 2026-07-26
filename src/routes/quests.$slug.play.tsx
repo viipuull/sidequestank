@@ -341,7 +341,14 @@ function VerificationSheet({
       submit({ data: { sessionId, objectiveId: objective.id, payload } }),
     onSuccess: (r) => {
       if (r.ok) {
-        toast.success(r.questCompleted ? "Quest complete! 🎉" : "Objective verified ✨");
+        const pending = (r as { pendingReview?: boolean }).pendingReview;
+        toast.success(
+          pending
+            ? "Photo submitted — awaiting review ⏳"
+            : r.questCompleted
+              ? "Quest complete! 🎉"
+              : "Objective verified ✨",
+        );
         onSuccess(r.questCompleted ? r.xpAward ?? null : null);
         if (r.unlockedTitles && r.unlockedTitles.length > 0) {
           onUnlockedTitles?.(r.unlockedTitles as UnlockedTitle[]);
