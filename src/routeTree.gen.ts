@@ -40,7 +40,6 @@ import { Route as StudioMediaRouteImport } from './routes/studio.media'
 import { Route as StudioAuditRouteImport } from './routes/studio.audit'
 import { Route as SettingsSocialRouteImport } from './routes/settings.social'
 import { Route as SettingsProfileRouteImport } from './routes/settings.profile'
-import { Route as QuestsSlugRouteImport } from './routes/quests.$slug'
 import { Route as PlayersUsernameRouteImport } from './routes/players.$username'
 import { Route as FounderTitlesRouteImport } from './routes/founder.titles'
 import { Route as FounderSocialRouteImport } from './routes/founder.social'
@@ -51,6 +50,7 @@ import { Route as EventsSlugRouteImport } from './routes/events.$slug'
 import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
 import { Route as AchievementsSlugRouteImport } from './routes/achievements.$slug'
 import { Route as StudioPlayersIndexRouteImport } from './routes/studio.players.index'
+import { Route as QuestsSlugIndexRouteImport } from './routes/quests.$slug.index'
 import { Route as FounderQuestsIndexRouteImport } from './routes/founder.quests.index'
 import { Route as StudioPlayersUserIdRouteImport } from './routes/studio.players.$userId'
 import { Route as QuestsSlugPlayRouteImport } from './routes/quests.$slug.play'
@@ -215,11 +215,6 @@ const SettingsProfileRoute = SettingsProfileRouteImport.update({
   path: '/settings/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
-const QuestsSlugRoute = QuestsSlugRouteImport.update({
-  id: '/quests/$slug',
-  path: '/quests/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const PlayersUsernameRoute = PlayersUsernameRouteImport.update({
   id: '/players/$username',
   path: '/players/$username',
@@ -270,6 +265,11 @@ const StudioPlayersIndexRoute = StudioPlayersIndexRouteImport.update({
   path: '/players/',
   getParentRoute: () => StudioRoute,
 } as any)
+const QuestsSlugIndexRoute = QuestsSlugIndexRouteImport.update({
+  id: '/quests/$slug/',
+  path: '/quests/$slug/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FounderQuestsIndexRoute = FounderQuestsIndexRouteImport.update({
   id: '/quests/',
   path: '/quests/',
@@ -281,9 +281,9 @@ const StudioPlayersUserIdRoute = StudioPlayersUserIdRouteImport.update({
   getParentRoute: () => StudioRoute,
 } as any)
 const QuestsSlugPlayRoute = QuestsSlugPlayRouteImport.update({
-  id: '/play',
-  path: '/play',
-  getParentRoute: () => QuestsSlugRoute,
+  id: '/quests/$slug/play',
+  path: '/quests/$slug/play',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const PlayersUsernameCompareRoute = PlayersUsernameCompareRouteImport.update({
   id: '/compare',
@@ -344,7 +344,6 @@ export interface FileRoutesByFullPath {
   '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
-  '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/settings/profile': typeof SettingsProfileRoute
   '/settings/social': typeof SettingsSocialRoute
   '/studio/audit': typeof StudioAuditRoute
@@ -361,6 +360,7 @@ export interface FileRoutesByFullPath {
   '/quests/$slug/play': typeof QuestsSlugPlayRoute
   '/studio/players/$userId': typeof StudioPlayersUserIdRoute
   '/founder/quests/': typeof FounderQuestsIndexRoute
+  '/quests/$slug/': typeof QuestsSlugIndexRoute
   '/studio/players/': typeof StudioPlayersIndexRoute
   '/api/public/hooks/liveops-tick': typeof ApiPublicHooksLiveopsTickRoute
 }
@@ -394,7 +394,6 @@ export interface FileRoutesByTo {
   '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
-  '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/settings/profile': typeof SettingsProfileRoute
   '/settings/social': typeof SettingsSocialRoute
   '/studio/audit': typeof StudioAuditRoute
@@ -411,6 +410,7 @@ export interface FileRoutesByTo {
   '/quests/$slug/play': typeof QuestsSlugPlayRoute
   '/studio/players/$userId': typeof StudioPlayersUserIdRoute
   '/founder/quests': typeof FounderQuestsIndexRoute
+  '/quests/$slug': typeof QuestsSlugIndexRoute
   '/studio/players': typeof StudioPlayersIndexRoute
   '/api/public/hooks/liveops-tick': typeof ApiPublicHooksLiveopsTickRoute
 }
@@ -447,7 +447,6 @@ export interface FileRoutesById {
   '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
-  '/quests/$slug': typeof QuestsSlugRouteWithChildren
   '/settings/profile': typeof SettingsProfileRoute
   '/settings/social': typeof SettingsSocialRoute
   '/studio/audit': typeof StudioAuditRoute
@@ -464,6 +463,7 @@ export interface FileRoutesById {
   '/quests/$slug/play': typeof QuestsSlugPlayRoute
   '/studio/players/$userId': typeof StudioPlayersUserIdRoute
   '/founder/quests/': typeof FounderQuestsIndexRoute
+  '/quests/$slug/': typeof QuestsSlugIndexRoute
   '/studio/players/': typeof StudioPlayersIndexRoute
   '/api/public/hooks/liveops-tick': typeof ApiPublicHooksLiveopsTickRoute
 }
@@ -501,7 +501,6 @@ export interface FileRouteTypes {
     | '/founder/social'
     | '/founder/titles'
     | '/players/$username'
-    | '/quests/$slug'
     | '/settings/profile'
     | '/settings/social'
     | '/studio/audit'
@@ -518,6 +517,7 @@ export interface FileRouteTypes {
     | '/quests/$slug/play'
     | '/studio/players/$userId'
     | '/founder/quests/'
+    | '/quests/$slug/'
     | '/studio/players/'
     | '/api/public/hooks/liveops-tick'
   fileRoutesByTo: FileRoutesByTo
@@ -551,7 +551,6 @@ export interface FileRouteTypes {
     | '/founder/social'
     | '/founder/titles'
     | '/players/$username'
-    | '/quests/$slug'
     | '/settings/profile'
     | '/settings/social'
     | '/studio/audit'
@@ -568,6 +567,7 @@ export interface FileRouteTypes {
     | '/quests/$slug/play'
     | '/studio/players/$userId'
     | '/founder/quests'
+    | '/quests/$slug'
     | '/studio/players'
     | '/api/public/hooks/liveops-tick'
   id:
@@ -603,7 +603,6 @@ export interface FileRouteTypes {
     | '/founder/social'
     | '/founder/titles'
     | '/players/$username'
-    | '/quests/$slug'
     | '/settings/profile'
     | '/settings/social'
     | '/studio/audit'
@@ -620,6 +619,7 @@ export interface FileRouteTypes {
     | '/quests/$slug/play'
     | '/studio/players/$userId'
     | '/founder/quests/'
+    | '/quests/$slug/'
     | '/studio/players/'
     | '/api/public/hooks/liveops-tick'
   fileRoutesById: FileRoutesById
@@ -648,12 +648,13 @@ export interface RootRouteChildren {
   WelcomeRoute: typeof WelcomeRoute
   XpHistoryRoute: typeof XpHistoryRoute
   PlayersUsernameRoute: typeof PlayersUsernameRouteWithChildren
-  QuestsSlugRoute: typeof QuestsSlugRouteWithChildren
   SettingsProfileRoute: typeof SettingsProfileRoute
   SettingsSocialRoute: typeof SettingsSocialRoute
   PlayersIndexRoute: typeof PlayersIndexRoute
   QuestsIndexRoute: typeof QuestsIndexRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
+  QuestsSlugPlayRoute: typeof QuestsSlugPlayRoute
+  QuestsSlugIndexRoute: typeof QuestsSlugIndexRoute
   ApiPublicHooksLiveopsTickRoute: typeof ApiPublicHooksLiveopsTickRoute
 }
 
@@ -876,13 +877,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/quests/$slug': {
-      id: '/quests/$slug'
-      path: '/quests/$slug'
-      fullPath: '/quests/$slug'
-      preLoaderRoute: typeof QuestsSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/players/$username': {
       id: '/players/$username'
       path: '/players/$username'
@@ -953,6 +947,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudioPlayersIndexRouteImport
       parentRoute: typeof StudioRoute
     }
+    '/quests/$slug/': {
+      id: '/quests/$slug/'
+      path: '/quests/$slug'
+      fullPath: '/quests/$slug/'
+      preLoaderRoute: typeof QuestsSlugIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/founder/quests/': {
       id: '/founder/quests/'
       path: '/quests'
@@ -969,10 +970,10 @@ declare module '@tanstack/react-router' {
     }
     '/quests/$slug/play': {
       id: '/quests/$slug/play'
-      path: '/play'
+      path: '/quests/$slug/play'
       fullPath: '/quests/$slug/play'
       preLoaderRoute: typeof QuestsSlugPlayRouteImport
-      parentRoute: typeof QuestsSlugRoute
+      parentRoute: typeof rootRouteImport
     }
     '/players/$username/compare': {
       id: '/players/$username/compare'
@@ -1116,18 +1117,6 @@ const PlayersUsernameRouteWithChildren = PlayersUsernameRoute._addFileChildren(
   PlayersUsernameRouteChildren,
 )
 
-interface QuestsSlugRouteChildren {
-  QuestsSlugPlayRoute: typeof QuestsSlugPlayRoute
-}
-
-const QuestsSlugRouteChildren: QuestsSlugRouteChildren = {
-  QuestsSlugPlayRoute: QuestsSlugPlayRoute,
-}
-
-const QuestsSlugRouteWithChildren = QuestsSlugRoute._addFileChildren(
-  QuestsSlugRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AchievementsRoute: AchievementsRouteWithChildren,
@@ -1152,12 +1141,13 @@ const rootRouteChildren: RootRouteChildren = {
   WelcomeRoute: WelcomeRoute,
   XpHistoryRoute: XpHistoryRoute,
   PlayersUsernameRoute: PlayersUsernameRouteWithChildren,
-  QuestsSlugRoute: QuestsSlugRouteWithChildren,
   SettingsProfileRoute: SettingsProfileRoute,
   SettingsSocialRoute: SettingsSocialRoute,
   PlayersIndexRoute: PlayersIndexRoute,
   QuestsIndexRoute: QuestsIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
+  QuestsSlugPlayRoute: QuestsSlugPlayRoute,
+  QuestsSlugIndexRoute: QuestsSlugIndexRoute,
   ApiPublicHooksLiveopsTickRoute: ApiPublicHooksLiveopsTickRoute,
 }
 export const routeTree = rootRouteImport

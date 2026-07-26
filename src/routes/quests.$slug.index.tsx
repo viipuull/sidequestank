@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/quests/$slug")({
+export const Route = createFileRoute("/quests/$slug/")({
   head: ({ params }) => ({
     meta: [
       { title: `Quest — ${params.slug} — SideQuest` },
