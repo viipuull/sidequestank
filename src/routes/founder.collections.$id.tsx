@@ -19,6 +19,7 @@ import {
   founderListAchievementsForPicker,
   getCollectionBySlug,
 } from "@/lib/collections.functions";
+import { MediaField } from "@/components/media/MediaPicker";
 
 export const Route = createFileRoute("/founder/collections/$id")({
   head: () => ({ meta: [
@@ -204,8 +205,12 @@ function EditCollectionPage() {
           <Textarea rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
         </Field>
         <div className="grid grid-cols-2 gap-2">
-          <Field label="Cover image URL"><Input value={form.cover_image_url} onChange={(e) => setForm({ ...form, cover_image_url: e.target.value })} /></Field>
-          <Field label="Banner image URL"><Input value={form.banner_image_url} onChange={(e) => setForm({ ...form, banner_image_url: e.target.value })} /></Field>
+          <Field label="Cover image">
+            <MediaField value={form.cover_image_url} onChange={(url) => setForm({ ...form, cover_image_url: url })} />
+          </Field>
+          <Field label="Banner image">
+            <MediaField value={form.banner_image_url} onChange={(url) => setForm({ ...form, banner_image_url: url })} />
+          </Field>
         </div>
         <div className="grid grid-cols-2 gap-2">
           <Field label="Category"><Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} /></Field>
