@@ -36,16 +36,16 @@ export const listPlayers = createServerFn({ method: "POST" })
   .inputValidator((input: PlayerListFilters) => input ?? {})
   .handler(async ({ data, context }): Promise<AdminPlayerRow[]> => {
     const { data: rows, error } = await context.supabase.rpc("admin_list_players", {
-      _search: data.search ?? null,
-      _city: data.city ?? null,
-      _min_level: data.minLevel ?? null,
-      _only_suspended: data.onlySuspended ?? null,
-      _only_hidden: data.onlyHidden ?? null,
-      _only_pioneer: data.onlyPioneer ?? null,
-      _only_founder: data.onlyFounder ?? null,
+      _search: data.search ?? undefined,
+      _city: data.city ?? undefined,
+      _min_level: data.minLevel ?? undefined,
+      _only_suspended: data.onlySuspended ?? undefined,
+      _only_hidden: data.onlyHidden ?? undefined,
+      _only_pioneer: data.onlyPioneer ?? undefined,
+      _only_founder: data.onlyFounder ?? undefined,
       _limit: data.limit ?? 50,
       _offset: data.offset ?? 0,
-    });
+    } as never);
     if (error) throw new Error(error.message);
     return (rows ?? []) as AdminPlayerRow[];
   });
