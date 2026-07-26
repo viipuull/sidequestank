@@ -52,6 +52,7 @@ import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
 import { Route as AchievementsSlugRouteImport } from './routes/achievements.$slug'
 import { Route as StudioPlayersIndexRouteImport } from './routes/studio.players.index'
 import { Route as FounderQuestsIndexRouteImport } from './routes/founder.quests.index'
+import { Route as StudioPlayersUserIdRouteImport } from './routes/studio.players.$userId'
 import { Route as QuestsSlugPlayRouteImport } from './routes/quests.$slug.play'
 import { Route as PlayersUsernameCompareRouteImport } from './routes/players.$username.compare'
 import { Route as FounderQuestsNewRouteImport } from './routes/founder.quests.new'
@@ -274,6 +275,11 @@ const FounderQuestsIndexRoute = FounderQuestsIndexRouteImport.update({
   path: '/quests/',
   getParentRoute: () => FounderRoute,
 } as any)
+const StudioPlayersUserIdRoute = StudioPlayersUserIdRouteImport.update({
+  id: '/players/$userId',
+  path: '/players/$userId',
+  getParentRoute: () => StudioRoute,
+} as any)
 const QuestsSlugPlayRoute = QuestsSlugPlayRouteImport.update({
   id: '/play',
   path: '/play',
@@ -353,6 +359,7 @@ export interface FileRoutesByFullPath {
   '/founder/quests/new': typeof FounderQuestsNewRoute
   '/players/$username/compare': typeof PlayersUsernameCompareRoute
   '/quests/$slug/play': typeof QuestsSlugPlayRoute
+  '/studio/players/$userId': typeof StudioPlayersUserIdRoute
   '/founder/quests/': typeof FounderQuestsIndexRoute
   '/studio/players/': typeof StudioPlayersIndexRoute
   '/api/public/hooks/liveops-tick': typeof ApiPublicHooksLiveopsTickRoute
@@ -402,6 +409,7 @@ export interface FileRoutesByTo {
   '/founder/quests/new': typeof FounderQuestsNewRoute
   '/players/$username/compare': typeof PlayersUsernameCompareRoute
   '/quests/$slug/play': typeof QuestsSlugPlayRoute
+  '/studio/players/$userId': typeof StudioPlayersUserIdRoute
   '/founder/quests': typeof FounderQuestsIndexRoute
   '/studio/players': typeof StudioPlayersIndexRoute
   '/api/public/hooks/liveops-tick': typeof ApiPublicHooksLiveopsTickRoute
@@ -454,6 +462,7 @@ export interface FileRoutesById {
   '/founder/quests/new': typeof FounderQuestsNewRoute
   '/players/$username/compare': typeof PlayersUsernameCompareRoute
   '/quests/$slug/play': typeof QuestsSlugPlayRoute
+  '/studio/players/$userId': typeof StudioPlayersUserIdRoute
   '/founder/quests/': typeof FounderQuestsIndexRoute
   '/studio/players/': typeof StudioPlayersIndexRoute
   '/api/public/hooks/liveops-tick': typeof ApiPublicHooksLiveopsTickRoute
@@ -507,6 +516,7 @@ export interface FileRouteTypes {
     | '/founder/quests/new'
     | '/players/$username/compare'
     | '/quests/$slug/play'
+    | '/studio/players/$userId'
     | '/founder/quests/'
     | '/studio/players/'
     | '/api/public/hooks/liveops-tick'
@@ -556,6 +566,7 @@ export interface FileRouteTypes {
     | '/founder/quests/new'
     | '/players/$username/compare'
     | '/quests/$slug/play'
+    | '/studio/players/$userId'
     | '/founder/quests'
     | '/studio/players'
     | '/api/public/hooks/liveops-tick'
@@ -607,6 +618,7 @@ export interface FileRouteTypes {
     | '/founder/quests/new'
     | '/players/$username/compare'
     | '/quests/$slug/play'
+    | '/studio/players/$userId'
     | '/founder/quests/'
     | '/studio/players/'
     | '/api/public/hooks/liveops-tick'
@@ -948,6 +960,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FounderQuestsIndexRouteImport
       parentRoute: typeof FounderRoute
     }
+    '/studio/players/$userId': {
+      id: '/studio/players/$userId'
+      path: '/players/$userId'
+      fullPath: '/studio/players/$userId'
+      preLoaderRoute: typeof StudioPlayersUserIdRouteImport
+      parentRoute: typeof StudioRoute
+    }
     '/quests/$slug/play': {
       id: '/quests/$slug/play'
       path: '/play'
@@ -1070,6 +1089,7 @@ interface StudioRouteChildren {
   StudioAuditRoute: typeof StudioAuditRoute
   StudioMediaRoute: typeof StudioMediaRoute
   StudioIndexRoute: typeof StudioIndexRoute
+  StudioPlayersUserIdRoute: typeof StudioPlayersUserIdRoute
   StudioPlayersIndexRoute: typeof StudioPlayersIndexRoute
 }
 
@@ -1077,6 +1097,7 @@ const StudioRouteChildren: StudioRouteChildren = {
   StudioAuditRoute: StudioAuditRoute,
   StudioMediaRoute: StudioMediaRoute,
   StudioIndexRoute: StudioIndexRoute,
+  StudioPlayersUserIdRoute: StudioPlayersUserIdRoute,
   StudioPlayersIndexRoute: StudioPlayersIndexRoute,
 }
 

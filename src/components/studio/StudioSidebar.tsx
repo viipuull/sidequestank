@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  LayoutDashboard, Users, Radio, Trophy, ListChecks, History, Sparkles,
+  LayoutDashboard, Users, Radio, Trophy, ListChecks, History, Sparkles, UserCog,
   Compass, Award, Image as ImageIcon,
 } from "lucide-react";
 import {
@@ -14,6 +14,7 @@ type Item = { title: string; url: string; icon: any; badge?: string };
 // rather than surfaced as "Coming soon" placeholders.
 const overview: Item[] = [
   { title: "Home", url: "/studio", icon: LayoutDashboard },
+  { title: "Players", url: "/studio/players", icon: UserCog },
   { title: "Media", url: "/studio/media", icon: ImageIcon },
   { title: "Audit Log", url: "/studio/audit", icon: History },
 ];
