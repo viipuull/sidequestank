@@ -213,9 +213,52 @@ export const submitObjective = createServerFn({ method: "POST" })
         break;
       }
       case "take_photo": {
-        if (data.payload.photoPath && data.payload.photoPath.length > 0) verified = true;
-        else reason = "Photo required";
-        break;
+        // Photo objectives require manual founder review; mark as pending and stop here.
+        if (!data.payload.photoPath || data.payload.photoPath.length === 0) {
+          reason = "Photo required";
+          break;
+        }
+        const attemptsPhoto = (existingProgress?.attempts ?? 0) + 1;
+        const photoVerification = { ...data.payload, verifiedReason: undefined };
+        if (existingProgress) {
+          const { error: uErr } = await sb
+            .from("objective_progress")
+            .update({
+              status: "pending_review",
+              verification_data: photoVerification,
+              attempts: attemptsPhoto,
+              verified_at: null,
+              reviewed_by: null,
+              reviewed_at: null,
+              review_notes: null,
+            })
+            .eq("id", existingProgress.id);
+          if (uErr) throw uErr;
+        } else {
+          const { error: iErr } = await sb.from("objective_progress").insert({
+            session_id: session.id,
+            objective_id: obj.id,
+            user_id: context.userId,
+            status: "pending_review",
+            verification_data: photoVerification,
+            attempts: attemptsPhoto,
+          });
+          if (iErr) throw iErr;
+        }
+        await sb
+          .from("quest_sessions")
+          .update({ last_activity_at: new Date().toISOString(), status: "active" })
+          .eq("id", session.id);
+        return {
+          ok: true,
+          pendingReview: true,
+          reason: "Awaiting founder review",
+          questCompleted: false,
+          xpAward: null,
+          unlockedTitles: [],
+          unlockedAchievements: [],
+          completedCollections: [],
+        };
       }
       case "collect_item":
       case "custom":
