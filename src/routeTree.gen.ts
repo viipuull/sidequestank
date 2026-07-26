@@ -36,6 +36,7 @@ import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as QuestsIndexRouteImport } from './routes/quests.index'
 import { Route as PlayersIndexRouteImport } from './routes/players.index'
 import { Route as FounderIndexRouteImport } from './routes/founder.index'
+import { Route as StudioMediaRouteImport } from './routes/studio.media'
 import { Route as StudioAuditRouteImport } from './routes/studio.audit'
 import { Route as SettingsSocialRouteImport } from './routes/settings.social'
 import { Route as SettingsProfileRouteImport } from './routes/settings.profile'
@@ -192,6 +193,11 @@ const FounderIndexRoute = FounderIndexRouteImport.update({
   path: '/',
   getParentRoute: () => FounderRoute,
 } as any)
+const StudioMediaRoute = StudioMediaRouteImport.update({
+  id: '/media',
+  path: '/media',
+  getParentRoute: () => StudioRoute,
+} as any)
 const StudioAuditRoute = StudioAuditRouteImport.update({
   id: '/audit',
   path: '/audit',
@@ -330,6 +336,7 @@ export interface FileRoutesByFullPath {
   '/settings/profile': typeof SettingsProfileRoute
   '/settings/social': typeof SettingsSocialRoute
   '/studio/audit': typeof StudioAuditRoute
+  '/studio/media': typeof StudioMediaRoute
   '/founder/': typeof FounderIndexRoute
   '/players/': typeof PlayersIndexRoute
   '/quests/': typeof QuestsIndexRoute
@@ -377,6 +384,7 @@ export interface FileRoutesByTo {
   '/settings/profile': typeof SettingsProfileRoute
   '/settings/social': typeof SettingsSocialRoute
   '/studio/audit': typeof StudioAuditRoute
+  '/studio/media': typeof StudioMediaRoute
   '/founder': typeof FounderIndexRoute
   '/players': typeof PlayersIndexRoute
   '/quests': typeof QuestsIndexRoute
@@ -427,6 +435,7 @@ export interface FileRoutesById {
   '/settings/profile': typeof SettingsProfileRoute
   '/settings/social': typeof SettingsSocialRoute
   '/studio/audit': typeof StudioAuditRoute
+  '/studio/media': typeof StudioMediaRoute
   '/founder/': typeof FounderIndexRoute
   '/players/': typeof PlayersIndexRoute
   '/quests/': typeof QuestsIndexRoute
@@ -478,6 +487,7 @@ export interface FileRouteTypes {
     | '/settings/profile'
     | '/settings/social'
     | '/studio/audit'
+    | '/studio/media'
     | '/founder/'
     | '/players/'
     | '/quests/'
@@ -525,6 +535,7 @@ export interface FileRouteTypes {
     | '/settings/profile'
     | '/settings/social'
     | '/studio/audit'
+    | '/studio/media'
     | '/founder'
     | '/players'
     | '/quests'
@@ -574,6 +585,7 @@ export interface FileRouteTypes {
     | '/settings/profile'
     | '/settings/social'
     | '/studio/audit'
+    | '/studio/media'
     | '/founder/'
     | '/players/'
     | '/quests/'
@@ -812,6 +824,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FounderIndexRouteImport
       parentRoute: typeof FounderRoute
     }
+    '/studio/media': {
+      id: '/studio/media'
+      path: '/media'
+      fullPath: '/studio/media'
+      preLoaderRoute: typeof StudioMediaRouteImport
+      parentRoute: typeof StudioRoute
+    }
     '/studio/audit': {
       id: '/studio/audit'
       path: '/audit'
@@ -1030,11 +1049,13 @@ const FounderRouteWithChildren =
 
 interface StudioRouteChildren {
   StudioAuditRoute: typeof StudioAuditRoute
+  StudioMediaRoute: typeof StudioMediaRoute
   StudioIndexRoute: typeof StudioIndexRoute
 }
 
 const StudioRouteChildren: StudioRouteChildren = {
   StudioAuditRoute: StudioAuditRoute,
+  StudioMediaRoute: StudioMediaRoute,
   StudioIndexRoute: StudioIndexRoute,
 }
 
