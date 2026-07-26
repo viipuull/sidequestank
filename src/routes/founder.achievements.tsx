@@ -21,6 +21,7 @@ import {
   founderSearchPlayers,
   type AchievementRow,
 } from "@/lib/achievements.functions";
+import { MediaField } from "@/components/media/MediaPicker";
 
 const FOUNDER_EMAIL = "ankleshwarweb@gmail.com";
 const RARITIES = ["common", "uncommon", "rare", "epic", "legendary", "mythic"] as const;
