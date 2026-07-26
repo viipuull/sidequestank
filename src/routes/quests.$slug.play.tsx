@@ -538,10 +538,15 @@ function PhotoVerifier({ sessionId, onSubmit, disabled, config }: { sessionId: s
       const { error } = await supabase.storage.from("quest-media").upload(path, file, {
         cacheControl: "3600", upsert: false, contentType: file.type || "image/jpeg",
       });
-      if (error) throw error;
+      if (error) {
+        console.error("[photo upload] storage error", error);
+        throw error;
+      }
       setUploadedPath(path);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Upload failed");
+      const msg = e instanceof Error ? e.message : "Upload failed";
+      toast.error(msg);
+      setPreviewUrl(null);
     } finally {
       setUploading(false);
     }
@@ -569,23 +574,28 @@ function PhotoVerifier({ sessionId, onSubmit, disabled, config }: { sessionId: s
           )}
         </div>
       ) : (
-        <button type="button" onClick={() => (showCamera ? cameraInputRef : galleryInputRef).current?.click()}
-          className="grid aspect-square w-full max-w-[280px] mx-auto place-items-center rounded-2xl border-2 border-dashed border-border/60 bg-background/40 text-muted-foreground">
-          <div className="flex flex-col items-center gap-2">
+        <div className="mx-auto grid aspect-square w-full max-w-[280px] place-items-center rounded-2xl border-2 border-dashed border-border/60 bg-background/40 text-muted-foreground">
+          <div className="flex flex-col items-center gap-3 px-4 text-center">
             <Camera className="h-8 w-8" />
-            <span className="text-xs">{showCamera && showGallery ? "Tap to add a photo" : showCamera ? "Tap to take a photo" : "Tap to choose from gallery"}</span>
+            <span className="text-xs">
+              {showCamera && showGallery
+                ? "Choose a photo from your gallery or take a new one"
+                : showCamera
+                ? "Take a photo to verify this objective"
+                : "Choose a photo from your gallery"}
+            </span>
           </div>
-        </button>
+        </div>
       )}
-      <div className="grid grid-cols-2 gap-2">
+      <div className={`grid gap-2 ${showCamera && showGallery ? "grid-cols-2" : "grid-cols-1"}`}>
         {showCamera && (
-          <Button type="button" variant="outline" onClick={() => { setPreviewUrl(null); setUploadedPath(null); cameraInputRef.current?.click(); }} disabled={uploading}>
+          <Button type="button" variant="outline" className="h-11 min-h-11" onClick={() => { setPreviewUrl(null); setUploadedPath(null); cameraInputRef.current?.click(); }} disabled={uploading}>
             <Camera className="mr-2 h-4 w-4" /> {previewUrl ? "Retake" : "Camera"}
           </Button>
         )}
         {showGallery && (
-          <Button type="button" variant="outline" onClick={() => { setPreviewUrl(null); setUploadedPath(null); galleryInputRef.current?.click(); }} disabled={uploading}>
-            <Sparkles className="mr-2 h-4 w-4" /> Gallery
+          <Button type="button" variant="outline" className="h-11 min-h-11" onClick={() => { setPreviewUrl(null); setUploadedPath(null); galleryInputRef.current?.click(); }} disabled={uploading}>
+            <Sparkles className="mr-2 h-4 w-4" /> {previewUrl ? "Choose another" : "Gallery"}
           </Button>
         )}
         {previewUrl && (
