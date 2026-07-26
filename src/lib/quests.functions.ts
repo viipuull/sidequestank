@@ -157,7 +157,7 @@ const objectiveSchema = z.object({
 
 const questPayloadSchema = z.object({
   title: z.string().min(3).max(160),
-  slug: z.string().min(3).max(120).optional(),
+  slug: z.string().max(120).optional().or(z.literal("")),
   short_description: z.string().max(240).default(""),
   full_description: z.string().max(8000).default(""),
   cover_image_url: z.string().url().max(1000).nullable().optional(),
