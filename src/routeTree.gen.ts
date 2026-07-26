@@ -281,9 +281,9 @@ const StudioPlayersUserIdRoute = StudioPlayersUserIdRouteImport.update({
   getParentRoute: () => StudioRoute,
 } as any)
 const QuestsSlugPlayRoute = QuestsSlugPlayRouteImport.update({
-  id: '/play',
-  path: '/play',
-  getParentRoute: () => QuestsSlugRoute,
+  id: '/quests/$slug/play',
+  path: '/quests/$slug/play',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const PlayersUsernameCompareRoute = PlayersUsernameCompareRouteImport.update({
   id: '/compare',
@@ -653,6 +653,7 @@ export interface RootRouteChildren {
   PlayersIndexRoute: typeof PlayersIndexRoute
   QuestsIndexRoute: typeof QuestsIndexRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
+  QuestsSlugPlayRoute: typeof QuestsSlugPlayRoute
   QuestsSlugIndexRoute: typeof QuestsSlugIndexRoute
   ApiPublicHooksLiveopsTickRoute: typeof ApiPublicHooksLiveopsTickRoute
 }
@@ -969,10 +970,10 @@ declare module '@tanstack/react-router' {
     }
     '/quests/$slug/play': {
       id: '/quests/$slug/play'
-      path: '/play'
+      path: '/quests/$slug/play'
       fullPath: '/quests/$slug/play'
       preLoaderRoute: typeof QuestsSlugPlayRouteImport
-      parentRoute: typeof QuestsSlugRoute
+      parentRoute: typeof rootRouteImport
     }
     '/players/$username/compare': {
       id: '/players/$username/compare'
@@ -1145,19 +1146,10 @@ const rootRouteChildren: RootRouteChildren = {
   PlayersIndexRoute: PlayersIndexRoute,
   QuestsIndexRoute: QuestsIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
+  QuestsSlugPlayRoute: QuestsSlugPlayRoute,
   QuestsSlugIndexRoute: QuestsSlugIndexRoute,
   ApiPublicHooksLiveopsTickRoute: ApiPublicHooksLiveopsTickRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
