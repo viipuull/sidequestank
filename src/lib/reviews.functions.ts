@@ -64,7 +64,7 @@ export const listPhotoReviews = createServerFn({ method: "GET" })
           attempts: row.attempts,
           submittedAt: row.updated_at,
           reviewedAt: row.reviewed_at,
-          reviewNotes: row.review_notes,
+          reviewNotes: row.review_notes ?? undefined,
           photoUrl,
           photoPath: vd.photoPath ?? null,
           player: playerMap.get(row.user_id) ?? { id: row.user_id, username: "unknown", display_name: "Unknown", avatar_url: null },
