@@ -880,6 +880,51 @@ export type Database = {
           },
         ]
       }
+      media_assets: {
+        Row: {
+          created_at: string
+          filename: string
+          height: number | null
+          id: string
+          mime_type: string
+          size_bytes: number
+          storage_bucket: string
+          storage_path: string
+          updated_at: string
+          uploaded_by: string | null
+          url: string
+          width: number | null
+        }
+        Insert: {
+          created_at?: string
+          filename: string
+          height?: number | null
+          id?: string
+          mime_type: string
+          size_bytes: number
+          storage_bucket?: string
+          storage_path: string
+          updated_at?: string
+          uploaded_by?: string | null
+          url: string
+          width?: number | null
+        }
+        Update: {
+          created_at?: string
+          filename?: string
+          height?: number | null
+          id?: string
+          mime_type?: string
+          size_bytes?: number
+          storage_bucket?: string
+          storage_path?: string
+          updated_at?: string
+          uploaded_by?: string | null
+          url?: string
+          width?: number | null
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           body: string

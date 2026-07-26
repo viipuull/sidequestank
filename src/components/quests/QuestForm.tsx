@@ -13,6 +13,7 @@ import {
   type QuestCategory, type QuestDifficulty, type QuestType, type QuestVisibility,
   type ObjectiveType, slugify,
 } from "@/lib/quests.types";
+import { MediaField } from "@/components/media/MediaPicker";
 
 export type QuestFormValues = {
   title: string;
@@ -159,22 +160,11 @@ export function QuestForm({ value, onChange, onSubmit, submitting, submitLabel =
       </Section>
 
       <Section title="Media">
-        <Field label="Cover image URL">
-          <Input
-            type="url"
-            value={value.cover_image_url}
-            onChange={(e) => patch({ cover_image_url: e.target.value })}
-            placeholder="https://…"
-          />
-        </Field>
-        {value.cover_image_url && (
-          <img
-            src={value.cover_image_url}
-            alt="Cover preview"
-            className="h-40 w-full rounded-2xl object-cover"
-            onError={(e) => ((e.currentTarget.style.display = "none"))}
-          />
-        )}
+        <MediaField
+          label="Cover image"
+          value={value.cover_image_url}
+          onChange={(url) => patch({ cover_image_url: url })}
+        />
       </Section>
 
       <Section title="Classification">
