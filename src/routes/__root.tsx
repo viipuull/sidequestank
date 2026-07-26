@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { PageTransition } from "../components/motion/PageTransition";
 
 function NotFoundComponent() {
   const quickLinks = [
@@ -142,7 +143,9 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <PageTransition>
+        <Outlet />
+      </PageTransition>
     </QueryClientProvider>
   );
 }
