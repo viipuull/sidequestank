@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION public.is_founder() TO authenticated, anon;
