@@ -1,28 +1,17 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
-import { useEffect } from "react";
-import { ArrowLeft, Award, CalendarDays, Compass, Loader2, Sparkles, TrendingUp, Users } from "lucide-react";
-import { AuthGate } from "@/components/layout/AuthGate";
-import { useAuth } from "@/lib/hooks/useAuth";
-import { getFounderStats, type FounderUserRow } from "@/lib/founder.functions";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 
-const FOUNDER_EMAIL = "ankleshwarweb@gmail.com";
-
+/**
+ * Legacy mobile /founder dashboard is retired.
+ * The single admin experience is /studio.
+ */
 export const Route = createFileRoute("/founder/")({
   head: () => ({
     meta: [
-      { title: "Founder Dashboard — SideQuest" },
-      { name: "description", content: "Private founder overview for SideQuest." },
+      { title: "SideQuest Studio" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
-  component: () => (
-    <AuthGate>
-      <FounderPage />
-    </AuthGate>
-  ),
+  component: () => <Navigate to="/studio" replace />,
 });
 
 function FounderPage() {
