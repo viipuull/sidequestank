@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { escapePostgrestLike } from "@/lib/postgrest";
 
 // Shared founder gate.
 async function assertFounder(ctx: { supabase: any; userId: string }) {
@@ -111,8 +112,7 @@ export const studioSearch = createServerFn({ method: "POST" })
   .handler(async ({ data, context }): Promise<StudioSearchResult> => {
     await assertFounder(context);
     const sb = context.supabase;
-    const q = data.q.replace(/[%_]/g, "\\$&");
-    const like = `%${q}%`;
+    const like = escapePostgrestLike(data.q);
     const [players, quests, collections, events, achievements, titles] = await Promise.all([
       sb.from("profiles").select("id, username, display_name, avatar_url")
         .or(`username.ilike.${like},display_name.ilike.${like}`).limit(8),
