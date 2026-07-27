@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
+import { escapePostgrestLike } from "@/lib/postgrest";
 
 export type AchievementRow = Database["public"]["Tables"]["achievements"]["Row"];
 export type PlayerAchievementRow = Database["public"]["Tables"]["player_achievements"]["Row"];
