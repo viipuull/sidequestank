@@ -60,7 +60,7 @@ export function WelcomePopup({ userId }: { userId: string | undefined }) {
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Welcome to SideQuest! You're one of our earliest explorers helping shape the adventure.
-              More exciting quests and features are coming soon.
+              Complete quests, climb the leaderboard, and earn real-life prizes (dropping soon).
             </p>
             <div className="mt-6 flex flex-col gap-2">
               <Button size="lg" className="h-12 w-full font-semibold" onClick={dismiss}>
