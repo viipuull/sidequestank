@@ -2,6 +2,22 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+// Keep quest verification secrets server-side. Players receive the objective
+// title/description/type but never the trivia answer, QR code, or GPS target.
+const SECRET_CONFIG_KEYS = new Set([
+  "code", "answer", "correct", "correct_index", "correct_answer", "correct_option",
+  "latitude", "longitude", "lat", "lng", "radius_m", "min_accuracy_m",
+  "target", "solution",
+]);
+function redactObjectiveConfig<T extends { config?: unknown }>(obj: T): T {
+  const cfg = (obj.config ?? {}) as Record<string, unknown>;
+  const safe: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(cfg)) {
+    if (!SECRET_CONFIG_KEYS.has(k)) safe[k] = v;
+  }
+  return { ...obj, config: safe };
+}
+
 // ---- helpers ----
 function haversineMeters(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {
   const R = 6371000;
@@ -89,7 +105,12 @@ export const getSessionState = createServerFn({ method: "GET" })
       .eq("session_id", session.id);
     if (pErr) throw pErr;
 
-    return { session, quest, objectives: objectives ?? [], progress: progress ?? [] };
+    return {
+      session,
+      quest,
+      objectives: (objectives ?? []).map(redactObjectiveConfig),
+      progress: progress ?? [],
+    };
   });
 
 // ---- Get active session for a quest (for resume UI) ----

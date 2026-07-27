@@ -7,6 +7,24 @@ import { slugify } from "@/lib/quests.types";
 
 const FOUNDER_EMAIL = "ankleshwarweb@gmail.com";
 
+// Keys inside quest_objectives.config that contain verification secrets
+// (trivia answers, exact QR codes, target coordinates, tolerances, etc.).
+// These must never be returned to players — verification runs server-side.
+const SECRET_CONFIG_KEYS = new Set([
+  "code", "answer", "correct", "correct_index", "correct_answer", "correct_option",
+  "latitude", "longitude", "lat", "lng", "radius_m", "min_accuracy_m",
+  "target", "solution",
+]);
+
+function redactObjectiveConfig<T extends { config?: unknown }>(obj: T): T {
+  const cfg = (obj.config ?? {}) as Record<string, unknown>;
+  const safe: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(cfg)) {
+    if (!SECRET_CONFIG_KEYS.has(k)) safe[k] = v;
+  }
+  return { ...obj, config: safe };
+}
+
 // ---------- Public read client (anon) ----------
 function publicClient() {
   const url = process.env.SUPABASE_URL!;
@@ -93,7 +111,7 @@ export const getPublishedQuestBySlug = createServerFn({ method: "GET" })
       .eq("quest_id", quest.id)
       .order("completion_order", { ascending: true });
     if (oErr) throw oErr;
-    return { ...quest, objectives: objectives ?? [] };
+    return { ...quest, objectives: (objectives ?? []).map(redactObjectiveConfig) };
   });
 
 // ---------- Founder: list all quests (any status) ----------
