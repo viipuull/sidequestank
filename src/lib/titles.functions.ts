@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
+import { escapePostgrestLike } from "@/lib/postgrest";
 
 export type TitleRow = Database["public"]["Tables"]["titles"]["Row"];
 export type PlayerTitleRow = Database["public"]["Tables"]["player_titles"]["Row"];
@@ -184,7 +185,7 @@ export const founderSearchPlayers = createServerFn({ method: "GET" })
       .select("id, username, display_name, avatar_url, is_pioneer, pioneer_number")
       .limit(20);
     if (data.q.trim()) {
-      const s = `%${data.q.trim()}%`;
+      const s = escapePostgrestLike(data.q.trim());
       q = q.or(`display_name.ilike.${s},username.ilike.${s}`);
     }
     const { data: rows, error } = await q.order("created_at", { ascending: false });
