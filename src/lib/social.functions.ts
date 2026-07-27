@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { escapePostgrestLike } from "@/lib/postgrest";
 import type { Database } from "@/integrations/supabase/types";
 
 const sel = (s: string): string => s;
@@ -164,7 +165,10 @@ export const discoverPlayers = createServerFn({ method: "GET" })
       default: q = q.order("total_xp", { ascending: false }).order("level", { ascending: false });
     }
     if (data.city) q = q.ilike("profiles.city", data.city);
-    if (data.query) q = q.or(`username.ilike.%${data.query}%,display_name.ilike.%${data.query}%`, { referencedTable: "profiles" });
+    if (data.query) {
+      const s = escapePostgrestLike(data.query);
+      q = q.or(`username.ilike.${s},display_name.ilike.${s}`, { referencedTable: "profiles" });
+    }
     q = q.range(data.offset, data.offset + data.limit - 1);
     const { data: rows, error } = await q;
     if (error) throw error;
@@ -276,9 +280,10 @@ export const founderSearchUsers = createServerFn({ method: "GET" })
   .inputValidator((raw: unknown) => z.object({ query: z.string().min(1).max(60) }).parse(raw))
   .handler(async ({ context, data }) => {
     await assertFounder(context);
+    const s = escapePostgrestLike(data.query);
     const { data: rows } = await context.supabase.from("profiles")
       .select("id, username, display_name, avatar_url, city")
-      .or(`username.ilike.%${data.query}%,display_name.ilike.%${data.query}%`)
+      .or(`username.ilike.${s},display_name.ilike.${s}`)
       .limit(20);
     return rows ?? [];
   });
