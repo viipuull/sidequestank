@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
+import { escapePostgrestLike } from "@/lib/postgrest";
 
 export type AchievementRow = Database["public"]["Tables"]["achievements"]["Row"];
 export type PlayerAchievementRow = Database["public"]["Tables"]["player_achievements"]["Row"];
@@ -276,7 +277,10 @@ export const founderSearchPlayers = createServerFn({ method: "GET" })
     await assertFounder(context.supabase, context.userId);
     const q = data.q.trim();
     let query = context.supabase.from("profiles").select("id, username, display_name, avatar_url").limit(20);
-    if (q.length > 0) query = query.or(`username.ilike.%${q}%,display_name.ilike.%${q}%`);
+    if (q.length > 0) {
+      const s = escapePostgrestLike(q);
+      query = query.or(`username.ilike.${s},display_name.ilike.${s}`);
+    }
     const { data: rows, error } = await query.order("created_at", { ascending: false });
     if (error) throw error;
     return rows ?? [];
