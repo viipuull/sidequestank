@@ -5,7 +5,6 @@ import { Loader2 } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { ScreenShell } from "@/components/onboarding/ScreenShell";
 import { Button } from "@/components/ui/button";
-import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useProfile } from "@/lib/hooks/useProfile";
 import { onboarding } from "@/lib/hooks/useOnboarding";
@@ -112,11 +111,12 @@ function AuthPage() {
     setSigningIn(true);
     setError(null);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: window.location.origin },
       });
-      if (result.error) {
-        setError(result.error.message || "Sign-in failed. Please try again.");
+      if (oauthError) {
+        setError(oauthError.message || "Sign-in failed. Please try again.");
         setSigningIn(false);
       }
     } catch (e) {
