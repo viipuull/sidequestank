@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Award, Bell, CalendarDays, Compass, FlaskConical, MapPin, Sparkles, Star, Trophy } from "lucide-react";
+import { Award, Bell, Compass, FlaskConical, Gift, MapPin, Sparkles, Star, Trophy, Users } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { AuthGate } from "@/components/layout/AuthGate";
 import { ProfileMenu } from "@/components/home/ProfileMenu";
@@ -209,13 +209,31 @@ function HomeInner() {
       )}
 
       <section className="mt-6">
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Coming soon</h2>
-        <div className="space-y-3">
-          <ComingSoon icon={<Compass className="h-5 w-5" />} title="Quests" desc="Curated adventures across Ankleshwar — puzzles, photo hunts and QR check-ins." />
-          <ComingSoon icon={<Trophy className="h-5 w-5" />} title="Leaderboard" desc="Race to the top of the city ranks each week." />
-          <ComingSoon icon={<Award className="h-5 w-5" />} title="Collection" desc="Track every badge you earn along the way." />
-          <ComingSoon icon={<CalendarDays className="h-5 w-5" />} title="Weekly Quest" desc="One special mission every week with bonus rewards." />
-          <ComingSoon icon={<Bell className="h-5 w-5" />} title="Announcements" desc="Community events, new drops and city-wide challenges." />
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Explore</h2>
+        <div className="grid grid-cols-2 gap-3">
+          <QuickLink to="/quests" icon={<Compass className="h-5 w-5" />} title="Quests" desc="Adventures across Ankleshwar." />
+          <QuickLink to="/leaderboard" icon={<Trophy className="h-5 w-5" />} title="Leaderboard" desc="Climb the city ranks." />
+          <QuickLink to="/collections" icon={<Award className="h-5 w-5" />} title="Collections" desc="Complete themed sets." />
+          <QuickLink to="/players" icon={<Users className="h-5 w-5" />} title="Players" desc="Meet fellow explorers." />
+        </div>
+      </section>
+
+      <section className="mt-6">
+        <div className="relative overflow-hidden rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/15 via-primary/10 to-transparent p-4">
+          <div className="flex items-start gap-3">
+            <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-accent/20 text-accent">
+              <Gift className="h-5 w-5" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-semibold">Real-life prizes</p>
+                <span className="rounded-full bg-accent/20 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-accent">Coming soon</span>
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Redeem your XP for real-world rewards from local partners in Ankleshwar. Keep questing — you'll be first in line.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
     </AppShell>
@@ -237,17 +255,17 @@ function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string
   );
 }
 
-function ComingSoon({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
+function QuickLink({ to, icon, title, desc }: { to: string; icon: React.ReactNode; title: string; desc: string }) {
   return (
-    <div className="flex items-start gap-3 rounded-2xl border border-border bg-card/60 p-3.5 backdrop-blur">
-      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent/15 text-accent">{icon}</div>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <p className="text-sm font-semibold">{title}</p>
-          <span className="rounded-full bg-muted px-2 py-0.5 text-[9px] uppercase tracking-wider text-muted-foreground">Soon</span>
-        </div>
+    <Link
+      to={to}
+      className="flex flex-col gap-2 rounded-2xl border border-border bg-card/70 p-3.5 backdrop-blur transition active:scale-[0.98]"
+    >
+      <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/15 text-primary">{icon}</div>
+      <div>
+        <p className="text-sm font-semibold">{title}</p>
         <p className="mt-0.5 text-xs text-muted-foreground">{desc}</p>
       </div>
-    </div>
+    </Link>
   );
 }
