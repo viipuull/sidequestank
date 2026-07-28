@@ -1,35 +1,24 @@
-## The problem
+## Plan
 
-Google Sign-In works on the Lovable-hosted URL but fails on your Vercel-hosted `https://www.sidequestank.fun/`. The button uses `redirectTo: window.location.origin`, so on the custom domain the redirect target becomes `https://www.sidequestank.fun`. Supabase Auth rejects any redirect URL that isn't in its allow-list, and Google will only return to the exact Authorized redirect URI configured in the Google Cloud OAuth client. Either side can cause the "404 / doesn't come back / provider error" symptom.
+1. **Confirm the failing redirect URL**
+   - Reproduce the Google sign-in path on `https://www.sidequestank.fun/` and inspect the exact URL that becomes the Supabase 404.
+   - Identify whether it is failing before Google, at the backend callback, or after returning to the app.
 
-## What needs to change
+2. **Harden the app-side OAuth flow**
+   - Add a public `/auth/callback` route for Supabase OAuth returns.
+   - Update Google sign-in to redirect to the custom-domain-safe callback URL, then send the player to `/home` after the session is restored.
+   - Preserve existing onboarding/profile redirects after the session loads.
 
-This is a **configuration fix**, not a code change. Nothing in the app needs to be edited.
+3. **Fix Vercel routing for this TanStack app**
+   - Replace the current static SPA rewrite if needed so Vercel does not incorrectly route every URL to `/index.html` in a way that breaks OAuth/callback handling.
+   - Ensure `/auth`, `/auth/callback`, `/home`, and deep links can load directly on the custom domain.
 
-### 1. Supabase Auth URL Configuration
-In **Backend → Users → Authentication Settings → URL Configuration**:
-- **Site URL:** `https://www.sidequestank.fun`
-- **Additional Redirect URLs** (add all so previews + apex + Lovable URL keep working):
-  - `https://www.sidequestank.fun/**`
-  - `https://sidequestank.fun/**`
-  - `https://sidequestank.lovable.app/**`
-  - `http://localhost:8080/**` (optional, for local dev)
+4. **Dashboard configuration checklist for you**
+   - I’ll give the exact URLs to add to your backend auth settings:
+     - Site URL should use the canonical domain you want users to land on.
+     - Redirect URLs must include the exact `https://www.sidequestank.fun/auth/callback` URL and, if you also use apex, the matching apex version.
+   - If you use your own Google OAuth credentials, I’ll also list the exact Google Console authorized redirect URI.
 
-### 2. Google Cloud OAuth Client
-In the Google Cloud Console OAuth 2.0 Client that Supabase uses:
-- **Authorized JavaScript origins:** add `https://www.sidequestank.fun` and `https://sidequestank.fun`
-- **Authorized redirect URIs:** must contain the Supabase callback shown in Backend → Auth → Providers → Google (looks like `https://<project-ref>.supabase.co/auth/v1/callback`). If Supabase is using its own managed Google credentials you can skip this step — but if you provided your own client ID/secret, this is required.
-
-### 3. Vercel custom domain
-Confirm both `www.sidequestank.fun` and `sidequestank.fun` resolve to the Vercel deployment and one redirects to the other consistently (usually apex → www). If a user starts on the apex and Supabase only knows www, the callback lands off-allow-list.
-
-### 4. Verify
-After saving: open `https://www.sidequestank.fun/auth` in an incognito window, click Continue with Google, and confirm it returns to `/home`. If it fails, check browser devtools Network for the exact error from `/auth/v1/authorize` or the Google consent page — that pinpoints which of the three above is still misaligned.
-
-## What I need from you to proceed
-
-Since these changes live in dashboards I can't touch, tell me:
-1. Are you using **Supabase-managed Google credentials** or your **own Google OAuth client**? (Backend → Auth → Providers → Google shows this.)
-2. What's the exact error you see on `www.sidequestank.fun` — a Google error page, a Supabase error, or a silent redirect back to `/auth`?
-
-Once configured, no code changes are required. If you'd rather I also add a small hardening tweak (explicit `redirectTo` to a dedicated `/auth/callback` route so the redirect target is stable regardless of where the user started), say the word and I'll include that as a follow-up.
+5. **Verify**
+   - Test sign-in from `https://www.sidequestank.fun/`.
+   - Confirm the user returns to SideQuest, session is restored, and the app navigates to onboarding/profile/home instead of a Supabase 404.
