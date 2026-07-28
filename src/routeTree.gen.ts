@@ -49,6 +49,7 @@ import { Route as FounderCollectionsRouteImport } from './routes/founder.collect
 import { Route as FounderAchievementsRouteImport } from './routes/founder.achievements'
 import { Route as EventsSlugRouteImport } from './routes/events.$slug'
 import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AchievementsSlugRouteImport } from './routes/achievements.$slug'
 import { Route as StudioPlayersIndexRouteImport } from './routes/studio.players.index'
 import { Route as QuestsSlugIndexRouteImport } from './routes/quests.$slug.index'
@@ -261,6 +262,11 @@ const CollectionsSlugRoute = CollectionsSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => CollectionsRoute,
 } as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AchievementsSlugRoute = AchievementsSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -322,7 +328,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/achievements': typeof AchievementsRouteWithChildren
   '/activity': typeof ActivityRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/challenges': typeof ChallengesRoute
   '/collections': typeof CollectionsRouteWithChildren
   '/events': typeof EventsRouteWithChildren
@@ -342,6 +348,7 @@ export interface FileRoutesByFullPath {
   '/welcome': typeof WelcomeRoute
   '/xp-history': typeof XpHistoryRoute
   '/achievements/$slug': typeof AchievementsSlugRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/collections/$slug': typeof CollectionsSlugRoute
   '/events/$slug': typeof EventsSlugRoute
   '/founder/achievements': typeof FounderAchievementsRoute
@@ -375,7 +382,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/achievements': typeof AchievementsRouteWithChildren
   '/activity': typeof ActivityRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/challenges': typeof ChallengesRoute
   '/collections': typeof CollectionsRouteWithChildren
   '/events': typeof EventsRouteWithChildren
@@ -393,6 +400,7 @@ export interface FileRoutesByTo {
   '/welcome': typeof WelcomeRoute
   '/xp-history': typeof XpHistoryRoute
   '/achievements/$slug': typeof AchievementsSlugRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/collections/$slug': typeof CollectionsSlugRoute
   '/events/$slug': typeof EventsSlugRoute
   '/founder/achievements': typeof FounderAchievementsRoute
@@ -427,7 +435,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/achievements': typeof AchievementsRouteWithChildren
   '/activity': typeof ActivityRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/challenges': typeof ChallengesRoute
   '/collections': typeof CollectionsRouteWithChildren
   '/events': typeof EventsRouteWithChildren
@@ -447,6 +455,7 @@ export interface FileRoutesById {
   '/welcome': typeof WelcomeRoute
   '/xp-history': typeof XpHistoryRoute
   '/achievements/$slug': typeof AchievementsSlugRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/collections/$slug': typeof CollectionsSlugRoute
   '/events/$slug': typeof EventsSlugRoute
   '/founder/achievements': typeof FounderAchievementsRoute
@@ -502,6 +511,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/xp-history'
     | '/achievements/$slug'
+    | '/auth/callback'
     | '/collections/$slug'
     | '/events/$slug'
     | '/founder/achievements'
@@ -553,6 +563,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/xp-history'
     | '/achievements/$slug'
+    | '/auth/callback'
     | '/collections/$slug'
     | '/events/$slug'
     | '/founder/achievements'
@@ -606,6 +617,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/xp-history'
     | '/achievements/$slug'
+    | '/auth/callback'
     | '/collections/$slug'
     | '/events/$slug'
     | '/founder/achievements'
@@ -640,7 +652,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AchievementsRoute: typeof AchievementsRouteWithChildren
   ActivityRoute: typeof ActivityRoute
-  AuthRoute: typeof AuthRoute
+  AuthRoute: typeof AuthRouteWithChildren
   ChallengesRoute: typeof ChallengesRoute
   CollectionsRoute: typeof CollectionsRouteWithChildren
   EventsRoute: typeof EventsRouteWithChildren
@@ -952,6 +964,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CollectionsSlugRouteImport
       parentRoute: typeof CollectionsRoute
     }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/achievements/$slug': {
       id: '/achievements/$slug'
       path: '/$slug'
@@ -1043,6 +1062,16 @@ const AchievementsRouteChildren: AchievementsRouteChildren = {
 const AchievementsRouteWithChildren = AchievementsRoute._addFileChildren(
   AchievementsRouteChildren,
 )
+
+interface AuthRouteChildren {
+  AuthCallbackRoute: typeof AuthCallbackRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthCallbackRoute: AuthCallbackRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface CollectionsRouteChildren {
   CollectionsSlugRoute: typeof CollectionsSlugRoute
@@ -1142,7 +1171,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AchievementsRoute: AchievementsRouteWithChildren,
   ActivityRoute: ActivityRoute,
-  AuthRoute: AuthRoute,
+  AuthRoute: AuthRouteWithChildren,
   ChallengesRoute: ChallengesRoute,
   CollectionsRoute: CollectionsRouteWithChildren,
   EventsRoute: EventsRouteWithChildren,
@@ -1174,3 +1203,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
