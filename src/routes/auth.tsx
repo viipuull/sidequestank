@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { useProfile } from "@/lib/hooks/useProfile";
 import { onboarding } from "@/lib/hooks/useOnboarding";
 import { useQueryClient } from "@tanstack/react-query";
+import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 import logoAsset from "@/assets/sidequest-logo.png.asset.json";
 import cyberShikariAvatar from "@/assets/cybershikari-avatar.png.asset.json";
@@ -113,10 +114,13 @@ function AuthPage() {
     setSigningIn(true);
     setError(null);
     try {
-      const { error: oauthError } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: `${window.location.origin}/auth/callback`,
       });
+
+      if (result.redirected) return;
+
+      const oauthError = result.error;
       if (oauthError) {
         setError(oauthError.message || "Sign-in failed. Please try again.");
         setSigningIn(false);
