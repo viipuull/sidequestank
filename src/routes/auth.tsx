@@ -114,10 +114,13 @@ function AuthPage() {
     setSigningIn(true);
     setError(null);
     try {
-      const { error: oauthError } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: `${window.location.origin}/auth/callback`,
       });
+
+      if (result.redirected) return;
+
+      const oauthError = result.error;
       if (oauthError) {
         setError(oauthError.message || "Sign-in failed. Please try again.");
         setSigningIn(false);
