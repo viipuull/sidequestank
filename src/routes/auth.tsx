@@ -28,6 +28,8 @@ export const Route = createFileRoute("/auth")({
       { name: "description", content: "Sign in with Google to start your SideQuest adventure." },
       { property: "og:title", content: "Sign in — SideQuest" },
       { property: "og:description", content: "Sign in with Google to start your SideQuest adventure." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: AuthPage,
@@ -113,7 +115,7 @@ function AuthPage() {
     try {
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: window.location.origin },
+        options: { redirectTo: `${window.location.origin}/auth/callback` },
       });
       if (oauthError) {
         setError(oauthError.message || "Sign-in failed. Please try again.");
