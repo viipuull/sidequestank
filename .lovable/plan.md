@@ -1,83 +1,35 @@
-# Game-Feel Motion Pass
+## The problem
 
-Goal: every scroll, tap, and screen change should feel like a polished game — snappy, physical, with subtle haptic-style feedback. No new features, no redesigns; purely a motion + micro-interaction layer on top of the existing UI.
+Google Sign-In works on the Lovable-hosted URL but fails on your Vercel-hosted `https://www.sidequestank.fun/`. The button uses `redirectTo: window.location.origin`, so on the custom domain the redirect target becomes `https://www.sidequestank.fun`. Supabase Auth rejects any redirect URL that isn't in its allow-list, and Google will only return to the exact Authorized redirect URI configured in the Google Cloud OAuth client. Either side can cause the "404 / doesn't come back / provider error" symptom.
 
-## 1. Motion foundation (shared primitives)
+## What needs to change
 
-Create `src/lib/motion.ts` with reusable Framer Motion presets so every screen uses the same "language":
-- `springs.snappy`, `springs.soft`, `springs.bouncy` (tuned stiffness/damping)
-- `variants.fadeUp`, `variants.popIn`, `variants.slideIn`, `variants.stagger`
-- `tap.press` (scale 0.96 + subtle brightness), `tap.bounce` (scale 0.92 → 1.02 → 1)
-- `hover.lift` (y:-2, shadow bump)
+This is a **configuration fix**, not a code change. Nothing in the app needs to be edited.
 
-Add a tiny `useHaptic()` hook wrapping `navigator.vibrate` (10ms tick on tap, 30ms on success, pattern on level-up) — silently no-ops on unsupported devices.
+### 1. Supabase Auth URL Configuration
+In **Backend → Users → Authentication Settings → URL Configuration**:
+- **Site URL:** `https://www.sidequestank.fun`
+- **Additional Redirect URLs** (add all so previews + apex + Lovable URL keep working):
+  - `https://www.sidequestank.fun/**`
+  - `https://sidequestank.fun/**`
+  - `https://sidequestank.lovable.app/**`
+  - `http://localhost:8080/**` (optional, for local dev)
 
-## 2. Global button + card feedback
+### 2. Google Cloud OAuth Client
+In the Google Cloud Console OAuth 2.0 Client that Supabase uses:
+- **Authorized JavaScript origins:** add `https://www.sidequestank.fun` and `https://sidequestank.fun`
+- **Authorized redirect URIs:** must contain the Supabase callback shown in Backend → Auth → Providers → Google (looks like `https://<project-ref>.supabase.co/auth/v1/callback`). If Supabase is using its own managed Google credentials you can skip this step — but if you provided your own client ID/secret, this is required.
 
-Extend `src/components/ui/button.tsx` and `Card`/`GlassCard`:
-- Wrap in `motion.button` / `motion.div` with `whileTap={tap.press}`, `whileHover={hover.lift}`.
-- Add `transition` using `springs.snappy`.
-- Trigger `useHaptic().tick()` on press.
-- Primary CTA variant gets a subtle glow pulse on mount.
+### 3. Vercel custom domain
+Confirm both `www.sidequestank.fun` and `sidequestank.fun` resolve to the Vercel deployment and one redirects to the other consistently (usually apex → www). If a user starts on the apex and Supabase only knows www, the callback lands off-allow-list.
 
-This propagates game-feel to every existing screen without touching them individually.
+### 4. Verify
+After saving: open `https://www.sidequestank.fun/auth` in an incognito window, click Continue with Google, and confirm it returns to `/home`. If it fails, check browser devtools Network for the exact error from `/auth/v1/authorize` or the Google consent page — that pinpoints which of the three above is still misaligned.
 
-## 3. Scroll-reveal system
+## What I need from you to proceed
 
-Add `src/components/motion/Reveal.tsx` — an IntersectionObserver-based wrapper that fades + slides children in when they enter the viewport (once, with configurable delay/direction). Add `StaggerList` that staggers children by index.
+Since these changes live in dashboards I can't touch, tell me:
+1. Are you using **Supabase-managed Google credentials** or your **own Google OAuth client**? (Backend → Auth → Providers → Google shows this.)
+2. What's the exact error you see on `www.sidequestank.fun` — a Google error page, a Supabase error, or a silent redirect back to `/auth`?
 
-Apply to the high-visibility feeds only (keep scope tight):
-- Home rails (LiveOps, quick actions, stat tiles)
-- Quest discovery cards (`/quests`)
-- Achievements, Collections, Titles gallery grids
-- Leaderboard rows
-- Activity feed items
-
-Rows stagger ~40ms apart with a soft spring. Respects `prefers-reduced-motion` (renders instantly).
-
-## 4. Route transitions
-
-In `src/routes/__root.tsx`, wrap `<Outlet />` in `AnimatePresence` keyed by pathname:
-- Default: fade + 8px slide up, 220ms.
-- Gameplay routes (`/quests/$slug/play`, celebrations): scale-in pop.
-- Back navigation: mirror in reverse.
-
-## 5. Bottom nav polish
-
-`BottomNav.tsx`: active tab icon gets a spring scale + a small animated pill indicator that slides between tabs using `layoutId`. Tap = haptic tick + micro bounce.
-
-## 6. Celebratory moments (amplify existing)
-
-The Level-Up, Pioneer, Achievement, Collection, and Title overlays already exist — enhance rather than rebuild:
-- Add screen shake (2-frame translate) on trigger.
-- Add radial burst behind the badge (CSS conic gradient + scale/opacity).
-- Longer haptic pattern.
-- Confetti already present on quest completion — reuse the same util.
-
-## 7. Number counters
-
-Add `src/components/motion/CountUp.tsx` (spring-driven number tween). Use on:
-- Home stat tiles (XP, level, quests done)
-- Profile stats
-- Studio dashboard tiles
-
-## 8. Reduced motion + performance
-
-- Every preset checks `useReducedMotion()`; when true, animations collapse to instant fades.
-- Reveal uses IntersectionObserver with `rootMargin: 100px` and unobserves after first trigger — no scroll listeners.
-- No layout thrash: only transform + opacity.
-
-## Files touched (approx)
-
-New: `src/lib/motion.ts`, `src/hooks/useHaptic.ts`, `src/components/motion/{Reveal,StaggerList,CountUp}.tsx`
-Edited: `src/components/ui/{button,card,glass-card}.tsx`, `src/components/layout/BottomNav.tsx`, `src/routes/__root.tsx`, and the ~8 feed/gallery routes listed above to wrap lists in `StaggerList` / `Reveal`.
-
-No database, RLS, or business-logic changes.
-
-## Out of scope
-
-- Redesigning any screen's layout or colors
-- New gameplay/social/studio features
-- Sound effects (can be a follow-up if you want audio too)
-
-Want me to add lightweight sound effects (button click, success chime, level-up fanfare) as part of this pass, or keep it silent for now?
+Once configured, no code changes are required. If you'd rather I also add a small hardening tweak (explicit `redirectTo` to a dedicated `/auth/callback` route so the redirect target is stable regardless of where the user started), say the word and I'll include that as a follow-up.
