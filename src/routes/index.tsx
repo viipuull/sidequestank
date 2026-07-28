@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 import { Logo } from "@/components/brand/Logo";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useProfile } from "@/lib/hooks/useProfile";
 import { onboarding } from "@/lib/hooks/useOnboarding";
@@ -22,6 +23,33 @@ function SplashRoute() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile(user?.id);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const error = searchParams.get("error") ?? hashParams.get("error");
+    const errorDescription =
+      searchParams.get("error_description") ?? hashParams.get("error_description");
+
+    if (error || errorDescription) {
+      navigate({
+        to: "/auth",
+        search: { error: errorDescription ?? error ?? "Google sign-in failed" },
+        replace: true,
+      });
+      return;
+    }
+
+    const accessToken = hashParams.get("access_token");
+    const refreshToken = hashParams.get("refresh_token");
+    if (!accessToken || !refreshToken) return;
+
+    void supabase.auth
+      .setSession({ access_token: accessToken, refresh_token: refreshToken })
+      .finally(() => navigate({ to: "/auth", replace: true }));
+  }, [navigate]);
 
   useEffect(() => {
     const minDelay = new Promise((r) => setTimeout(r, 2000));
