@@ -47,13 +47,26 @@ function GoogleIcon() {
   );
 }
 
+function readAuthError() {
+  if (typeof window === "undefined") return null;
+
+  const searchParams = new URLSearchParams(window.location.search);
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+  return (
+    searchParams.get("error_description") ??
+    hashParams.get("error_description") ??
+    searchParams.get("error") ??
+    hashParams.get("error")
+  );
+}
+
 function AuthPage() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile(user?.id);
   const queryClient = useQueryClient();
   const [signingIn, setSigningIn] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(() => readAuthError());
 
   useEffect(() => {
     if (authLoading || !user || profileLoading) return;
@@ -115,7 +128,7 @@ function AuthPage() {
     setError(null);
     try {
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: `${window.location.origin}/auth/callback`,
+        redirect_uri: window.location.origin,
       });
 
       if (result.redirected) return;
