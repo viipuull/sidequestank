@@ -36,6 +36,24 @@ export type LeaderboardEntry = {
 const scopeE = z.enum(["global","country","state","city","event","friends","team"]);
 const periodE = z.enum(["all_time","weekly","monthly","seasonal"]);
 
+/** Rebuild the requested board when it is missing or stale. Safe/no-op when fresh. */
+async function ensureFresh(
+  sb: ReturnType<typeof serverPublicClient>,
+  args: { scope: string; scope_key: string; period: string; period_key: string },
+): Promise<void> {
+  try {
+    await sb.rpc("ensure_leaderboard", {
+      _scope: args.scope,
+      _scope_key: args.scope_key,
+      _period: args.period,
+      _period_key: args.period_key,
+      _max_age_seconds: 120,
+    } as never);
+  } catch {
+    // never block a read on a refresh failure
+  }
+}
+
 const listInput = z.object({
   scope: scopeE.default("global"),
   scope_key: z.string().max(60).default(""),
@@ -50,6 +68,7 @@ export const getLeaderboard = createServerFn({ method: "GET" })
   .inputValidator((raw: unknown) => listInput.parse(raw ?? {}))
   .handler(async ({ data }): Promise<LeaderboardEntry[]> => {
     const sb = serverPublicClient();
+    await ensureFresh(sb, { scope: data.scope, scope_key: data.scope_key, period: data.period, period_key: data.period_key });
     let q = sb.from("leaderboard_snapshots")
       .select(sel("rank, user_id, xp, level, quests_completed, collections_completed, achievements_earned, titles_earned"))
       .eq("scope", data.scope).eq("scope_key", data.scope_key)
@@ -108,6 +127,7 @@ export const getMyRank = createServerFn({ method: "GET" })
   .inputValidator((raw: unknown) => myRankInput.parse(raw))
   .handler(async ({ data }) => {
     const sb = serverPublicClient();
+    await ensureFresh(sb, { scope: data.scope, scope_key: data.scope_key, period: data.period, period_key: data.period_key });
     const { data: row } = await sb.from("leaderboard_snapshots")
       .select("rank, xp, level")
       .eq("scope", data.scope).eq("scope_key", data.scope_key)

@@ -1897,6 +1897,16 @@ export type Database = {
         Args: { _freq: Database["public"]["Enums"]["challenge_reset"] }
         Returns: string
       }
+      ensure_leaderboard: {
+        Args: {
+          _max_age_seconds?: number
+          _period: Database["public"]["Enums"]["leaderboard_period"]
+          _period_key: string
+          _scope: Database["public"]["Enums"]["leaderboard_scope"]
+          _scope_key: string
+        }
+        Returns: undefined
+      }
       equip_highest_owned_title: {
         Args: { _user_id: string }
         Returns: undefined

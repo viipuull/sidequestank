@@ -237,6 +237,9 @@ function PlayPage() {
               qc.invalidateQueries({ queryKey: ["my-progress"] });
               qc.invalidateQueries({ queryKey: ["my-xp-history"] });
               qc.invalidateQueries({ queryKey: ["profile"] });
+              qc.invalidateQueries({ queryKey: ["leaderboard"] });
+              qc.invalidateQueries({ queryKey: ["my-rank"] });
+              qc.invalidateQueries({ queryKey: ["player-stats"] });
               refetch();
             }}
             onUnlockedTitles={(t) => {

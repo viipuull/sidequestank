@@ -1,41 +1,38 @@
-## What I verified
+## What's actually wrong
 
-- **XP can be farmed by replaying a quest — confirmed in live data.** One player has 3 separate "quest completed" XP awards for the *same* quest (300 XP total). Cause: `startOrResumeSession` only resumes `active`/`paused` sessions — once a quest is completed, pressing Start creates a brand-new session, and the XP award is idempotent *per session*, not per quest.
-- **Approving another player's photo breaks when it finishes their quest.** The approve routine calls the XP award routine, which rejects any call where the session owner isn't the current user. So a founder approving the final photo of a player's quest hits "Forbidden" and the approval fails. (Read from both database routines.)
-- **Photo objectives can be resubmitted freely while pending.** Each new upload overwrites the pending row and resets review state, so a player can spam new photos while one is already in the queue.
-- **Admin "Players" page:** I could not reproduce it from here — my test browser has no founder session, so it bounced to the welcome screen. Diagnosing this is step 1 below, not a guess.
+I checked the live data. This is confirmed, not a guess:
 
-## Plan
+- Your progress is correct everywhere: `sidequest` is level 2 / 200 XP / 2 quests in both `player_progress` and `player_stats` (updated today).
+- The leaderboard does NOT read those tables. It reads a snapshot table that was last computed on **2026-07-25** — six days ago — when everyone was level 1 / 0 XP. That's exactly why the board shows level 1.
+- Nothing ever recomputes it. The recompute routine exists but is only callable manually from Studio; the LiveOps tick doesn't call it and nothing schedules it.
+- Worse: the weekly board is keyed `2026-W30`. We're now in W31, so the weekly tab currently reads an empty key and shows nothing.
+- One player (`bigboyshoubhit`) has no stats row at all, so they can never appear on any board.
 
-### 1. Diagnose the admin panel pages that won't open
-Reproduce as the founder account in a real browser session and capture the actual error (console + network + server function response) for **Players**, and sweep every Studio sidebar link (Players, Media, Audit, Reviews, Quests, Collections, Achievements, Titles, LiveOps, Social) to find all the dead ones in one pass. Fix what the errors show — likely candidates are a failing admin data call, a route that renders outside the Studio shell, or a stuck loading gate. Also add a visible error state to those screens so a failure shows a message instead of an endless spinner.
+## The fix
 
-### 2. One quest = one XP payout (database)
-- Make the XP award unique per player + quest, not per session: a uniqueness rule on completed-quest XP events, and an explicit check in the award routine so a replay returns "already awarded, 0 XP" instead of paying again.
-- Introduce a `repeatable` flag on quests (default off). Non-repeatable quests can be replayed for fun, but grant XP, titles, achievements and collection progress only the first time. Repeatable quests keep paying — founder's choice per quest.
-- Clean up the existing duplicate awards: recalculate that player's XP/level so the leaderboard reflects the honest total.
+**1. Leaderboards refresh themselves**
+- Recompute is triggered automatically whenever XP is awarded / a quest is completed, so the board reflects reality within seconds of a player finishing a quest.
+- Plus a safety net on read: if the requested board is missing or older than ~2 minutes, the read path recomputes it before returning. This kills the "new week = empty board" problem permanently, since the current week/month key gets built on first view.
+- Recompute stays throttled so a burst of views can't hammer the database.
 
-### 3. Fix founder photo approval
-Let the approve/reject routines complete a quest on the player's behalf (award XP as the session owner instead of as the founder), so approvals never fail with a permission error. Same fix applied to the reject-and-reopen path.
+**2. Backfill now**
+- Recompute all default boards (all-time, weekly W31, monthly 2026-07, seasonal, city) immediately so today's board is correct the moment this ships.
+- Create the missing stats rows for any player who has a profile but no stats/progress row, so nobody is invisible.
 
-### 4. One submission per objective, locked while pending
-- Server-side: once a photo objective is `pending_review`, reject further uploads for that objective until it's approved or rejected. Only a **rejected** submission reopens for a retry (which is exactly your "if you couldn't submit, you can play again" rule).
-- Client-side (`quests/$slug/play`): after submitting, the objective card locks into a clear "Submitted — awaiting review" state with the uploaded photo, the upload buttons disappear, and a rejected item shows the reason plus a single "Try again" button.
-- Guard the submit button against double-taps so one tap can't create two submissions.
+**3. Keep stats rows from going missing**
+- Ensure a stats + progress row is created when a profile is created, not only when XP is first earned.
 
-### 5. Small things a player and admin panel need
-Player side:
-- Completed quests show "Completed — replay for fun (no XP)" instead of a plain Start button, so nobody thinks they're grinding XP.
-- Consistent loading / empty / error states on quests, leaderboard, collections and profile — no blank or infinitely spinning screens.
-- Clear pending-review count somewhere visible so players know a submission is in the queue.
-
-Admin side:
-- Photo Reviews shows the player, quest, objective and the photo full-size, with approve/reject and a rejection reason in one place.
-- Players list: working search, filters and pagination, plus quick actions straight from the row.
-- Every Studio action gives a success/failure toast instead of silently doing nothing.
+**4. Small consistency pass on what the board shows**
+- Leaderboard rows show the same level/XP source as the profile and Home XP bar, and "your rank" card refreshes with the list instead of caching a stale rank.
+- Cache invalidation after quest completion so Home, Profile and Leaderboard all update together without a manual refresh.
 
 ## Technical notes
 
-- Changes span: one database migration (uniqueness rule + `repeatable` column + updated `award_quest_completion_xp`, `founder_approve_photo`, `founder_reject_photo`), a data correction for the duplicated XP, `src/lib/gameplay.functions.ts` (resubmission guard, first-completion reward gating), `src/routes/quests.$slug.play.tsx`, `src/routes/quests.$slug.index.tsx`, and the Studio routes found broken in step 1.
-- Step 1 runs first because its findings may change what needs fixing in step 5.
-- No permissions needed from you — I have everything required. If a Studio page turns out to need a setting I can't reach, I'll flag it explicitly.
+- Migration: add a trigger on `xp_events` (and quest-completion path) that calls `recompute_default_leaderboards()`, guarded by a short throttle using `max(computed_at)`; make `compute_leaderboard` tolerant of a missing active season; add profile-creation trigger for `player_stats` / `player_progress`.
+- `src/lib/leaderboards.functions.ts`: before querying `leaderboard_snapshots`, call a new `ensure_leaderboard(scope, scope_key, period, period_key)` security-definer RPC that computes-if-stale, then read as today.
+- Data backfill for existing players via the insert tool (not a migration).
+- Front end: invalidate leaderboard/profile/progress query keys after quest completion.
+
+## On "there are a lot of small things"
+
+I'll fix these leaderboard issues in this pass. Send me the next batch (or just describe what looked wrong on a screen) and I'll keep knocking them out one sprint at a time — same as this.
