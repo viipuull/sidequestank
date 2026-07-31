@@ -63,7 +63,7 @@ function PlayPage() {
     enabled: !!quest?.id,
     queryFn: async () => {
       const active = await getActive({ data: { questId: quest!.id } });
-      if (active && active.status !== "completed" && active.status !== "abandoned") return active.id;
+      if (active?.id && active.status !== "completed" && active.status !== "abandoned") return active.id;
       const started = await startFn({ data: { questId: quest!.id } });
       return started.sessionId;
     },
