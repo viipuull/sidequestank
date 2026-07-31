@@ -193,6 +193,7 @@ const questPayloadSchema = z.object({
   tags: z.array(z.string().max(24)).max(12).default([]),
   visibility: z.enum(["public","unlisted","private"]).default("public"),
   featured: z.boolean().default(false),
+  repeatable: z.boolean().default(false),
   objectives: z.array(objectiveSchema).max(30).default([]),
 });
 
@@ -227,6 +228,7 @@ export const createQuest = createServerFn({ method: "POST" })
         tags: data.tags,
         visibility: data.visibility,
         featured: data.featured,
+        repeatable: data.repeatable,
         status: "draft",
         created_by: context.userId,
       })
@@ -293,6 +295,7 @@ export const updateQuest = createServerFn({ method: "POST" })
         tags: p.tags,
         visibility: p.visibility,
         featured: p.featured,
+        repeatable: p.repeatable,
       })
       .eq("id", data.id);
     if (error) throw error;
@@ -376,6 +379,7 @@ export const duplicateQuest = createServerFn({ method: "POST" })
       tags: src.tags,
       visibility: src.visibility,
       featured: false,
+      repeatable: false,
       status: "draft",
       created_by: context.userId,
     }).select("id").single();

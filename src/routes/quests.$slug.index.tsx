@@ -75,6 +75,10 @@ function QuestDetailPage() {
   const diff = QUEST_DIFFICULTIES.find((d) => d.value === data.difficulty);
   const type = QUEST_TYPES.find((t) => t.value === data.quest_type);
 
+  const hasOpenSession = !!activeSession?.id && activeSession.status !== "completed" && activeSession.status !== "abandoned";
+  const rewardSpent = !!activeSession?.alreadyRewarded && !activeSession?.repeatable;
+  const ctaLabel = hasOpenSession ? "Resume Quest" : rewardSpent ? "Play Again · No XP" : "Start Quest";
+
   async function handleStart() {
     if (!user) {
       toast("Sign in to start this quest");
@@ -239,7 +243,9 @@ function QuestDetailPage() {
         <div className="mx-auto flex max-w-md items-center gap-3">
           <div className="min-w-0 flex-1">
             <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Reward</div>
-            <div className="text-sm font-semibold text-primary">+{data.reward_xp} XP</div>
+            <div className="text-sm font-semibold text-primary">
+              {rewardSpent ? "Already earned" : `+${data.reward_xp} XP`}
+            </div>
           </div>
           <Button
             size="lg"
@@ -248,7 +254,7 @@ function QuestDetailPage() {
             disabled={starting}
           >
             {starting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-2 h-4 w-4" />}
-            {activeSession && activeSession.status !== "completed" ? "Resume Quest" : activeSession?.status === "completed" ? "Play Again" : "Start Quest"}
+            {ctaLabel}
           </Button>
         </div>
       </div>

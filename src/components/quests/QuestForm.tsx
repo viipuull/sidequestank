@@ -35,6 +35,7 @@ export type QuestFormValues = {
   tags: string[];
   visibility: QuestVisibility;
   featured: boolean;
+  repeatable: boolean;
   objectives: {
     id?: string;
     title: string;
@@ -66,6 +67,7 @@ export const emptyForm: QuestFormValues = {
   tags: [],
   visibility: "public",
   featured: false,
+  repeatable: false,
   objectives: [],
 };
 
@@ -322,6 +324,15 @@ export function QuestForm({ value, onChange, onSubmit, submitting, submitLabel =
           <div className="flex items-end justify-between rounded-md border border-input bg-background px-3 py-2">
             <Label>Featured</Label>
             <Switch checked={value.featured} onCheckedChange={(c) => patch({ featured: c })} />
+          </div>
+          <div className="flex items-start justify-between gap-3 rounded-md border border-input bg-background px-3 py-2 sm:col-span-2">
+            <div>
+              <Label>Repeatable</Label>
+              <p className="mt-0.5 text-[11px] text-muted-foreground">
+                Off (recommended): XP is paid once per player. Replays are for fun only.
+              </p>
+            </div>
+            <Switch checked={value.repeatable} onCheckedChange={(c) => patch({ repeatable: c })} />
           </div>
         </div>
       </Section>

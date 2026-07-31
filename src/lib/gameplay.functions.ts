@@ -87,7 +87,7 @@ export const getSessionState = createServerFn({ method: "GET" })
 
     const { data: quest, error: qErr } = await sb
       .from("quests")
-      .select("id, title, slug, short_description, cover_image_url, reward_xp, city, estimated_minutes, category")
+      .select("id, title, slug, short_description, cover_image_url, reward_xp, city, estimated_minutes, category, repeatable")
       .eq("id", session.quest_id)
       .maybeSingle();
     if (qErr) throw qErr;
@@ -126,7 +126,25 @@ export const getActiveSessionForQuest = createServerFn({ method: "GET" })
       .order("last_activity_at", { ascending: false })
       .limit(1)
       .maybeSingle();
-    return session ?? null;
+    // Has this player already been paid for this quest? Used by the UI to show
+    // an honest "replay for fun, no XP" state instead of promising XP twice.
+    const { data: paid } = await context.supabase
+      .from("xp_events")
+      .select("id")
+      .eq("user_id", context.userId)
+      .eq("quest_id", data.questId)
+      .eq("reason", "quest_completed")
+      .limit(1)
+      .maybeSingle();
+    const { data: quest } = await context.supabase
+      .from("quests")
+      .select("repeatable")
+      .eq("id", data.questId)
+      .maybeSingle();
+    if (!session) {
+      return { id: null as string | null, status: null as string | null, alreadyRewarded: !!paid, repeatable: !!quest?.repeatable };
+    }
+    return { ...session, alreadyRewarded: !!paid, repeatable: !!quest?.repeatable };
   });
 
 // ---- Submit / verify an objective ----
@@ -187,6 +205,12 @@ export const submitObjective = createServerFn({ method: "POST" })
       .maybeSingle();
     if (existingProgress?.status === "completed") {
       return { ok: true, alreadyCompleted: true };
+    }
+    // One submission at a time: while a photo is queued for review the player
+    // cannot send another one. A rejection reopens the objective (status goes
+    // back to `pending`), which is the only way to retry.
+    if (existingProgress?.status === "pending_review") {
+      throw new Error("This submission is already awaiting review. You'll be notified once it's checked.");
     }
 
     // Verify per type

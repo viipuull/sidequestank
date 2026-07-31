@@ -1588,6 +1588,7 @@ export type Database = {
           longitude: number | null
           published_at: string | null
           quest_type: Database["public"]["Enums"]["quest_type"]
+          repeatable: boolean
           reward_preview: string
           reward_xp: number
           short_description: string
@@ -1617,6 +1618,7 @@ export type Database = {
           longitude?: number | null
           published_at?: string | null
           quest_type?: Database["public"]["Enums"]["quest_type"]
+          repeatable?: boolean
           reward_preview?: string
           reward_xp?: number
           short_description?: string
@@ -1646,6 +1648,7 @@ export type Database = {
           longitude?: number | null
           published_at?: string | null
           quest_type?: Database["public"]["Enums"]["quest_type"]
+          repeatable?: boolean
           reward_preview?: string
           reward_xp?: number
           short_description?: string
