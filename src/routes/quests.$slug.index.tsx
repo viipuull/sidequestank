@@ -243,7 +243,9 @@ function QuestDetailPage() {
         <div className="mx-auto flex max-w-md items-center gap-3">
           <div className="min-w-0 flex-1">
             <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Reward</div>
-            <div className="text-sm font-semibold text-primary">+{data.reward_xp} XP</div>
+            <div className="text-sm font-semibold text-primary">
+              {rewardSpent ? "Already earned" : `+${data.reward_xp} XP`}
+            </div>
           </div>
           <Button
             size="lg"
@@ -252,7 +254,7 @@ function QuestDetailPage() {
             disabled={starting}
           >
             {starting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-2 h-4 w-4" />}
-            {activeSession && activeSession.status !== "completed" ? "Resume Quest" : activeSession?.status === "completed" ? "Play Again" : "Start Quest"}
+            {ctaLabel}
           </Button>
         </div>
       </div>
