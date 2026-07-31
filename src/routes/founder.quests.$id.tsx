@@ -59,6 +59,7 @@ function EditQuestPage() {
       tags: data.tags ?? [],
       visibility: data.visibility,
       featured: data.featured,
+      repeatable: (data as { repeatable?: boolean }).repeatable ?? false,
       objectives: (data.objectives ?? []).map((o) => ({
         id: o.id,
         title: o.title,
