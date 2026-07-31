@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { LoadingScreen } from "@/components/feedback/LoadingScreen";
 import { EmptyState } from "@/components/feedback/EmptyState";
+import { ErrorState } from "@/components/feedback/ErrorState";
 import { toast } from "sonner";
 import { Check, X, Camera, ExternalLink } from "lucide-react";
 import {
