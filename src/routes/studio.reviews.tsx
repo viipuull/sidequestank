@@ -34,9 +34,10 @@ function ReviewsPage() {
   const [tab, setTab] = useState<Tab>("pending_review");
   const listFn = useServerFn(listPhotoReviews);
   const qc = useQueryClient();
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["photo-reviews", tab],
     queryFn: () => listFn({ data: { status: tab, limit: 100 } }),
+    retry: 1,
   });
 
   return (
@@ -68,6 +69,12 @@ function ReviewsPage() {
 
       {isLoading ? (
         <LoadingScreen />
+      ) : isError ? (
+        <ErrorState
+          title="Couldn't load submissions"
+          description={error instanceof Error ? error.message : "The review queue failed to load."}
+          onRetry={() => void refetch()}
+        />
       ) : !data || data.length === 0 ? (
         <EmptyState icon={Camera} title="No submissions" description={tab === "pending_review" ? "You're all caught up." : "Nothing here yet."} />
       ) : (
