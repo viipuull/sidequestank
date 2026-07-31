@@ -87,7 +87,7 @@ export const getSessionState = createServerFn({ method: "GET" })
 
     const { data: quest, error: qErr } = await sb
       .from("quests")
-      .select("id, title, slug, short_description, cover_image_url, reward_xp, city, estimated_minutes, category")
+      .select("id, title, slug, short_description, cover_image_url, reward_xp, city, estimated_minutes, category, repeatable")
       .eq("id", session.quest_id)
       .maybeSingle();
     if (qErr) throw qErr;
@@ -187,6 +187,12 @@ export const submitObjective = createServerFn({ method: "POST" })
       .maybeSingle();
     if (existingProgress?.status === "completed") {
       return { ok: true, alreadyCompleted: true };
+    }
+    // One submission at a time: while a photo is queued for review the player
+    // cannot send another one. A rejection reopens the objective (status goes
+    // back to `pending`), which is the only way to retry.
+    if (existingProgress?.status === "pending_review") {
+      throw new Error("This submission is already awaiting review. You'll be notified once it's checked.");
     }
 
     // Verify per type
