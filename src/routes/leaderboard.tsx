@@ -61,13 +61,17 @@ function LeaderboardPage() {
   const listQ = useQuery({
     queryKey: ["leaderboard", scope, scopeKey, period, periodKey, query],
     queryFn: () => fetchLb({ data: { scope, scope_key: scopeKey, period, period_key: periodKey, limit: 100, offset: 0, query: query || undefined } }),
-    staleTime: 60_000,
+    staleTime: 15_000,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
   });
   const myQ = useQuery({
     queryKey: ["my-rank", user?.id, scope, scopeKey, period, periodKey],
     enabled: !!user?.id,
     queryFn: () => fetchMy({ data: { user_id: user!.id, scope, scope_key: scopeKey, period, period_key: periodKey } }),
-    staleTime: 60_000,
+    staleTime: 15_000,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
   });
 
   return (
