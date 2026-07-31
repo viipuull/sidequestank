@@ -75,6 +75,10 @@ function QuestDetailPage() {
   const diff = QUEST_DIFFICULTIES.find((d) => d.value === data.difficulty);
   const type = QUEST_TYPES.find((t) => t.value === data.quest_type);
 
+  const hasOpenSession = !!activeSession?.id && activeSession.status !== "completed" && activeSession.status !== "abandoned";
+  const rewardSpent = !!activeSession?.alreadyRewarded && !activeSession?.repeatable;
+  const ctaLabel = hasOpenSession ? "Resume Quest" : rewardSpent ? "Play Again · No XP" : "Start Quest";
+
   async function handleStart() {
     if (!user) {
       toast("Sign in to start this quest");
