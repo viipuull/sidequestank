@@ -126,7 +126,25 @@ export const getActiveSessionForQuest = createServerFn({ method: "GET" })
       .order("last_activity_at", { ascending: false })
       .limit(1)
       .maybeSingle();
-    return session ?? null;
+    // Has this player already been paid for this quest? Used by the UI to show
+    // an honest "replay for fun, no XP" state instead of promising XP twice.
+    const { data: paid } = await context.supabase
+      .from("xp_events")
+      .select("id")
+      .eq("user_id", context.userId)
+      .eq("quest_id", data.questId)
+      .eq("reason", "quest_completed")
+      .limit(1)
+      .maybeSingle();
+    const { data: quest } = await context.supabase
+      .from("quests")
+      .select("repeatable")
+      .eq("id", data.questId)
+      .maybeSingle();
+    if (!session) {
+      return { id: null as string | null, status: null as string | null, alreadyRewarded: !!paid, repeatable: !!quest?.repeatable };
+    }
+    return { ...session, alreadyRewarded: !!paid, repeatable: !!quest?.repeatable };
   });
 
 // ---- Submit / verify an objective ----
