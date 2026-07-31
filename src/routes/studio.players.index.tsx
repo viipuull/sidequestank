@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { EmptyState } from "@/components/feedback";
+import { EmptyState, ErrorState } from "@/components/feedback";
 
 export const Route = createFileRoute("/studio/players/")({
   component: PlayersIndex,
@@ -28,9 +28,10 @@ function PlayersIndex() {
 
   const filters = { search, onlySuspended, onlyHidden, onlyPioneer, onlyFounder,
     minLevel: minLevel ? Number(minLevel) : undefined, limit: pageSize, offset: page * pageSize };
-  const { data, isLoading, isFetching } = useQuery({
+  const { data, isLoading, isFetching, isError, error, refetch } = useQuery({
     queryKey: ["admin-players", filters],
     queryFn: () => list({ data: filters }),
+    retry: 1,
   });
 
   return (
@@ -71,6 +72,14 @@ function PlayersIndex() {
       <Card className="overflow-hidden">
         {isLoading ? (
           <div className="p-12 grid place-items-center"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
+        ) : isError ? (
+          <div className="p-6">
+            <ErrorState
+              title="Couldn't load players"
+              description={error instanceof Error ? error.message : "The player list failed to load."}
+              onRetry={() => void refetch()}
+            />
+          </div>
         ) : (data ?? []).length === 0 ? (
           <EmptyState title="No players found" description="Try adjusting search or filters." />
         ) : (
