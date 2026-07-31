@@ -82,6 +82,7 @@ export function toPayload(v: QuestFormValues) {
     tags: v.tags,
     visibility: v.visibility,
     featured: v.featured,
+    repeatable: v.repeatable,
     objectives: v.objectives.map((o, i) => ({
       title: o.title.trim(),
       description: o.description,
