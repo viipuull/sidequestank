@@ -16,7 +16,7 @@ export function TitleBadge({
     <motion.span
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      className={`inline-flex items-center gap-1 rounded-full border font-semibold ${style.ring} ${pad}`}
+      className={`title-glow inline-flex items-center gap-1 rounded-full border font-semibold ${style.ring} ${pad}`}
       style={{
         background: style.bg,
         color: color ?? style.text,

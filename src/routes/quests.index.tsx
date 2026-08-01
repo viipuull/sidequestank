@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Compass, Loader2, Search, Sparkles } from "lucide-react";
+import { Compass, Search, Sparkles } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { QuestCard } from "@/components/quests/QuestCard";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { listPublishedQuests } from "@/lib/quests.functions";
 import { QUEST_CATEGORIES, QUEST_DIFFICULTIES } from "@/lib/quests.types";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { QuestGridSkeleton } from "@/components/feedback";
 
 export const Route = createFileRoute("/quests/")({
   head: () => ({
@@ -107,9 +108,7 @@ function QuestsFeedPage() {
         </header>
 
         {isLoading ? (
-          <div className="grid place-items-center py-16">
-            <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          </div>
+          <QuestGridSkeleton count={3} />
         ) : !data || data.length === 0 ? (
           <EmptyState />
         ) : (

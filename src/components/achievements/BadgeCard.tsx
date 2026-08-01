@@ -29,10 +29,11 @@ export function BadgeCard({
 
   const inner = (
     <motion.div
-      whileHover={{ y: -2 }}
+      whileHover={{ y: -3, scale: 1.01 }}
       whileTap={{ scale: 0.98 }}
+      transition={{ type: "spring", stiffness: 400, damping: 26 }}
       className={`relative overflow-hidden rounded-2xl border p-4 backdrop-blur transition ${style.ring} ${
-        completed ? "" : "opacity-90"
+        completed ? "badge-shimmer" : "opacity-90"
       }`}
       style={{
         background: completed

@@ -8,7 +8,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { EmptyState, LoadingScreen } from "@/components/feedback";
+import { EmptyState, ListSkeleton } from "@/components/feedback";
 import {
   listPublicCollections,
   myCollections,
@@ -129,7 +129,9 @@ function CollectionsGallery() {
       </div>
 
       {listQ.isLoading ? (
-        <LoadingScreen label="Loading collections" fullscreen={false} />
+        <div className="mt-5">
+          <ListSkeleton count={5} label="Loading collections" />
+        </div>
       ) : filtered.length === 0 ? (
         <div className="mt-10">
           {(listQ.data ?? []).length === 0 ? (

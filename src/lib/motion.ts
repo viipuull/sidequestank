@@ -37,3 +37,41 @@ export const pageTransition: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.22, ease: [0.2, 0.7, 0.2, 1] } },
   exit: { opacity: 0, y: -6, transition: { duration: 0.15, ease: [0.4, 0, 1, 1] } },
 };
+
+export const easings = {
+  premium: [0.2, 0.7, 0.2, 1] as const,
+  exit: [0.4, 0, 1, 1] as const,
+};
+
+export const durations = { fast: 0.14, base: 0.22, slow: 0.42 };
+
+/** Fade + rise + a touch of blur. The house reveal. */
+export const fadeBlurUp: Variants = {
+  hidden: { opacity: 0, y: 14, filter: "blur(6px)" },
+  show: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.38, ease: easings.premium },
+  },
+};
+
+export const heroReveal: Variants = {
+  hidden: { opacity: 0, y: 24, scale: 0.985 },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.5, ease: easings.premium },
+  },
+};
+
+export const listStagger = stagger(0.04, 0.055);
+
+export const cardHover = {
+  rest: { y: 0, scale: 1 },
+  hover: { y: -3, scale: 1.015, transition: springs.snappy },
+  tap: { scale: 0.985, transition: springs.snappy },
+};
+
+export const pressTap = { scale: 0.96, transition: springs.snappy };

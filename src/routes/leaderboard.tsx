@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { Search, Trophy, Users } from "lucide-react";
 import { AuthGate } from "@/components/layout/AuthGate";
 import { AppShell } from "@/components/layout/AppShell";
-import { EmptyState, LoadingScreen, ErrorState } from "@/components/feedback";
+import { EmptyState, ErrorState, ListSkeleton } from "@/components/feedback";
 import { LeaderboardRow } from "@/components/social/LeaderboardRow";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useProfile } from "@/lib/hooks/useProfile";
@@ -118,7 +118,7 @@ function LeaderboardPage() {
       )}
 
       <div className="mt-5 space-y-2">
-        {listQ.isPending && <LoadingScreen label="Loading leaderboard" fullscreen={false} />}
+        {listQ.isPending && <ListSkeleton count={7} label="Loading leaderboard" />}
         {listQ.isError && !listQ.isPending && (
           <ErrorState title="Couldn't load leaderboard" description={(listQ.error as Error)?.message ?? "Please try again."} onRetry={() => listQ.refetch()} />
         )}

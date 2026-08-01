@@ -42,7 +42,7 @@ export function TitleUnlockOverlay({
           initial={{ scale: 0.85, y: 30, opacity: 0 }}
           animate={{ scale: 1, y: 0, opacity: 1 }}
           transition={{ type: "spring", damping: 18, stiffness: 220 }}
-          className={`w-full max-w-sm rounded-3xl border p-6 text-center shadow-2xl ${s.ring}`}
+          className={`card-shine relative w-full max-w-sm rounded-3xl border p-6 text-center shadow-2xl ${s.ring}`}
           style={{ background: `linear-gradient(180deg, ${s.bg}, oklch(0.14 0.02 260))`, boxShadow: s.glow }}
         >
           <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: first.color ?? s.text }}>
@@ -51,7 +51,7 @@ export function TitleUnlockOverlay({
           <motion.div
             initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }}
             transition={{ type: "spring", damping: 12, delay: 0.1 }}
-            className="mx-auto mt-3 grid h-24 w-24 place-items-center rounded-full border text-5xl"
+            className="badge-shimmer mx-auto mt-3 grid h-24 w-24 place-items-center rounded-full border text-5xl"
             style={{ borderColor: first.color ?? s.text, boxShadow: s.glow, background: s.bg }}
           >
             {first.icon}

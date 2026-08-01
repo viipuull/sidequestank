@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Search, Sparkles } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
+import { ListSkeleton } from "@/components/feedback";
 import { AuthGate } from "@/components/layout/AuthGate";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/hooks/useAuth";
@@ -133,7 +134,9 @@ function AchievementsPage() {
         </div>
 
         {isLoading ? (
-          <p className="mt-8 text-center text-sm text-muted-foreground">Loading…</p>
+          <div className="mt-4">
+            <ListSkeleton count={6} label="Loading achievements" />
+          </div>
         ) : list.length === 0 ? (
           <p className="mt-8 text-center text-sm text-muted-foreground">
             No achievements match those filters.
