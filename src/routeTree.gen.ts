@@ -37,10 +37,12 @@ import { Route as QuestsIndexRouteImport } from './routes/quests.index'
 import { Route as PlayersIndexRouteImport } from './routes/players.index'
 import { Route as FounderIndexRouteImport } from './routes/founder.index'
 import { Route as StudioReviewsRouteImport } from './routes/studio.reviews'
+import { Route as StudioNotificationsRouteImport } from './routes/studio.notifications'
 import { Route as StudioMediaRouteImport } from './routes/studio.media'
 import { Route as StudioAuditRouteImport } from './routes/studio.audit'
 import { Route as SettingsSocialRouteImport } from './routes/settings.social'
 import { Route as SettingsProfileRouteImport } from './routes/settings.profile'
+import { Route as SettingsNotificationsRouteImport } from './routes/settings.notifications'
 import { Route as PlayersUsernameRouteImport } from './routes/players.$username'
 import { Route as FounderTitlesRouteImport } from './routes/founder.titles'
 import { Route as FounderSocialRouteImport } from './routes/founder.social'
@@ -202,6 +204,11 @@ const StudioReviewsRoute = StudioReviewsRouteImport.update({
   path: '/reviews',
   getParentRoute: () => StudioRoute,
 } as any)
+const StudioNotificationsRoute = StudioNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => StudioRoute,
+} as any)
 const StudioMediaRoute = StudioMediaRouteImport.update({
   id: '/media',
   path: '/media',
@@ -220,6 +227,11 @@ const SettingsSocialRoute = SettingsSocialRouteImport.update({
 const SettingsProfileRoute = SettingsProfileRouteImport.update({
   id: '/settings/profile',
   path: '/settings/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsNotificationsRoute = SettingsNotificationsRouteImport.update({
+  id: '/settings/notifications',
+  path: '/settings/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlayersUsernameRoute = PlayersUsernameRouteImport.update({
@@ -357,10 +369,12 @@ export interface FileRoutesByFullPath {
   '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
+  '/settings/notifications': typeof SettingsNotificationsRoute
   '/settings/profile': typeof SettingsProfileRoute
   '/settings/social': typeof SettingsSocialRoute
   '/studio/audit': typeof StudioAuditRoute
   '/studio/media': typeof StudioMediaRoute
+  '/studio/notifications': typeof StudioNotificationsRoute
   '/studio/reviews': typeof StudioReviewsRoute
   '/founder/': typeof FounderIndexRoute
   '/players/': typeof PlayersIndexRoute
@@ -409,10 +423,12 @@ export interface FileRoutesByTo {
   '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
+  '/settings/notifications': typeof SettingsNotificationsRoute
   '/settings/profile': typeof SettingsProfileRoute
   '/settings/social': typeof SettingsSocialRoute
   '/studio/audit': typeof StudioAuditRoute
   '/studio/media': typeof StudioMediaRoute
+  '/studio/notifications': typeof StudioNotificationsRoute
   '/studio/reviews': typeof StudioReviewsRoute
   '/founder': typeof FounderIndexRoute
   '/players': typeof PlayersIndexRoute
@@ -464,10 +480,12 @@ export interface FileRoutesById {
   '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
+  '/settings/notifications': typeof SettingsNotificationsRoute
   '/settings/profile': typeof SettingsProfileRoute
   '/settings/social': typeof SettingsSocialRoute
   '/studio/audit': typeof StudioAuditRoute
   '/studio/media': typeof StudioMediaRoute
+  '/studio/notifications': typeof StudioNotificationsRoute
   '/studio/reviews': typeof StudioReviewsRoute
   '/founder/': typeof FounderIndexRoute
   '/players/': typeof PlayersIndexRoute
@@ -520,10 +538,12 @@ export interface FileRouteTypes {
     | '/founder/social'
     | '/founder/titles'
     | '/players/$username'
+    | '/settings/notifications'
     | '/settings/profile'
     | '/settings/social'
     | '/studio/audit'
     | '/studio/media'
+    | '/studio/notifications'
     | '/studio/reviews'
     | '/founder/'
     | '/players/'
@@ -572,10 +592,12 @@ export interface FileRouteTypes {
     | '/founder/social'
     | '/founder/titles'
     | '/players/$username'
+    | '/settings/notifications'
     | '/settings/profile'
     | '/settings/social'
     | '/studio/audit'
     | '/studio/media'
+    | '/studio/notifications'
     | '/studio/reviews'
     | '/founder'
     | '/players'
@@ -626,10 +648,12 @@ export interface FileRouteTypes {
     | '/founder/social'
     | '/founder/titles'
     | '/players/$username'
+    | '/settings/notifications'
     | '/settings/profile'
     | '/settings/social'
     | '/studio/audit'
     | '/studio/media'
+    | '/studio/notifications'
     | '/studio/reviews'
     | '/founder/'
     | '/players/'
@@ -672,6 +696,7 @@ export interface RootRouteChildren {
   WelcomeRoute: typeof WelcomeRoute
   XpHistoryRoute: typeof XpHistoryRoute
   PlayersUsernameRoute: typeof PlayersUsernameRouteWithChildren
+  SettingsNotificationsRoute: typeof SettingsNotificationsRoute
   SettingsProfileRoute: typeof SettingsProfileRoute
   SettingsSocialRoute: typeof SettingsSocialRoute
   PlayersIndexRoute: typeof PlayersIndexRoute
@@ -880,6 +905,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudioReviewsRouteImport
       parentRoute: typeof StudioRoute
     }
+    '/studio/notifications': {
+      id: '/studio/notifications'
+      path: '/notifications'
+      fullPath: '/studio/notifications'
+      preLoaderRoute: typeof StudioNotificationsRouteImport
+      parentRoute: typeof StudioRoute
+    }
     '/studio/media': {
       id: '/studio/media'
       path: '/media'
@@ -906,6 +938,13 @@ declare module '@tanstack/react-router' {
       path: '/settings/profile'
       fullPath: '/settings/profile'
       preLoaderRoute: typeof SettingsProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/notifications': {
+      id: '/settings/notifications'
+      path: '/settings/notifications'
+      fullPath: '/settings/notifications'
+      preLoaderRoute: typeof SettingsNotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/players/$username': {
@@ -1137,6 +1176,7 @@ const FounderRouteWithChildren =
 interface StudioRouteChildren {
   StudioAuditRoute: typeof StudioAuditRoute
   StudioMediaRoute: typeof StudioMediaRoute
+  StudioNotificationsRoute: typeof StudioNotificationsRoute
   StudioReviewsRoute: typeof StudioReviewsRoute
   StudioIndexRoute: typeof StudioIndexRoute
   StudioPlayersUserIdRoute: typeof StudioPlayersUserIdRoute
@@ -1146,6 +1186,7 @@ interface StudioRouteChildren {
 const StudioRouteChildren: StudioRouteChildren = {
   StudioAuditRoute: StudioAuditRoute,
   StudioMediaRoute: StudioMediaRoute,
+  StudioNotificationsRoute: StudioNotificationsRoute,
   StudioReviewsRoute: StudioReviewsRoute,
   StudioIndexRoute: StudioIndexRoute,
   StudioPlayersUserIdRoute: StudioPlayersUserIdRoute,
@@ -1191,6 +1232,7 @@ const rootRouteChildren: RootRouteChildren = {
   WelcomeRoute: WelcomeRoute,
   XpHistoryRoute: XpHistoryRoute,
   PlayersUsernameRoute: PlayersUsernameRouteWithChildren,
+  SettingsNotificationsRoute: SettingsNotificationsRoute,
   SettingsProfileRoute: SettingsProfileRoute,
   SettingsSocialRoute: SettingsSocialRoute,
   PlayersIndexRoute: PlayersIndexRoute,

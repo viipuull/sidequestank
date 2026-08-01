@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard, Users, Radio, Trophy, ListChecks, History, Sparkles, UserCog,
-  Compass, Award, Image as ImageIcon, Camera,
+  Compass, Award, Image as ImageIcon, Camera, Bell,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -29,6 +29,7 @@ const content: Item[] = [
 
 const ops: Item[] = [
   { title: "LiveOps", url: "/founder/liveops", icon: Radio },
+  { title: "Notifications", url: "/studio/notifications", icon: Bell },
   { title: "Social", url: "/founder/social", icon: Users },
 ];
 
