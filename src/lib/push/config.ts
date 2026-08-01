@@ -1,14 +1,22 @@
-/** Firebase Web config — publishable values, supplied via env vars. */
+/**
+ * Firebase Web config — these are PUBLISHABLE values (they ship in every
+ * Firebase web app's bundle), so they live in code rather than in secrets.
+ * Paste the values from Firebase console → Project settings → Your apps,
+ * and the VAPID key from Cloud Messaging → Web Push certificates.
+ * The private service-account credential stays server-side in
+ * FIREBASE_SERVICE_ACCOUNT_JSON and is never exposed here.
+ */
 export const firebaseConfig = {
-  apiKey: import.meta.env['VITE_FIREBASE_API_KEY'] ?? "",
-  authDomain: import.meta.env['VITE_FIREBASE_AUTH_DOMAIN'] ?? "",
-  projectId: import.meta.env['VITE_FIREBASE_PROJECT_ID'] ?? "",
-  storageBucket: import.meta.env['VITE_FIREBASE_STORAGE_BUCKET'] ?? "",
-  messagingSenderId: import.meta.env['VITE_FIREBASE_MESSAGING_SENDER_ID'] ?? "",
-  appId: import.meta.env['VITE_FIREBASE_APP_ID'] ?? "",
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: "",
 };
 
-export const vapidKey = import.meta.env['VITE_FIREBASE_VAPID_KEY'] ?? "";
+/** Cloud Messaging → Web Push certificates → Key pair (public). */
+export const vapidKey = "";
 
 export const pushConfigured =
   Boolean(firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.messagingSenderId && vapidKey);
