@@ -133,7 +133,9 @@ function AchievementsPage() {
         </div>
 
         {isLoading ? (
-          <p className="mt-8 text-center text-sm text-muted-foreground">Loading…</p>
+          <div className="mt-4">
+            <ListSkeleton count={6} label="Loading achievements" />
+          </div>
         ) : list.length === 0 ? (
           <p className="mt-8 text-center text-sm text-muted-foreground">
             No achievements match those filters.
