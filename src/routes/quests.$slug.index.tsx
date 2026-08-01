@@ -101,7 +101,14 @@ function QuestDetailPage() {
       {/* Hero */}
       <div className="relative h-72 w-full overflow-hidden">
         {data.cover_image_url ? (
-          <img src={data.cover_image_url} alt={data.title} className="h-full w-full object-cover" />
+          <motion.img
+            src={data.cover_image_url}
+            alt={data.title}
+            className="h-full w-full object-cover"
+            initial={{ scale: 1.12, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 1.1, ease: [0.2, 0.7, 0.2, 1] }}
+          />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/40 via-fuchsia-500/25 to-transparent text-7xl">
             {cat?.emoji ?? "🧭"}
@@ -194,9 +201,12 @@ function QuestDetailPage() {
               {data.objectives.map((o, i) => {
                 const t = OBJECTIVE_TYPES.find((x) => x.value === o.objective_type);
                 return (
-                  <li
+                  <motion.li
                     key={o.id}
-                    className="flex items-start gap-3 rounded-2xl border border-border/50 bg-background/40 p-3"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.05 * i, duration: 0.32, ease: [0.2, 0.7, 0.2, 1] }}
+                    className="flex items-start gap-3 rounded-2xl border border-border/50 bg-background/40 p-3 transition-colors duration-200 hover:border-primary/40"
                   >
                     <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/15 text-xs font-bold text-primary">
                       {i + 1}
