@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Search, Sparkles } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
+import { ListSkeleton } from "@/components/feedback";
 import { AuthGate } from "@/components/layout/AuthGate";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/hooks/useAuth";
