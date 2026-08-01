@@ -1,38 +1,62 @@
-## What's actually wrong
+# SideQuest — Game Feel & Immersion Pass
 
-I checked the live data. This is confirmed, not a guess:
+Goal: make every screen feel alive and cinematic without hurting usability or performance. The project already has the raw pieces (`src/lib/motion.ts`, `Reveal`, `StaggerList`, `PageTransition`, `CountUp`, `useHaptic`), but most screens don't use them. This pass turns those pieces into a consistent, applied motion language.
 
-- Your progress is correct everywhere: `sidequest` is level 2 / 200 XP / 2 quests in both `player_progress` and `player_stats` (updated today).
-- The leaderboard does NOT read those tables. It reads a snapshot table that was last computed on **2026-07-25** — six days ago — when everyone was level 1 / 0 XP. That's exactly why the board shows level 1.
-- Nothing ever recomputes it. The recompute routine exists but is only callable manually from Studio; the LiveOps tick doesn't call it and nothing schedules it.
-- Worse: the weekly board is keyed `2026-W30`. We're now in W31, so the weekly tab currently reads an empty key and shows nothing.
-- One player (`bigboyshoubhit`) has no stats row at all, so they can never appear on any board.
+## 1. Motion foundation (tokens + utilities)
 
-## The fix
+- Extend `src/styles.css` with immersion tokens and keyframes: `shine-sweep`, `shimmer`, `aurora-drift`, `breathe`, `ring-pulse`, plus `--ease-premium` and duration tokens. All colors stay on existing oklch tokens (purple primary / gold accent).
+- Add utility classes: `.card-shine`, `.badge-shimmer`, `.title-glow`, `.ambient-layer`, `.skeleton-shimmer`.
+- Every animation wrapped in `@media (prefers-reduced-motion: reduce)` off-switches.
+- Expand `src/lib/motion.ts` with shared variants: `fadeBlurUp`, `heroReveal`, `listStagger`, `cardHover`, `pressTap`, and standard durations so nothing is hand-tuned per file.
 
-**1. Leaderboards refresh themselves**
-- Recompute is triggered automatically whenever XP is awarded / a quest is completed, so the board reflects reality within seconds of a player finishing a quest.
-- Plus a safety net on read: if the requested board is missing or older than ~2 minutes, the read path recomputes it before returning. This kills the "new week = empty board" problem permanently, since the current week/month key gets built on first view.
-- Recompute stays throttled so a burst of views can't hammer the database.
+## 2. Ambient live background
 
-**2. Backfill now**
-- Recompute all default boards (all-time, weekly W31, monthly 2026-07, seasonal, city) immediately so today's board is correct the moment this ships.
-- Create the missing stats rows for any player who has a profile but no stats/progress row, so nobody is invisible.
+- New `src/components/motion/AmbientBackground.tsx`: two very slow drifting radial gradient blobs (purple + gold, low opacity) plus faint noise overlay, GPU-only transforms, `pointer-events-none`, fixed behind content.
+- Mounted once in `AppShell` (and the auth/onboarding `ScreenShell`) so the world always breathes. Disabled under reduced motion.
 
-**3. Keep stats rows from going missing**
-- Ensure a stats + progress row is created when a profile is created, not only when XP is first earned.
+## 3. Page transitions
 
-**4. Small consistency pass on what the board shows**
-- Leaderboard rows show the same level/XP source as the profile and Home XP bar, and "your rank" card refreshes with the list instead of caching a stale rank.
-- Cache invalidation after quest completion so Home, Profile and Leaderboard all update together without a manual refresh.
+- Upgrade `PageTransition` to fade + 8px rise + slight blur-out on exit, using the premium easing, ~220ms in / 140ms out. Keeps existing route-key logic and reduced-motion bypass.
+
+## 4. Scroll choreography
+
+Apply `Reveal` / `StaggerList` (once-only, IntersectionObserver based) to the main content sections of:
+- `/home` (stat tiles, quick links, rails, prizes card)
+- `/quests` (card grid)
+- `/leaderboard` (rows)
+- `/collections`, `/achievements`, `/titles` (galleries)
+- `/players/$username`, `/profile`
+
+All numeric stats (XP, level, rank, streaks, counts) switch to `CountUp`.
+
+## 5. Interaction feel
+
+- `QuestCard`: becomes a collectible-card component — hover lift + 1.02 scale + border glow, subtle pointer-based tilt on devices with a fine pointer, occasional slow shine sweep, image parallax/zoom, press-scale + haptic tick on tap.
+- Buttons (`src/components/ui/button.tsx`): unified press spring, soft glow on primary, smooth color transition; keep all variants/API unchanged.
+- Icons in nav and action rows: gentle spring bounce/rotate on activation.
+- Bottom nav: keep `layoutId` pill, add glow ring and springier morph.
+
+## 6. Reward moments
+
+- Level up: ring pulse + glow burst around the XP bar (`XpBar` gets an `onLevelUp` pulse state).
+- XP earned: count-up plus a floating "+XP" chip.
+- Achievement / title unlock overlays: add a shine sweep across the badge on top of existing confetti.
+- Quest completion: confetti (already present) plus a light sweep across the completion card.
+- Badges shimmer on a slow ~25s loop; titles get a soft glow.
+- Success toasts for Saved / Published / Uploaded / Verified / Claimed get a check-draw animation.
+
+## 7. Loading states
+
+- New `src/components/feedback/Skeletons.tsx` with shimmering skeletons for quest cards, leaderboard rows, stat tiles, and profile headers.
+- Replace bare `LoadingScreen` spinners on `/home`, `/quests`, `/leaderboard`, `/collections`, `/profile`, and Studio list pages with matching skeletons that cross-fade into loaded content. `LoadingScreen` stays for full-route auth gating only.
+
+## 8. Studio (admin)
+
+Lighter touch: page transitions, list stagger, table row hover, button press feedback, and skeletons — no ambient background, so the admin stays fast and utilitarian.
 
 ## Technical notes
 
-- Migration: add a trigger on `xp_events` (and quest-completion path) that calls `recompute_default_leaderboards()`, guarded by a short throttle using `max(computed_at)`; make `compute_leaderboard` tolerant of a missing active season; add profile-creation trigger for `player_stats` / `player_progress`.
-- `src/lib/leaderboards.functions.ts`: before querying `leaderboard_snapshots`, call a new `ensure_leaderboard(scope, scope_key, period, period_key)` security-definer RPC that computes-if-stale, then read as today.
-- Data backfill for existing players via the insert tool (not a migration).
-- Front end: invalidate leaderboard/profile/progress query keys after quest completion.
-
-## On "there are a lot of small things"
-
-I'll fix these leaderboard issues in this pass. Send me the next batch (or just describe what looked wrong on a screen) and I'll keep knocking them out one sprint at a time — same as this.
+- All motion via Framer Motion transforms/opacity only (no layout thrash); ambient layers use `will-change: transform` and long durations to stay at 60 FPS.
+- Every animated component respects `useReducedMotion()` / the CSS media query.
+- No business logic, data fetching, RLS, or schema changes — presentation layer only.
+- Verification: typecheck plus a Playwright pass on `/`, `/home`, `/quests`, `/leaderboard`, `/profile` at 360px to confirm no console errors, no layout shift, and content visible after reveals.
