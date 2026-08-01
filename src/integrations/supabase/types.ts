@@ -925,6 +925,75 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_templates: {
+        Row: {
+          action_label: string | null
+          action_url: string | null
+          body: string
+          built_in: boolean
+          category: string
+          created_at: string
+          created_by: string | null
+          deep_link: string
+          display_order: number
+          favorite: boolean
+          icon: string
+          id: string
+          kind: Database["public"]["Enums"]["push_kind"]
+          name: string
+          priority: string
+          requires_confirm: boolean
+          slug: string
+          title: string
+          updated_at: string
+          variations: string[]
+        }
+        Insert: {
+          action_label?: string | null
+          action_url?: string | null
+          body: string
+          built_in?: boolean
+          category: string
+          created_at?: string
+          created_by?: string | null
+          deep_link?: string
+          display_order?: number
+          favorite?: boolean
+          icon?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["push_kind"]
+          name: string
+          priority?: string
+          requires_confirm?: boolean
+          slug: string
+          title: string
+          updated_at?: string
+          variations?: string[]
+        }
+        Update: {
+          action_label?: string | null
+          action_url?: string | null
+          body?: string
+          built_in?: boolean
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          deep_link?: string
+          display_order?: number
+          favorite?: boolean
+          icon?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["push_kind"]
+          name?: string
+          priority?: string
+          requires_confirm?: boolean
+          slug?: string
+          title?: string
+          updated_at?: string
+          variations?: string[]
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           body: string
@@ -1494,6 +1563,7 @@ export type Database = {
           id: string
           image_url: string | null
           kind: Database["public"]["Enums"]["push_kind"]
+          open_count: number
           recipients_count: number
           scheduled_at: string | null
           sent_at: string | null
@@ -1517,6 +1587,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           kind?: Database["public"]["Enums"]["push_kind"]
+          open_count?: number
           recipients_count?: number
           scheduled_at?: string | null
           sent_at?: string | null
@@ -1540,6 +1611,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           kind?: Database["public"]["Enums"]["push_kind"]
+          open_count?: number
           recipients_count?: number
           scheduled_at?: string | null
           sent_at?: string | null
@@ -1553,6 +1625,7 @@ export type Database = {
       push_deliveries: {
         Row: {
           campaign_id: string
+          clicked_at: string | null
           created_at: string
           error: string | null
           id: string
@@ -1562,6 +1635,7 @@ export type Database = {
         }
         Insert: {
           campaign_id: string
+          clicked_at?: string | null
           created_at?: string
           error?: string | null
           id?: string
@@ -1571,6 +1645,7 @@ export type Database = {
         }
         Update: {
           campaign_id?: string
+          clicked_at?: string | null
           created_at?: string
           error?: string | null
           id?: string
@@ -2145,6 +2220,7 @@ export type Database = {
         }
         Returns: string
       }
+      record_push_open: { Args: { _campaign_id: string }; Returns: boolean }
       remove_title: {
         Args: { _title_id: string; _user_id: string }
         Returns: boolean
