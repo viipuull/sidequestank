@@ -25,7 +25,7 @@ export type NotificationTemplate = {
   kind: PushKind;
   priority: PushPriority;
   deep_link: string;
-  action_label?: string;
+  action_label?: string | null;
   action_url?: string | null;
   variations?: string[];
   requires_confirm?: boolean;
