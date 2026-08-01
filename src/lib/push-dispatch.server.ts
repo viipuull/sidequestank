@@ -77,11 +77,16 @@ export async function runCampaign(campaignId: string) {
       tokens = rows ?? [];
     }
 
+    const deepLinkBase = campaign.deep_link || "/home";
+    const trackedLink = deepLinkBase.includes("sqc=")
+      ? deepLinkBase
+      : `${deepLinkBase}${deepLinkBase.includes("?") ? "&" : "?"}sqc=${campaignId}`;
+
     const payload: PushPayload = {
       title: campaign.title,
       body: campaign.body,
       image: campaign.image_url,
-      deep_link: campaign.deep_link || "/home",
+      deep_link: trackedLink,
       action_label: campaign.action_label,
       action_url: campaign.action_url,
       kind: campaign.kind,
