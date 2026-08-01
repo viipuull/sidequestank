@@ -18,6 +18,10 @@ import { RARITY_STYLES } from "@/lib/hooks/useTitles";
 import { LiveOpsRail } from "@/components/home/LiveOpsRail";
 import { AnnouncementBanner } from "@/components/home/AnnouncementBanner";
 import { useUnreadNotifCount } from "@/lib/hooks/useLiveOps";
+import { Reveal } from "@/components/motion/Reveal";
+import { StaggerList } from "@/components/motion/StaggerList";
+import { CountUp } from "@/components/motion/CountUp";
+import { heroReveal } from "@/lib/motion";
 
 export const Route = createFileRoute("/home")({
   head: () => ({
@@ -120,15 +124,18 @@ function HomeInner() {
       <motion.section
         className="mt-5 overflow-hidden rounded-3xl border border-border p-5"
         style={{ background: "var(--gradient-hero)", boxShadow: "var(--shadow-elevated)" }}
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
+        variants={heroReveal}
+        initial="hidden"
+        animate="show"
       >
         <div className="flex items-center justify-between text-primary-foreground">
           <div>
             <p className="text-xs uppercase tracking-wider opacity-80">Explorer</p>
             <p className="text-lg font-bold">Level {p.level}</p>
           </div>
-          <p className="text-sm opacity-90">{lifetimeXp} total XP</p>
+          <p className="text-sm opacity-90">
+            <CountUp value={lifetimeXp} /> total XP
+          </p>
         </div>
         <XpBar
           level={p.level}
@@ -140,16 +147,16 @@ function HomeInner() {
 
       <LiveOpsRail />
 
-      <section className="mt-5 grid grid-cols-2 gap-3">
-        <StatCard icon={<Sparkles className="h-5 w-5 text-primary" />} label="Level" value={String(p.level)} />
-        <StatCard icon={<Star className="h-5 w-5 text-accent" />} label="XP" value={String(lifetimeXp)} />
-        <StatCard icon={<Compass className="h-5 w-5 text-primary" />} label="Quests" value={String(questsDone)} />
+      <StaggerList as="div" className="mt-5 grid grid-cols-2 gap-3">
+        <StatCard icon={<Sparkles className="h-5 w-5 text-primary" />} label="Level" value={p.level} />
+        <StatCard icon={<Star className="h-5 w-5 text-accent" />} label="XP" value={lifetimeXp} />
+        <StatCard icon={<Compass className="h-5 w-5 text-primary" />} label="Quests" value={questsDone} />
         <Link to="/achievements" className="block">
-          <StatCard icon={<Award className="h-5 w-5 text-accent" />} label="Badges" value={String(badgeCount)} />
+          <StatCard icon={<Award className="h-5 w-5 text-accent" />} label="Badges" value={badgeCount} />
         </Link>
-      </section>
+      </StaggerList>
 
-      <section className="mt-6">
+      <Reveal className="mt-6">
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Badge showcase</h2>
           <Link to="/achievements" className="text-xs font-semibold text-primary">View all</Link>
@@ -160,19 +167,25 @@ function HomeInner() {
           </Link>
         ) : (
           <div className="grid grid-cols-4 gap-2">
-            {showcase.map((row) => {
+            {showcase.map((row, i) => {
               const s = RARITY_STYLES[row.achievements.rarity] ?? RARITY_STYLES.common;
               return (
-                <Link
+                <motion.div
                   key={row.id}
+                  initial={{ opacity: 0, scale: 0.85 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.05 * i, type: "spring", stiffness: 320, damping: 20 }}
+                >
+                <Link
                   to="/achievements/$slug"
                   params={{ slug: row.achievements.slug }}
-                  className={`grid aspect-square place-items-center rounded-2xl border text-3xl backdrop-blur active:scale-95 ${s.ring}`}
+                  className={`badge-shimmer grid aspect-square place-items-center rounded-2xl border text-3xl backdrop-blur transition-transform duration-200 hover:scale-105 active:scale-95 ${s.ring}`}
                   style={{ background: s.bg, boxShadow: s.glow }}
                   aria-label={row.achievements.name}
                 >
                   {row.achievements.icon}
                 </Link>
+                </motion.div>
               );
             })}
           </div>
@@ -182,17 +195,17 @@ function HomeInner() {
             Latest: <span className="text-foreground">{latestBadge.achievements.name}</span>
           </p>
         )}
-      </section>
+      </Reveal>
 
       {recentXp && recentXp.length > 0 && (
-        <section className="mt-6">
+        <Reveal className="mt-6">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Recent XP</h2>
             <Link to="/xp-history" className="text-xs font-semibold text-primary">View all</Link>
           </div>
-          <div className="space-y-2">
+          <StaggerList as="div" className="space-y-2">
             {recentXp.map((e) => (
-              <div key={e.id} className="flex items-center justify-between rounded-2xl border border-border bg-card/60 p-3 backdrop-blur">
+              <div key={e.id} className="flex items-center justify-between rounded-2xl border border-border bg-card/60 p-3 backdrop-blur transition-colors duration-200 hover:border-primary/40">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold">
                     {e.quests?.title ?? "Bonus"}
@@ -204,22 +217,22 @@ function HomeInner() {
                 <span className="rounded-full bg-primary/15 px-2.5 py-1 text-xs font-bold text-primary">+{e.xp_earned} XP</span>
               </div>
             ))}
-          </div>
-        </section>
+          </StaggerList>
+        </Reveal>
       )}
 
-      <section className="mt-6">
+      <Reveal className="mt-6">
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Explore</h2>
-        <div className="grid grid-cols-2 gap-3">
+        <StaggerList as="div" className="grid grid-cols-2 gap-3">
           <QuickLink to="/quests" icon={<Compass className="h-5 w-5" />} title="Quests" desc="Adventures across Ankleshwar." />
           <QuickLink to="/leaderboard" icon={<Trophy className="h-5 w-5" />} title="Leaderboard" desc="Climb the city ranks." />
           <QuickLink to="/collections" icon={<Award className="h-5 w-5" />} title="Collections" desc="Complete themed sets." />
           <QuickLink to="/players" icon={<Users className="h-5 w-5" />} title="Players" desc="Meet fellow explorers." />
-        </div>
-      </section>
+        </StaggerList>
+      </Reveal>
 
-      <section className="mt-6">
-        <div className="relative overflow-hidden rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/15 via-primary/10 to-transparent p-4">
+      <Reveal className="mt-6">
+        <div className="card-shine relative overflow-hidden rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/15 via-primary/10 to-transparent p-4">
           <div className="flex items-start gap-3">
             <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-accent/20 text-accent">
               <Gift className="h-5 w-5" />
@@ -235,22 +248,24 @@ function HomeInner() {
             </div>
           </div>
         </div>
-      </section>
+      </Reveal>
     </AppShell>
   );
 }
 
-function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) {
   return (
     <motion.div
-      whileTap={{ scale: 0.98 }}
-      className="rounded-2xl border border-border bg-card/70 p-3.5 backdrop-blur"
+      whileHover={{ y: -3 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ type: "spring", stiffness: 400, damping: 26 }}
+      className="rounded-2xl border border-border bg-card/70 p-3.5 backdrop-blur transition-colors duration-200 hover:border-primary/40"
     >
       <div className="flex items-center justify-between">
         <div className="grid h-9 w-9 place-items-center rounded-xl bg-primary/10">{icon}</div>
       </div>
       <p className="mt-3 text-[11px] uppercase tracking-wider text-muted-foreground">{label}</p>
-      <p className="text-xl font-bold">{value}</p>
+      <CountUp value={value} className="text-xl font-bold" />
     </motion.div>
   );
 }
@@ -259,9 +274,9 @@ function QuickLink({ to, icon, title, desc }: { to: string; icon: React.ReactNod
   return (
     <Link
       to={to}
-      className="flex flex-col gap-2 rounded-2xl border border-border bg-card/70 p-3.5 backdrop-blur transition active:scale-[0.98]"
+      className="group flex flex-col gap-2 rounded-2xl border border-border bg-card/70 p-3.5 backdrop-blur transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 active:scale-[0.98]"
     >
-      <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/15 text-primary">{icon}</div>
+      <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/15 text-primary transition-transform duration-200 group-hover:scale-110">{icon}</div>
       <div>
         <p className="text-sm font-semibold">{title}</p>
         <p className="mt-0.5 text-xs text-muted-foreground">{desc}</p>
