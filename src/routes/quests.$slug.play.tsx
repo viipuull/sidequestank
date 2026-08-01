@@ -183,15 +183,19 @@ function PlayPage() {
           return (
             <motion.div
               key={o.id}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.04 }}
-              className={`rounded-2xl border p-4 ${done ? "border-primary/40 bg-primary/5" : isActive ? "border-primary bg-card/80" : "border-border/60 bg-card/60"}`}
+              initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ delay: i * 0.05, duration: 0.32, ease: [0.2, 0.7, 0.2, 1] }}
+              className={`relative rounded-2xl border p-4 transition-colors duration-300 ${done ? "card-shine border-primary/40 bg-primary/5" : isActive ? "border-primary bg-card/80 shadow-[0_0_28px_-12px_oklch(0.62_0.22_295/0.8)]" : "border-border/60 bg-card/60"}`}
             >
               <div className="flex items-start gap-3">
-                <div className={`grid h-9 w-9 shrink-0 place-items-center rounded-full text-xs font-bold ${done ? "bg-primary text-primary-foreground" : "bg-primary/15 text-primary"}`}>
+                <motion.div
+                  animate={done ? { scale: [1, 1.25, 1] } : { scale: 1 }}
+                  transition={{ duration: 0.45, ease: "easeOut" }}
+                  className={`grid h-9 w-9 shrink-0 place-items-center rounded-full text-xs font-bold ${done ? "bg-primary text-primary-foreground" : "bg-primary/15 text-primary"}`}
+                >
                   {done ? <CheckCircle2 className="h-4 w-4" /> : i + 1}
-                </div>
+                </motion.div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold">{o.title}</span>
