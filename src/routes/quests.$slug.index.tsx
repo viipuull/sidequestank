@@ -222,7 +222,7 @@ function QuestDetailPage() {
                         <p className="mt-0.5 text-xs text-muted-foreground">{o.description}</p>
                       )}
                     </div>
-                  </li>
+                  </motion.li>
                 );
               })}
             </ol>
