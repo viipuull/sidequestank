@@ -62,6 +62,7 @@ import { Route as PlayersUsernameCompareRouteImport } from './routes/players.$us
 import { Route as FounderQuestsNewRouteImport } from './routes/founder.quests.new'
 import { Route as FounderQuestsIdRouteImport } from './routes/founder.quests.$id'
 import { Route as FounderCollectionsIdRouteImport } from './routes/founder.collections.$id'
+import { Route as ApiPublicHooksPushNotifyRouteImport } from './routes/api/public/hooks/push-notify'
 import { Route as ApiPublicHooksLiveopsTickRouteImport } from './routes/api/public/hooks/liveops-tick'
 
 const XpHistoryRoute = XpHistoryRouteImport.update({
@@ -329,6 +330,12 @@ const FounderCollectionsIdRoute = FounderCollectionsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => FounderCollectionsRoute,
 } as any)
+const ApiPublicHooksPushNotifyRoute =
+  ApiPublicHooksPushNotifyRouteImport.update({
+    id: '/api/public/hooks/push-notify',
+    path: '/api/public/hooks/push-notify',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksLiveopsTickRoute =
   ApiPublicHooksLiveopsTickRouteImport.update({
     id: '/api/public/hooks/liveops-tick',
@@ -391,6 +398,7 @@ export interface FileRoutesByFullPath {
   '/quests/$slug/': typeof QuestsSlugIndexRoute
   '/studio/players/': typeof StudioPlayersIndexRoute
   '/api/public/hooks/liveops-tick': typeof ApiPublicHooksLiveopsTickRoute
+  '/api/public/hooks/push-notify': typeof ApiPublicHooksPushNotifyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -445,6 +453,7 @@ export interface FileRoutesByTo {
   '/quests/$slug': typeof QuestsSlugIndexRoute
   '/studio/players': typeof StudioPlayersIndexRoute
   '/api/public/hooks/liveops-tick': typeof ApiPublicHooksLiveopsTickRoute
+  '/api/public/hooks/push-notify': typeof ApiPublicHooksPushNotifyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -502,6 +511,7 @@ export interface FileRoutesById {
   '/quests/$slug/': typeof QuestsSlugIndexRoute
   '/studio/players/': typeof StudioPlayersIndexRoute
   '/api/public/hooks/liveops-tick': typeof ApiPublicHooksLiveopsTickRoute
+  '/api/public/hooks/push-notify': typeof ApiPublicHooksPushNotifyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -560,6 +570,7 @@ export interface FileRouteTypes {
     | '/quests/$slug/'
     | '/studio/players/'
     | '/api/public/hooks/liveops-tick'
+    | '/api/public/hooks/push-notify'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -614,6 +625,7 @@ export interface FileRouteTypes {
     | '/quests/$slug'
     | '/studio/players'
     | '/api/public/hooks/liveops-tick'
+    | '/api/public/hooks/push-notify'
   id:
     | '__root__'
     | '/'
@@ -670,6 +682,7 @@ export interface FileRouteTypes {
     | '/quests/$slug/'
     | '/studio/players/'
     | '/api/public/hooks/liveops-tick'
+    | '/api/public/hooks/push-notify'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -705,6 +718,7 @@ export interface RootRouteChildren {
   QuestsSlugPlayRoute: typeof QuestsSlugPlayRoute
   QuestsSlugIndexRoute: typeof QuestsSlugIndexRoute
   ApiPublicHooksLiveopsTickRoute: typeof ApiPublicHooksLiveopsTickRoute
+  ApiPublicHooksPushNotifyRoute: typeof ApiPublicHooksPushNotifyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1080,6 +1094,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FounderCollectionsIdRouteImport
       parentRoute: typeof FounderCollectionsRoute
     }
+    '/api/public/hooks/push-notify': {
+      id: '/api/public/hooks/push-notify'
+      path: '/api/public/hooks/push-notify'
+      fullPath: '/api/public/hooks/push-notify'
+      preLoaderRoute: typeof ApiPublicHooksPushNotifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/liveops-tick': {
       id: '/api/public/hooks/liveops-tick'
       path: '/api/public/hooks/liveops-tick'
@@ -1241,6 +1262,7 @@ const rootRouteChildren: RootRouteChildren = {
   QuestsSlugPlayRoute: QuestsSlugPlayRoute,
   QuestsSlugIndexRoute: QuestsSlugIndexRoute,
   ApiPublicHooksLiveopsTickRoute: ApiPublicHooksLiveopsTickRoute,
+  ApiPublicHooksPushNotifyRoute: ApiPublicHooksPushNotifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
