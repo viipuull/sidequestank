@@ -107,9 +107,7 @@ function QuestsFeedPage() {
         </header>
 
         {isLoading ? (
-          <div className="grid place-items-center py-16">
-            <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          </div>
+          <QuestGridSkeleton count={3} />
         ) : !data || data.length === 0 ? (
           <EmptyState />
         ) : (
