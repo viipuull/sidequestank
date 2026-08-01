@@ -5,6 +5,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { AuthGate } from "@/components/layout/AuthGate";
 import { ProfileMenu } from "@/components/home/ProfileMenu";
 import { WelcomePopup } from "@/components/home/WelcomePopup";
+import { PushPrompt } from "@/components/push/PushPrompt";
 import { PioneerCelebration } from "@/components/home/PioneerCelebration";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useProfile } from "@/lib/hooks/useProfile";
@@ -70,6 +71,7 @@ function HomeInner() {
     <AppShell>
       <PioneerCelebration userId={user?.id} pioneerNumber={profile?.pioneer_number ?? null} />
       <WelcomePopup userId={user?.id} />
+      <PushPrompt userId={user?.id} />
       <header className="flex items-start justify-between">
         <div>
           <p className="text-xs text-muted-foreground">Welcome back,</p>
