@@ -21,7 +21,15 @@ export const Route = createFileRoute("/api/public/hooks/liveops-tick")({
         const admin = createClient(url, service, { auth: { persistSession: false } });
         const { data, error } = await admin.rpc("tick_liveops");
         if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500 });
-        return Response.json({ ok: true, result: data ?? null });
+        // Also flush any push campaigns whose scheduled time has arrived.
+        let pushed: unknown = null;
+        try {
+          const { runDueCampaigns } = await import("@/lib/push-dispatch.server");
+          pushed = await runDueCampaigns();
+        } catch (e) {
+          pushed = { error: e instanceof Error ? e.message : "push dispatch failed" };
+        }
+        return Response.json({ ok: true, result: data ?? null, push: pushed });
       },
       GET: async () => Response.json({ ok: true, hint: "POST with x-liveops-secret header" }),
     },

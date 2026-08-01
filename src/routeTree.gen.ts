@@ -37,6 +37,7 @@ import { Route as QuestsIndexRouteImport } from './routes/quests.index'
 import { Route as PlayersIndexRouteImport } from './routes/players.index'
 import { Route as FounderIndexRouteImport } from './routes/founder.index'
 import { Route as StudioReviewsRouteImport } from './routes/studio.reviews'
+import { Route as StudioNotificationsRouteImport } from './routes/studio.notifications'
 import { Route as StudioMediaRouteImport } from './routes/studio.media'
 import { Route as StudioAuditRouteImport } from './routes/studio.audit'
 import { Route as SettingsSocialRouteImport } from './routes/settings.social'
@@ -201,6 +202,11 @@ const FounderIndexRoute = FounderIndexRouteImport.update({
 const StudioReviewsRoute = StudioReviewsRouteImport.update({
   id: '/reviews',
   path: '/reviews',
+  getParentRoute: () => StudioRoute,
+} as any)
+const StudioNotificationsRoute = StudioNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => StudioRoute,
 } as any)
 const StudioMediaRoute = StudioMediaRouteImport.update({
@@ -368,6 +374,7 @@ export interface FileRoutesByFullPath {
   '/settings/social': typeof SettingsSocialRoute
   '/studio/audit': typeof StudioAuditRoute
   '/studio/media': typeof StudioMediaRoute
+  '/studio/notifications': typeof StudioNotificationsRoute
   '/studio/reviews': typeof StudioReviewsRoute
   '/founder/': typeof FounderIndexRoute
   '/players/': typeof PlayersIndexRoute
@@ -421,6 +428,7 @@ export interface FileRoutesByTo {
   '/settings/social': typeof SettingsSocialRoute
   '/studio/audit': typeof StudioAuditRoute
   '/studio/media': typeof StudioMediaRoute
+  '/studio/notifications': typeof StudioNotificationsRoute
   '/studio/reviews': typeof StudioReviewsRoute
   '/founder': typeof FounderIndexRoute
   '/players': typeof PlayersIndexRoute
@@ -477,6 +485,7 @@ export interface FileRoutesById {
   '/settings/social': typeof SettingsSocialRoute
   '/studio/audit': typeof StudioAuditRoute
   '/studio/media': typeof StudioMediaRoute
+  '/studio/notifications': typeof StudioNotificationsRoute
   '/studio/reviews': typeof StudioReviewsRoute
   '/founder/': typeof FounderIndexRoute
   '/players/': typeof PlayersIndexRoute
@@ -534,6 +543,7 @@ export interface FileRouteTypes {
     | '/settings/social'
     | '/studio/audit'
     | '/studio/media'
+    | '/studio/notifications'
     | '/studio/reviews'
     | '/founder/'
     | '/players/'
@@ -587,6 +597,7 @@ export interface FileRouteTypes {
     | '/settings/social'
     | '/studio/audit'
     | '/studio/media'
+    | '/studio/notifications'
     | '/studio/reviews'
     | '/founder'
     | '/players'
@@ -642,6 +653,7 @@ export interface FileRouteTypes {
     | '/settings/social'
     | '/studio/audit'
     | '/studio/media'
+    | '/studio/notifications'
     | '/studio/reviews'
     | '/founder/'
     | '/players/'
@@ -891,6 +903,13 @@ declare module '@tanstack/react-router' {
       path: '/reviews'
       fullPath: '/studio/reviews'
       preLoaderRoute: typeof StudioReviewsRouteImport
+      parentRoute: typeof StudioRoute
+    }
+    '/studio/notifications': {
+      id: '/studio/notifications'
+      path: '/notifications'
+      fullPath: '/studio/notifications'
+      preLoaderRoute: typeof StudioNotificationsRouteImport
       parentRoute: typeof StudioRoute
     }
     '/studio/media': {
@@ -1157,6 +1176,7 @@ const FounderRouteWithChildren =
 interface StudioRouteChildren {
   StudioAuditRoute: typeof StudioAuditRoute
   StudioMediaRoute: typeof StudioMediaRoute
+  StudioNotificationsRoute: typeof StudioNotificationsRoute
   StudioReviewsRoute: typeof StudioReviewsRoute
   StudioIndexRoute: typeof StudioIndexRoute
   StudioPlayersUserIdRoute: typeof StudioPlayersUserIdRoute
@@ -1166,6 +1186,7 @@ interface StudioRouteChildren {
 const StudioRouteChildren: StudioRouteChildren = {
   StudioAuditRoute: StudioAuditRoute,
   StudioMediaRoute: StudioMediaRoute,
+  StudioNotificationsRoute: StudioNotificationsRoute,
   StudioReviewsRoute: StudioReviewsRoute,
   StudioIndexRoute: StudioIndexRoute,
   StudioPlayersUserIdRoute: StudioPlayersUserIdRoute,
