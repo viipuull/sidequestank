@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { PageTransition } from "../components/motion/PageTransition";
+import { Toaster } from "../components/ui/sonner";
 
 function NotFoundComponent() {
   const quickLinks = [
@@ -146,6 +147,7 @@ function RootComponent() {
       <PageTransition>
         <Outlet />
       </PageTransition>
+      <Toaster position="top-center" />
     </QueryClientProvider>
   );
 }
