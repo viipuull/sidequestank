@@ -37,12 +37,13 @@ export function BottomNav() {
                 {isActive && (
                   <motion.span
                     layoutId="bottomnav-pill"
-                    className="absolute inset-x-3 top-1 h-8 rounded-2xl bg-primary/15"
+                    className="absolute inset-x-3 top-1 h-8 rounded-2xl bg-primary/15 ring-1 ring-primary/30"
+                    style={{ boxShadow: "0 0 18px oklch(0.62 0.22 295 / 0.35)" }}
                     transition={springs.snappy}
                   />
                 )}
                 <motion.span
-                  animate={{ scale: isActive ? 1.12 : 1, y: isActive ? -1 : 0 }}
+                  animate={{ scale: isActive ? 1.15 : 1, y: isActive ? -2 : 0, rotate: isActive ? [0, -8, 0] : 0 }}
                   whileTap={{ scale: 0.88 }}
                   transition={springs.bouncy}
                   className="relative z-10"
