@@ -2,14 +2,22 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Bell, Loader2, Send, Trash2 } from "lucide-react";
+import { Bell, Loader2, Send, Trash2, Zap, Save } from "lucide-react";
 import { toast } from "sonner";
 import { AuthGate } from "@/components/layout/AuthGate";
 import { AdminShell } from "@/components/studio/AdminShell";
 import { ErrorState } from "@/components/feedback";
+import { NotificationPreview } from "@/components/studio/NotificationPreview";
+import { TemplateLibrary } from "@/components/studio/TemplateLibrary";
+import {
+  PRIORITY_META, QUICK_SEND, type NotificationTemplate, type PushPriority,
+} from "@/lib/push/templates";
+import { SMART_VARIABLES, interpolate, pickVariation, usedVariables } from "@/lib/push/variables";
 import {
   founderListCampaigns, founderUpsertCampaign, founderDeleteCampaign,
   founderSendCampaign, founderCampaignDeliveries, founderPushOptions,
+  founderListTemplates, founderSaveTemplate, founderDeleteTemplate,
+  founderToggleTemplateFavorite, founderPushAnalytics,
 } from "@/lib/push.functions";
 
 export const Route = createFileRoute("/studio/notifications")({
@@ -39,11 +47,21 @@ function NotificationCenter() {
   const upsertFn = useServerFn(founderUpsertCampaign);
   const delFn = useServerFn(founderDeleteCampaign);
   const sendFn = useServerFn(founderSendCampaign);
+  const templatesFn = useServerFn(founderListTemplates);
+  const saveTemplateFn = useServerFn(founderSaveTemplate);
+  const delTemplateFn = useServerFn(founderDeleteTemplate);
+  const favTemplateFn = useServerFn(founderToggleTemplateFavorite);
+  const analyticsFn = useServerFn(founderPushAnalytics);
 
   const campaigns = useQuery({ queryKey: ["push-campaigns"], queryFn: () => listFn() });
   const options = useQuery({ queryKey: ["push-options"], queryFn: () => optionsFn() });
+  const templates = useQuery({ queryKey: ["push-templates"], queryFn: () => templatesFn() });
+  const analytics = useQuery({ queryKey: ["push-analytics"], queryFn: () => analyticsFn() });
 
-  const invalidate = () => qc.invalidateQueries({ queryKey: ["push-campaigns"] });
+  const invalidate = () => {
+    qc.invalidateQueries({ queryKey: ["push-campaigns"] });
+    qc.invalidateQueries({ queryKey: ["push-analytics"] });
+  };
 
   const upsert = useMutation({
     mutationFn: (v: any) => upsertFn({ data: v }),
@@ -69,6 +87,10 @@ function NotificationCenter() {
     also_inbox: true,
     schedule: false,
     scheduled_at: new Date(Date.now() + 3600_000).toISOString().slice(0, 16),
+    priority: "info" as PushPriority,
+    icon: "🔔",
+    variations: [] as string[],
+    requires_confirm: false,
   });
 
   const audience = useMemo(() => {
@@ -84,9 +106,18 @@ function NotificationCenter() {
 
   const submit = (status: "draft" | "scheduled", sendNow = false) => {
     if (!form.title.trim() || !form.body.trim()) { toast.error("Title and message are required."); return; }
+    if (sendNow) {
+      const risky = form.audience_kind === "everyone" || form.priority === "critical" || form.requires_confirm;
+      if (risky) {
+        const who = form.audience_kind === "everyone" ? "EVERY player" : "the selected audience";
+        // eslint-disable-next-line no-alert
+        if (!window.confirm(`Send "${form.title}" to ${who} right now?\n\nThis cannot be undone.`)) return;
+      }
+    }
     upsert.mutate(
       {
-        title: form.title, body: form.body,
+        title: form.title,
+        body: pickVariation(form.body, form.variations),
         image_url: form.image_url || null,
         deep_link: form.deep_link || "/home",
         action_label: form.action_label || null,
@@ -101,6 +132,55 @@ function NotificationCenter() {
       { onSuccess: (saved: any) => { if (sendNow && saved?.id) send.mutate(saved.id); } },
     );
   };
+
+  const applyTemplate = (tpl: NotificationTemplate) => {
+    setForm((f) => ({
+      ...f,
+      title: tpl.title,
+      body: tpl.body,
+      icon: tpl.icon,
+      kind: tpl.kind as (typeof KINDS)[number],
+      priority: tpl.priority,
+      deep_link: tpl.deep_link,
+      action_label: tpl.action_label ?? f.action_label,
+      action_url: tpl.action_url ?? f.action_url,
+      variations: tpl.variations ?? [],
+      requires_confirm: !!tpl.requires_confirm,
+    }));
+    toast(`Loaded “${tpl.name}”. Edit anything before sending.`);
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const saveTemplate = useMutation({
+    mutationFn: (v: any) => saveTemplateFn({ data: v }),
+    onSuccess: () => { toast.success("Template saved."); qc.invalidateQueries({ queryKey: ["push-templates"] }); },
+    onError: (e: any) => toast.error(e?.message ?? "Could not save template"),
+  });
+  const delTemplate = useMutation({
+    mutationFn: (id: string) => delTemplateFn({ data: { id } }),
+    onSuccess: () => { toast("Template deleted."); qc.invalidateQueries({ queryKey: ["push-templates"] }); },
+  });
+  const favTemplate = useMutation({
+    mutationFn: (v: { id: string; favorite: boolean }) => favTemplateFn({ data: v }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["push-templates"] }),
+  });
+
+  const saved: NotificationTemplate[] = ((templates.data ?? []) as any[]).map((r) => ({
+    id: r.id, slug: r.slug, name: r.name, category: r.category, icon: r.icon,
+    title: r.title, body: r.body, kind: r.kind, priority: r.priority,
+    deep_link: r.deep_link, action_label: r.action_label, action_url: r.action_url,
+    variations: r.variations ?? [], favorite: r.favorite, requires_confirm: r.requires_confirm,
+    built_in: false,
+  }));
+
+  const previewBag = {
+    player_name: "CyberShikari", username: "cybershikari", level: 4, xp: 250,
+    xp_remaining: 120, quest_name: "Clock Tower Run", city: "Ankleshwar",
+    rank: 3, collection: "Ankleshwar Explorer", event_name: "Double XP Weekend",
+    reason: "blurry photo", attempts_left: 2, reviewer: "the SideQuest team",
+    badge: "Trailblazer", title: "Pathfinder", objective_name: "Photo at the bridge",
+  };
+  const vars = usedVariables(`${form.title} ${form.body}`);
 
   if (campaigns.isError) {
     return <ErrorState title="Notification Center didn't load" onRetry={() => campaigns.refetch()} />;
@@ -120,6 +200,39 @@ function NotificationCenter() {
         </div>
       </header>
 
+      {/* Analytics */}
+      <section className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
+        {[
+          ["Devices", analytics.data?.devices ?? "—"],
+          ["Sent", analytics.data?.sent ?? "—"],
+          ["Delivered", analytics.data?.delivered ?? "—"],
+          ["Failed", analytics.data?.failed ?? "—"],
+          ["Opened", analytics.data?.opened ?? "—"],
+          ["CTR", analytics.data ? `${analytics.data.ctr}%` : "—"],
+          ["Avg open", analytics.data?.avg_open_seconds != null ? `${analytics.data.avg_open_seconds}s` : "—"],
+        ].map(([label, value]) => (
+          <div key={label as string} className="rounded-xl border border-border bg-card/60 p-3 backdrop-blur">
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
+            <p className="mt-0.5 text-lg font-bold">{value as string}</p>
+          </div>
+        ))}
+      </section>
+
+      {/* Quick send */}
+      <section className="rounded-2xl border border-border bg-card/60 p-4 backdrop-blur">
+        <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <Zap className="h-3.5 w-3.5" /> Quick send
+        </p>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {QUICK_SEND.map((tpl) => (
+            <button key={tpl.slug} onClick={() => applyTemplate(tpl)}
+              className="rounded-full border border-border px-3 py-1.5 text-[11px] font-semibold active:scale-95 hover:border-primary/60">
+              {tpl.icon} {tpl.name}
+            </button>
+          ))}
+        </div>
+      </section>
+
       <section className="rounded-2xl border border-border bg-card/60 p-4 backdrop-blur">
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">New notification</p>
 
@@ -129,11 +242,35 @@ function NotificationCenter() {
             <Select value={form.kind} onChange={(v) => setForm({ ...form, kind: v as any })} options={KINDS as unknown as string[]} />
           </Field>
         </div>
+        <div className="grid gap-2 sm:grid-cols-2">
+          <Field label="Priority">
+            <Select value={form.priority} onChange={(v) => setForm({ ...form, priority: v as PushPriority })}
+              options={Object.keys(PRIORITY_META)}
+              labels={Object.fromEntries(Object.entries(PRIORITY_META).map(([k, v]) => [k, v.label]))} />
+          </Field>
+          <Field label="Icon"><Input value={form.icon} onChange={(v) => setForm({ ...form, icon: v })} placeholder="🔔" /></Field>
+        </div>
         <Field label="Message">
           <textarea rows={3} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })}
             placeholder="A new side quest just dropped near the clock tower."
             className="w-full rounded-xl border border-border bg-background p-2 text-sm" />
         </Field>
+        <div className="mb-2 flex flex-wrap gap-1">
+          {SMART_VARIABLES.map((v) => (
+            <button key={v} type="button"
+              onClick={() => setForm((f) => ({ ...f, body: `${f.body}{{${v}}}` }))}
+              className={`rounded-md border px-1.5 py-0.5 font-mono text-[10px] active:scale-95 ${
+                vars.includes(v) ? "border-primary/60 text-primary" : "border-border text-muted-foreground"
+              }`}>
+              {`{{${v}}}`}
+            </button>
+          ))}
+        </div>
+        {form.variations.length > 0 && (
+          <p className="mb-2 text-[11px] text-muted-foreground">
+            {form.variations.length + 1} message variations loaded — one is picked at random on send.
+          </p>
+        )}
         <div className="grid gap-2 sm:grid-cols-2">
           <Field label="Image URL (optional)"><Input value={form.image_url} onChange={(v) => setForm({ ...form, image_url: v })} placeholder="https://…" /></Field>
           <Field label="Deep link"><Input value={form.deep_link} onChange={(v) => setForm({ ...form, deep_link: v })} placeholder="/quests/clock-tower" /></Field>
@@ -195,6 +332,22 @@ function NotificationCenter() {
             className="rounded-xl border border-border px-4 py-2 text-sm font-semibold active:scale-95 disabled:opacity-60">
             Save draft
           </button>
+          <button
+            onClick={() => {
+              const name = window.prompt("Save as template — name?", form.title.slice(0, 60));
+              if (!name) return;
+              saveTemplate.mutate({
+                slug: `custom-${name.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 50)}`,
+                name, category: "announcements", title: form.title, body: form.body,
+                icon: form.icon || "🔔", kind: form.kind, priority: form.priority,
+                deep_link: form.deep_link || "/home",
+                action_label: form.action_label || null, action_url: form.action_url || null,
+                variations: form.variations, favorite: false, requires_confirm: form.requires_confirm,
+              });
+            }}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-border px-4 py-2 text-sm font-semibold active:scale-95">
+            <Save className="h-4 w-4" /> Save as template
+          </button>
           {form.schedule ? (
             <button onClick={() => submit("scheduled")} disabled={upsert.isPending}
               className="rounded-xl bg-primary px-4 py-2 text-sm font-bold text-primary-foreground active:scale-95 disabled:opacity-60">
@@ -209,6 +362,22 @@ function NotificationCenter() {
           )}
         </div>
       </section>
+
+      <NotificationPreview
+        title={interpolate(form.title, previewBag)}
+        body={interpolate(pickVariation(form.body, []), previewBag)}
+        image={form.image_url || undefined}
+        actionLabel={form.action_label || undefined}
+        priority={form.priority}
+        icon={form.icon}
+      />
+
+      <TemplateLibrary
+        saved={saved}
+        onPick={applyTemplate}
+        onToggleFavorite={(tpl) => tpl.id && favTemplate.mutate({ id: tpl.id, favorite: !tpl.favorite })}
+        onDelete={(tpl) => tpl.id && delTemplate.mutate(tpl.id)}
+      />
 
       <section className="space-y-2">
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">History</p>
