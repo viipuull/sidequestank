@@ -1478,6 +1478,155 @@ export type Database = {
         }
         Relationships: []
       }
+      push_campaigns: {
+        Row: {
+          action_label: string | null
+          action_url: string | null
+          also_inbox: boolean
+          audience: Json
+          audience_kind: Database["public"]["Enums"]["push_audience_kind"]
+          body: string
+          created_at: string
+          created_by: string | null
+          deep_link: string
+          error: string | null
+          failure_count: number
+          id: string
+          image_url: string | null
+          kind: Database["public"]["Enums"]["push_kind"]
+          recipients_count: number
+          scheduled_at: string | null
+          sent_at: string | null
+          status: Database["public"]["Enums"]["push_campaign_status"]
+          success_count: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          action_label?: string | null
+          action_url?: string | null
+          also_inbox?: boolean
+          audience?: Json
+          audience_kind?: Database["public"]["Enums"]["push_audience_kind"]
+          body: string
+          created_at?: string
+          created_by?: string | null
+          deep_link?: string
+          error?: string | null
+          failure_count?: number
+          id?: string
+          image_url?: string | null
+          kind?: Database["public"]["Enums"]["push_kind"]
+          recipients_count?: number
+          scheduled_at?: string | null
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["push_campaign_status"]
+          success_count?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          action_label?: string | null
+          action_url?: string | null
+          also_inbox?: boolean
+          audience?: Json
+          audience_kind?: Database["public"]["Enums"]["push_audience_kind"]
+          body?: string
+          created_at?: string
+          created_by?: string | null
+          deep_link?: string
+          error?: string | null
+          failure_count?: number
+          id?: string
+          image_url?: string | null
+          kind?: Database["public"]["Enums"]["push_kind"]
+          recipients_count?: number
+          scheduled_at?: string | null
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["push_campaign_status"]
+          success_count?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      push_deliveries: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          error: string | null
+          id: string
+          success: boolean
+          token_tail: string | null
+          user_id: string | null
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          success?: boolean
+          token_tail?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          success?: boolean
+          token_tail?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_deliveries_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "push_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      push_tokens: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          id: string
+          invalid_at: string | null
+          last_seen_at: string
+          platform: string
+          token: string
+          updated_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          invalid_at?: string | null
+          last_seen_at?: string
+          platform?: string
+          token: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          invalid_at?: string | null
+          last_seen_at?: string
+          platform?: string
+          token?: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       quest_objectives: {
         Row: {
           completion_order: number
@@ -2000,6 +2149,15 @@ export type Database = {
         Args: { _title_id: string; _user_id: string }
         Returns: boolean
       }
+      resolve_push_audience: {
+        Args: {
+          _audience: Json
+          _kind: Database["public"]["Enums"]["push_audience_kind"]
+        }
+        Returns: {
+          user_id: string
+        }[]
+      }
       tick_liveops: { Args: never; Returns: Json }
       unequip_all_titles: { Args: never; Returns: boolean }
       update_collection_progress_for_user: {
@@ -2101,6 +2259,30 @@ export type Database = {
         | "answer_trivia"
         | "collect_item"
         | "custom"
+      push_audience_kind:
+        | "everyone"
+        | "player"
+        | "level"
+        | "title"
+        | "city"
+        | "event"
+      push_campaign_status:
+        | "draft"
+        | "scheduled"
+        | "sending"
+        | "sent"
+        | "failed"
+        | "cancelled"
+      push_kind:
+        | "new_quest_nearby"
+        | "quest_reminder"
+        | "event_reminder"
+        | "achievement_unlocked"
+        | "level_up"
+        | "collection_completed"
+        | "founder_announcement"
+        | "daily_reminder"
+        | "weekly_summary"
       quest_category:
         | "exploration"
         | "food"
@@ -2369,6 +2551,33 @@ export const Constants = {
         "answer_trivia",
         "collect_item",
         "custom",
+      ],
+      push_audience_kind: [
+        "everyone",
+        "player",
+        "level",
+        "title",
+        "city",
+        "event",
+      ],
+      push_campaign_status: [
+        "draft",
+        "scheduled",
+        "sending",
+        "sent",
+        "failed",
+        "cancelled",
+      ],
+      push_kind: [
+        "new_quest_nearby",
+        "quest_reminder",
+        "event_reminder",
+        "achievement_unlocked",
+        "level_up",
+        "collection_completed",
+        "founder_announcement",
+        "daily_reminder",
+        "weekly_summary",
       ],
       quest_category: [
         "exploration",
