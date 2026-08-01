@@ -47,7 +47,7 @@ export function CollectionCompletionOverlay({
         initial={{ scale: 0.9, y: 20, opacity: 0 }}
         animate={{ scale: 1, y: 0, opacity: 1 }}
         transition={{ type: "spring", damping: 20, stiffness: 260 }}
-        className="relative w-full max-w-sm overflow-hidden rounded-3xl border border-primary/40 bg-card shadow-2xl"
+        className="card-shine relative w-full max-w-sm overflow-hidden rounded-3xl border border-primary/40 bg-card shadow-2xl"
       >
         <button
           onClick={onDismiss}
