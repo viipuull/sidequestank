@@ -45,7 +45,7 @@ export function AchievementUnlockOverlay({
           initial={{ scale: 0.8, y: 40, opacity: 0 }}
           animate={{ scale: 1, y: 0, opacity: 1 }}
           transition={{ type: "spring", damping: 16, stiffness: 210 }}
-          className={`w-full max-w-sm rounded-3xl border p-6 text-center shadow-2xl ${s.ring}`}
+          className={`card-shine relative w-full max-w-sm rounded-3xl border p-6 text-center shadow-2xl ${s.ring}`}
           style={{
             background: `linear-gradient(180deg, ${s.bg}, oklch(0.14 0.02 260))`,
             boxShadow: s.glow,
@@ -61,7 +61,7 @@ export function AchievementUnlockOverlay({
             initial={{ rotate: -8, scale: 0.6, opacity: 0 }}
             animate={{ rotate: 0, scale: 1, opacity: 1 }}
             transition={{ delay: 0.1, type: "spring", damping: 12, stiffness: 200 }}
-            className="mx-auto mt-4 grid h-28 w-28 place-items-center rounded-3xl text-6xl"
+            className="badge-shimmer mx-auto mt-4 grid h-28 w-28 place-items-center rounded-3xl text-6xl"
             style={{ background: s.bg, boxShadow: s.glow }}
             aria-hidden
           >
