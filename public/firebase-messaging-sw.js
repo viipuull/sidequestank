@@ -23,8 +23,8 @@ if (config.projectId && config.apiKey) {
     const title = d.title || (payload.notification && payload.notification.title) || "SideQuest";
     const options = {
       body: d.body || (payload.notification && payload.notification.body) || "",
-      icon: "/icons/icon-192.png",
-      badge: "/icons/icon-192.png",
+      icon: "/icon-192.png",
+      badge: "/icon-192.png",
       image: d.image || undefined,
       tag: d.campaign_id || undefined,
       data: { deep_link: d.deep_link || "/home", action_url: d.action_url || "" },
