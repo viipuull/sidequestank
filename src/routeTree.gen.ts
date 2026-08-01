@@ -41,6 +41,7 @@ import { Route as StudioMediaRouteImport } from './routes/studio.media'
 import { Route as StudioAuditRouteImport } from './routes/studio.audit'
 import { Route as SettingsSocialRouteImport } from './routes/settings.social'
 import { Route as SettingsProfileRouteImport } from './routes/settings.profile'
+import { Route as SettingsNotificationsRouteImport } from './routes/settings.notifications'
 import { Route as PlayersUsernameRouteImport } from './routes/players.$username'
 import { Route as FounderTitlesRouteImport } from './routes/founder.titles'
 import { Route as FounderSocialRouteImport } from './routes/founder.social'
@@ -222,6 +223,11 @@ const SettingsProfileRoute = SettingsProfileRouteImport.update({
   path: '/settings/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsNotificationsRoute = SettingsNotificationsRouteImport.update({
+  id: '/settings/notifications',
+  path: '/settings/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PlayersUsernameRoute = PlayersUsernameRouteImport.update({
   id: '/players/$username',
   path: '/players/$username',
@@ -357,6 +363,7 @@ export interface FileRoutesByFullPath {
   '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
+  '/settings/notifications': typeof SettingsNotificationsRoute
   '/settings/profile': typeof SettingsProfileRoute
   '/settings/social': typeof SettingsSocialRoute
   '/studio/audit': typeof StudioAuditRoute
@@ -409,6 +416,7 @@ export interface FileRoutesByTo {
   '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
+  '/settings/notifications': typeof SettingsNotificationsRoute
   '/settings/profile': typeof SettingsProfileRoute
   '/settings/social': typeof SettingsSocialRoute
   '/studio/audit': typeof StudioAuditRoute
@@ -464,6 +472,7 @@ export interface FileRoutesById {
   '/founder/social': typeof FounderSocialRoute
   '/founder/titles': typeof FounderTitlesRoute
   '/players/$username': typeof PlayersUsernameRouteWithChildren
+  '/settings/notifications': typeof SettingsNotificationsRoute
   '/settings/profile': typeof SettingsProfileRoute
   '/settings/social': typeof SettingsSocialRoute
   '/studio/audit': typeof StudioAuditRoute
@@ -520,6 +529,7 @@ export interface FileRouteTypes {
     | '/founder/social'
     | '/founder/titles'
     | '/players/$username'
+    | '/settings/notifications'
     | '/settings/profile'
     | '/settings/social'
     | '/studio/audit'
@@ -572,6 +582,7 @@ export interface FileRouteTypes {
     | '/founder/social'
     | '/founder/titles'
     | '/players/$username'
+    | '/settings/notifications'
     | '/settings/profile'
     | '/settings/social'
     | '/studio/audit'
@@ -626,6 +637,7 @@ export interface FileRouteTypes {
     | '/founder/social'
     | '/founder/titles'
     | '/players/$username'
+    | '/settings/notifications'
     | '/settings/profile'
     | '/settings/social'
     | '/studio/audit'
@@ -672,6 +684,7 @@ export interface RootRouteChildren {
   WelcomeRoute: typeof WelcomeRoute
   XpHistoryRoute: typeof XpHistoryRoute
   PlayersUsernameRoute: typeof PlayersUsernameRouteWithChildren
+  SettingsNotificationsRoute: typeof SettingsNotificationsRoute
   SettingsProfileRoute: typeof SettingsProfileRoute
   SettingsSocialRoute: typeof SettingsSocialRoute
   PlayersIndexRoute: typeof PlayersIndexRoute
@@ -906,6 +919,13 @@ declare module '@tanstack/react-router' {
       path: '/settings/profile'
       fullPath: '/settings/profile'
       preLoaderRoute: typeof SettingsProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/notifications': {
+      id: '/settings/notifications'
+      path: '/settings/notifications'
+      fullPath: '/settings/notifications'
+      preLoaderRoute: typeof SettingsNotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/players/$username': {
@@ -1191,6 +1211,7 @@ const rootRouteChildren: RootRouteChildren = {
   WelcomeRoute: WelcomeRoute,
   XpHistoryRoute: XpHistoryRoute,
   PlayersUsernameRoute: PlayersUsernameRouteWithChildren,
+  SettingsNotificationsRoute: SettingsNotificationsRoute,
   SettingsProfileRoute: SettingsProfileRoute,
   SettingsSocialRoute: SettingsSocialRoute,
   PlayersIndexRoute: PlayersIndexRoute,
