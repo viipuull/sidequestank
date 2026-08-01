@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { PageTransition } from "../components/motion/PageTransition";
 import { Toaster } from "../components/ui/sonner";
+import { PushOpenTracker } from "../components/push/PushOpenTracker";
 
 function NotFoundComponent() {
   const quickLinks = [
@@ -143,6 +144,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <PushOpenTracker />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <PageTransition>
         <Outlet />
