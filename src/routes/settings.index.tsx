@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, FileText, LogOut, Moon, Shield, UserRound } from "lucide-react";
+import { Bell, ChevronLeft, ChevronRight, FileText, LogOut, Moon, Shield, UserRound } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { AuthGate } from "@/components/layout/AuthGate";
 import { Button } from "@/components/ui/button";
@@ -57,6 +57,7 @@ function SettingsInner() {
       <section className="mt-6 space-y-2">
         <LinkRow to="/settings/profile" icon={<UserRound className="h-4 w-4" />} title="Edit profile" value="Avatar, display name, bio" />
         <LinkRow to="/settings/social" icon={<Shield className="h-4 w-4" />} title="Social & privacy" value="Public profile, leaderboard visibility" />
+        <LinkRow to="/settings/notifications" icon={<Bell className="h-4 w-4" />} title="Notifications" value="Push alerts for quests, events, rewards" />
         <Row icon={<Moon className="h-4 w-4" />} title="Theme" value="Dark (default)" />
         <Row icon={<FileText className="h-4 w-4" />} title="Terms of use" value="Coming soon" />
         <Row icon={<FileText className="h-4 w-4" />} title="App version" value={APP_VERSION} />
