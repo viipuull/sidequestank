@@ -52,11 +52,12 @@ export async function runCampaign(campaignId: string) {
 
     if (campaign.also_inbox) {
       for (const uid of userIds) {
+        const bag = hasVars(campaign.title) || hasVars(campaign.body) ? await variableBag(admin, uid) : {};
         await admin.rpc("notify_user", {
           _user_id: uid,
           _kind: "announcement",
-          _title: campaign.title,
-          _body: campaign.body,
+          _title: interpolate(campaign.title, bag),
+          _body: interpolate(campaign.body, bag),
           _icon: "🔔",
           _deep_link: campaign.deep_link,
           _priority: 20,
