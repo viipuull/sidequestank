@@ -14,9 +14,9 @@ import type { FirebaseOptions } from "firebase/app";
  * restrictions), so it must be a literal here — browser code cannot read
  * backend secrets. Optionally override via VITE_FIREBASE_API_KEY.
  */
-const FIREBASE_API_KEY = "";
+const FIREBASE_API_KEY = "AIzaSyBhRv2aPkAI1d9I1XzMAh8cYc28zsexI_8";
 
-const apiKey = (import.meta.env['VITE_FIREBASE_API_KEY'] as string | undefined) || FIREBASE_API_KEY;
+const apiKey = (import.meta.env["VITE_FIREBASE_API_KEY"] as string | undefined) || FIREBASE_API_KEY;
 
 export const firebaseConfig: FirebaseOptions & Record<string, string> = {
   apiKey,
@@ -29,11 +29,11 @@ export const firebaseConfig: FirebaseOptions & Record<string, string> = {
 };
 
 /** Cloud Messaging → Web Push certificates → Key pair (public). */
-export const vapidKey =
-  "BOXBg44ADayquld0Td4ddIi1iDaivCvgj7YZFrx76M1fyPvsyLr0hYe-0U64UV0IhYK5qBqmmYBMVac0X_OPyms";
+export const vapidKey = "BOXBg44ADayquld0Td4ddIi1iDaivCvgj7YZFrx76M1fyPvsyLr0hYe-0U64UV0IhYK5qBqmmYBMVac0X_OPyms";
 
-export const pushConfigured =
-  Boolean(firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.messagingSenderId && vapidKey);
+export const pushConfigured = Boolean(
+  firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.messagingSenderId && vapidKey,
+);
 
 /** Service worker URL carrying the (public) config so the SW can init Firebase. */
 export function swUrl() {
