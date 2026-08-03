@@ -2,14 +2,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./adventure.css";
-import { TILE_ATTRIBUTION, TILE_URL, worldForCity } from "@/lib/world/config";
+import { DEFAULT_LAYERS, TILE_ATTRIBUTION, TILE_URL, worldForCity } from "@/lib/world/config";
 import { atmosphereNow, type Atmosphere } from "@/lib/world/atmosphere";
-import { detectTier } from "@/lib/world/perf";
+import { detectTier, TIER_BUDGET } from "@/lib/world/perf";
 import { distanceM } from "@/lib/world/geo";
 import { isRevealed, lerpLatLng, type LatLng, type Waypoint } from "@/lib/world/adventure";
 import { AmbientLayer } from "@/components/world/AmbientLayer";
-import { DEFAULT_LAYERS } from "@/lib/world/config";
-import { TIER_BUDGET } from "@/lib/world/perf";
 
 export type AdventureMapEngineProps = {
   waypoints: Waypoint[];
@@ -199,17 +197,17 @@ export default function AdventureMapEngine({
     const start = performance.now();
     const dur = smoothRef.current ? 900 : 0;
 
-    const html = (p: LatLng) => `<div class="sq-explorer" style="--sq-heading:${heading ?? 0}deg">
+    const html = () => `<div class="sq-explorer" style="--sq-heading:${heading ?? 0}deg">
         <div class="sq-explorer__pulse"></div>
         <div class="sq-explorer__pulse2"></div>
         <div class="sq-explorer__shadow"></div>
         <div class="sq-explorer__ring"></div>
         <div class="sq-explorer__core"></div>
         <div class="sq-explorer__heading"></div>
-      </div>${p ? "" : ""}`;
+      </div>`;
 
     const ensure = (p: LatLng) => {
-      const icon = L.divIcon({ className: "", html: html(p), iconSize: [72, 72], iconAnchor: [36, 36] });
+      const icon = L.divIcon({ className: "", html: html(), iconSize: [72, 72], iconAnchor: [36, 36] });
       if (playerMarkerRef.current) playerMarkerRef.current.setLatLng([p.lat, p.lng]).setIcon(icon);
       else
         playerMarkerRef.current = L.marker([p.lat, p.lng], {
