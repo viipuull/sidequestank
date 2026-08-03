@@ -14,6 +14,7 @@ import {
   type ObjectiveType, slugify,
 } from "@/lib/quests.types";
 import { MediaField } from "@/components/media/MediaPicker";
+import { ObjectiveMapEditor } from "@/components/quests/ObjectiveMapEditor";
 
 export type QuestFormValues = {
   title: string;
@@ -82,6 +83,8 @@ type Props = {
 
 export function QuestForm({ value, onChange, onSubmit, submitting, submitLabel = "Save", extra }: Props) {
   const [tagInput, setTagInput] = useState("");
+  const [activePin, setActivePin] = useState<number | null>(null);
+  const [routeMode, setRouteMode] = useState<"sequential" | "free" | "custom">("sequential");
 
   function patch(p: Partial<QuestFormValues>) {
     onChange({ ...value, ...p });
@@ -124,6 +127,30 @@ export function QuestForm({ value, onChange, onSubmit, submitting, submitLabel =
   function updateObjectiveConfig(i: number, cfg: Record<string, unknown>) {
     updateObjective(i, { config: { ...value.objectives[i].config, ...cfg } });
   }
+
+  const anchor = (() => {
+    const lat = Number(value.latitude);
+    const lng = Number(value.longitude);
+    return Number.isFinite(lat) && Number.isFinite(lng) && value.latitude && value.longitude
+      ? { lat, lng }
+      : null;
+  })();
+
+  const pins = value.objectives
+    .map((o, index) => {
+      const cfg = (o.config ?? {}) as Record<string, unknown>;
+      const lat = Number(cfg.latitude);
+      const lng = Number(cfg.longitude);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+      return {
+        index,
+        title: o.title,
+        lat,
+        lng,
+        radiusM: Number(cfg.radius_m) || 60,
+      };
+    })
+    .filter((p): p is NonNullable<typeof p> => p !== null);
 
   function addTag() {
     const t = tagInput.trim().replace(/^#/, "").toLowerCase();
@@ -262,6 +289,52 @@ export function QuestForm({ value, onChange, onSubmit, submitting, submitLabel =
 
       <Section title="Objectives">
         <div className="space-y-3">
+          <div className="space-y-2 rounded-2xl border border-border/60 bg-background/40 p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="text-[10px] font-semibold uppercase tracking-widest text-primary">Map placement</div>
+              <div className="flex gap-1">
+                {(["sequential", "free", "custom"] as const).map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => setRouteMode(m)}
+                    className={`rounded-full border px-2.5 py-1 text-[10px] font-semibold capitalize transition-colors ${
+                      routeMode === m ? "border-primary bg-primary text-primary-foreground" : "border-border text-muted-foreground"
+                    }`}
+                  >
+                    {m}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <ObjectiveMapEditor
+              pins={pins}
+              activeIndex={activePin}
+              routeMode={routeMode}
+              city={value.city}
+              anchor={anchor}
+              className="h-64 w-full overflow-hidden rounded-xl border border-border/60"
+              onPlace={(index, lat, lng) => updateObjectiveConfig(index, { latitude: lat, longitude: lng })}
+            />
+            <div className="flex flex-wrap gap-1.5">
+              {value.objectives.map((o, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setActivePin(activePin === i ? null : i)}
+                  className={`rounded-full border px-2.5 py-1 text-[10px] font-semibold transition-colors ${
+                    activePin === i ? "border-primary bg-primary/15 text-primary" : "border-border text-muted-foreground"
+                  }`}
+                >
+                  #{i + 1} {o.title || "Untitled"}
+                </button>
+              ))}
+            </div>
+            <p className="text-[10px] text-muted-foreground">
+              Pick an objective, then tap the map to drop its pin. Drag any pin to fine-tune. Radius is set per objective below.
+            </p>
+          </div>
+
           {value.objectives.map((o, i) => (
             <div key={i} className="rounded-2xl border border-border/60 bg-background/40 p-3 space-y-2">
               <div className="flex items-center gap-2">
