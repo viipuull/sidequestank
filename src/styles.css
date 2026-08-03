@@ -428,3 +428,18 @@
     transition-duration: 0.001ms !important;
   }
 }
+
+/* Hide the "Edit with Lovable" / "Made with Lovable" badge overlay */
+#lovable-badge,
+#lovable-badge-container,
+[id^="lovable-badge"],
+[class*="lovable-badge"],
+a[href*="lovable.dev"][target="_blank"][class*="fixed"],
+a[href*="lovable.dev/projects"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
