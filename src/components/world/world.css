@@ -1,0 +1,342 @@
+/* SideQuest world map — marker + ambience styling.
+   Imported by the map engine only, so it never ships in the SSR/base CSS. */
+
+.sq-world .leaflet-container {
+  background: transparent;
+  font-family: inherit;
+  outline: none;
+}
+.sq-world .leaflet-tile-pane {
+  filter: var(--sq-tile-filter, none);
+  transition: filter 900ms ease;
+}
+.sq-world .leaflet-control-attribution {
+  background: oklch(0.16 0.02 285 / 0.55);
+  color: oklch(0.75 0.02 285);
+  backdrop-filter: blur(6px);
+  border-radius: 8px 0 0 0;
+  font-size: 9px;
+  padding: 2px 6px;
+}
+.sq-world .leaflet-control-attribution a {
+  color: oklch(0.8 0.08 295);
+}
+
+/* ---------- quest markers ---------- */
+.sq-marker {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.sq-marker__halo {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: radial-gradient(circle, var(--sq-glow, oklch(0.68 0.19 285)) 0%, transparent 68%);
+  opacity: 0.32;
+  animation: sq-marker-breathe 3.6s ease-in-out infinite;
+}
+.sq-marker__ripple {
+  position: absolute;
+  inset: 6px;
+  border-radius: 999px;
+  border: 1px solid var(--sq-glow, oklch(0.68 0.19 285));
+  opacity: 0;
+  animation: sq-marker-ripple 3.6s ease-out infinite;
+}
+.sq-marker__pin {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  font-size: 14px;
+  line-height: 1;
+  color: oklch(0.98 0 0);
+  background: oklch(0.2 0.03 285 / 0.92);
+  border: 1.5px solid var(--sq-glow, oklch(0.68 0.19 285));
+  box-shadow: 0 6px 18px -6px var(--sq-glow, oklch(0.68 0.19 285));
+  animation: sq-marker-float 5s ease-in-out infinite;
+  transition: transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 220ms ease;
+}
+.sq-marker[data-state="completed"] {
+  --sq-glow: oklch(0.82 0.15 88);
+}
+.sq-marker[data-state="completed"] .sq-marker__pin {
+  border-color: oklch(0.85 0.16 88);
+  box-shadow: 0 0 0 1px oklch(0.85 0.16 88 / 0.5), 0 8px 22px -8px oklch(0.85 0.16 88);
+}
+.sq-marker[data-state="completed"] .sq-marker__pin::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 999px;
+  background: linear-gradient(120deg, transparent 40%, oklch(1 0 0 / 0.55) 50%, transparent 60%);
+  background-size: 260% 260%;
+  animation: sq-shine 4.5s linear infinite;
+  pointer-events: none;
+}
+.sq-marker[data-state="locked"] {
+  --sq-glow: oklch(0.55 0.02 285);
+}
+.sq-marker[data-state="locked"] .sq-marker__pin {
+  filter: grayscale(1);
+  opacity: 0.75;
+  animation: none;
+}
+.sq-marker[data-state="locked"] .sq-marker__halo,
+.sq-marker[data-state="locked"] .sq-marker__ripple {
+  display: none;
+}
+.sq-marker[data-state="unknown"] {
+  --sq-glow: oklch(0.7 0.12 200);
+}
+.sq-marker[data-state="unknown"] .sq-marker__pin {
+  background: oklch(0.18 0.03 240 / 0.85);
+  border-style: dashed;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  animation: sq-marker-signal 2.8s ease-in-out infinite;
+}
+.sq-marker[data-selected="true"] .sq-marker__pin {
+  transform: scale(1.28);
+  box-shadow: 0 0 0 2px var(--sq-glow), 0 10px 28px -8px var(--sq-glow);
+}
+.sq-marker[data-selected="true"] .sq-marker__halo {
+  opacity: 0.55;
+}
+.sq-marker__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 1.5px solid var(--sq-glow);
+  opacity: 0;
+}
+.sq-marker[data-selected="true"] .sq-marker__ring {
+  animation: sq-marker-ring 1.5s cubic-bezier(0.2, 0.7, 0.2, 1) infinite;
+}
+.sq-marker__burst {
+  position: absolute;
+  inset: -6px;
+  border-radius: 999px;
+  background: radial-gradient(circle, var(--sq-glow) 0%, transparent 60%);
+  opacity: 0;
+}
+.sq-marker[data-burst="true"] .sq-marker__burst {
+  animation: sq-burst 620ms cubic-bezier(0.2, 0.7, 0.2, 1) 1;
+}
+.sq-marker__label {
+  position: absolute;
+  top: 42px;
+  white-space: nowrap;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: oklch(0.92 0.01 285);
+  background: oklch(0.14 0.02 285 / 0.7);
+  border: 1px solid oklch(1 0 0 / 0.08);
+  padding: 2px 6px;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- landmarks ---------- */
+.sq-landmark {
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.sq-landmark__dot {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  font-size: 11px;
+  border-radius: 999px;
+  background: oklch(0.18 0.02 285 / 0.6);
+  border: 1px solid oklch(1 0 0 / 0.1);
+  opacity: 0.75;
+}
+.sq-landmark__name {
+  margin-top: 2px;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: oklch(0.72 0.02 285);
+  white-space: nowrap;
+}
+
+/* ---------- player ---------- */
+.sq-player {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+}
+.sq-player__radius {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 1px solid oklch(0.72 0.18 200 / 0.6);
+  background: radial-gradient(circle, oklch(0.72 0.18 200 / 0.16), transparent 70%);
+  animation: sq-player-radius 2.8s ease-out infinite;
+}
+.sq-player__core {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: oklch(0.85 0.16 200);
+  border: 2px solid oklch(0.99 0 0);
+  box-shadow: 0 0 16px oklch(0.75 0.18 200 / 0.9);
+  animation: sq-player-breathe 3s ease-in-out infinite;
+}
+.sq-player__dir {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 9px solid oklch(0.9 0.15 200);
+  transform: translateY(-17px) rotate(var(--sq-heading, 0deg));
+  transform-origin: 50% 17px;
+  filter: drop-shadow(0 0 6px oklch(0.75 0.18 200 / 0.8));
+  transition: transform 400ms ease-out;
+}
+
+@keyframes sq-marker-breathe {
+  0%, 100% { opacity: 0.24; transform: scale(0.94); }
+  50% { opacity: 0.42; transform: scale(1.06); }
+}
+@keyframes sq-marker-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -3px; }
+}
+@keyframes sq-marker-ripple {
+  0% { opacity: 0.5; transform: scale(0.7); }
+  70% { opacity: 0; transform: scale(1.5); }
+  100% { opacity: 0; transform: scale(1.5); }
+}
+@keyframes sq-marker-ring {
+  0% { opacity: 0.8; transform: scale(0.8); }
+  100% { opacity: 0; transform: scale(1.6); }
+}
+@keyframes sq-marker-signal {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+@keyframes sq-burst {
+  0% { opacity: 0.9; transform: scale(0.5); }
+  100% { opacity: 0; transform: scale(2.1); }
+}
+@keyframes sq-shine {
+  0% { background-position: 200% 0; }
+  100% { background-position: -60% 0; }
+}
+@keyframes sq-player-radius {
+  0% { opacity: 0.7; transform: scale(0.35); }
+  100% { opacity: 0; transform: scale(1); }
+}
+@keyframes sq-player-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.14); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sq-marker__halo,
+  .sq-marker__ripple,
+  .sq-marker__pin,
+  .sq-marker__ring,
+  .sq-marker__burst,
+  .sq-player__radius,
+  .sq-player__core,
+  .sq-marker[data-state="completed"] .sq-marker__pin::after {
+    animation: none !important;
+  }
+}
+
+/* ---------- ambience ---------- */
+.sq-star { animation: sq-twinkle 4.5s ease-in-out infinite; opacity: 0.6; }
+@keyframes sq-twinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.9; }
+}
+
+.sq-fog {
+  background: radial-gradient(60% 100% at 30% 50%, oklch(0.8 0.03 285 / 0.10), transparent 70%),
+    radial-gradient(50% 100% at 70% 50%, oklch(0.75 0.06 265 / 0.08), transparent 72%);
+  filter: blur(14px);
+  will-change: transform;
+}
+.sq-fog--a { animation: sq-fog-drift 46s linear infinite; }
+.sq-fog--b { animation: sq-fog-drift 68s linear infinite reverse; }
+@keyframes sq-fog-drift {
+  0% { transform: translate3d(-12%, 0, 0); }
+  50% { transform: translate3d(12%, -8px, 0); }
+  100% { transform: translate3d(-12%, 0, 0); }
+}
+
+.sq-rays {
+  background: conic-gradient(
+    from 200deg at 50% -10%,
+    transparent 0deg,
+    var(--sq-ray, oklch(0.68 0.19 285)) 12deg,
+    transparent 24deg,
+    transparent 40deg,
+    var(--sq-ray, oklch(0.68 0.19 285)) 52deg,
+    transparent 64deg
+  );
+  opacity: 0.06;
+  filter: blur(6px);
+  will-change: transform, opacity;
+  animation: sq-ray-sweep 24s ease-in-out infinite;
+}
+@keyframes sq-ray-sweep {
+  0%, 100% { transform: rotate(-4deg) scale(1.1); opacity: 0.04; }
+  50% { transform: rotate(4deg) scale(1.15); opacity: 0.09; }
+}
+
+.sq-mote {
+  opacity: 0;
+  will-change: transform, opacity;
+  animation-name: sq-mote-drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  box-shadow: 0 0 6px currentColor;
+}
+@keyframes sq-mote-drift {
+  0% { opacity: 0; transform: translate3d(0, 8px, 0); }
+  25% { opacity: 0.7; }
+  75% { opacity: 0.5; }
+  100% { opacity: 0; transform: translate3d(10px, -26px, 0); }
+}
+
+.sq-birds { will-change: transform; animation: sq-bird-cross 42s linear infinite; }
+@keyframes sq-bird-cross {
+  0% { transform: translate3d(-20%, 0, 0); opacity: 0; }
+  8% { opacity: 0.6; }
+  85% { opacity: 0.5; }
+  100% { transform: translate3d(120vw, -40px, 0); opacity: 0; }
+}
+.sq-bird-a { animation: sq-flap 1.1s ease-in-out infinite; }
+.sq-bird-b { animation: sq-flap 1.3s ease-in-out infinite 0.2s; }
+.sq-bird-c { animation: sq-flap 0.95s ease-in-out infinite 0.4s; }
+@keyframes sq-flap {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.45); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sq-star, .sq-fog, .sq-rays, .sq-mote, .sq-birds,
+  .sq-bird-a, .sq-bird-b, .sq-bird-c { animation: none !important; }
+  .sq-mote { opacity: 0.4; }
+}
