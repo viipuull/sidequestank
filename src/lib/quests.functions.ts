@@ -71,7 +71,7 @@ export const listPublishedQuests = createServerFn({ method: "GET" })
     let q = sb
       .from("quests")
       .select(
-        "id, title, slug, short_description, cover_image_url, category, difficulty, quest_type, estimated_minutes, city, reward_preview, reward_xp, tags, featured, created_at, published_at",
+        "id, title, slug, short_description, cover_image_url, category, difficulty, quest_type, estimated_minutes, city, reward_preview, reward_xp, tags, featured, created_at, published_at, latitude, longitude, address",
       )
       .eq("status", "published")
       .eq("visibility", "public")
