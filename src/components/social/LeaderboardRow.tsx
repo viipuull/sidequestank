@@ -16,8 +16,8 @@ export function LeaderboardRow({ entry, highlight, index = 0 }: { entry: Leaderb
       <Link
         to="/players/$username"
         params={{ username: entry.profile.username }}
-        className={`flex items-center gap-3 rounded-2xl border p-3 transition-all duration-200 hover:border-primary/45 active:scale-[0.99] ${
-          highlight ? "card-shine border-primary/60 bg-primary/10" : "border-border bg-card/60"
+        className={`hud-panel flex items-center gap-3 rounded-2xl p-3 transition-all duration-200 hover:border-primary/45 active:scale-[0.99] ${
+          highlight ? "card-shine neon-primary border-primary/60 bg-primary/10" : ""
         }`}
       >
         <RankBadge rank={entry.rank} />
@@ -33,7 +33,10 @@ export function LeaderboardRow({ entry, highlight, index = 0 }: { entry: Leaderb
           </div>
           <p className="truncate text-[11px] text-muted-foreground">Lv {entry.level} • {entry.quests_completed} quests</p>
         </div>
-        <CountUp value={entry.xp} className="text-sm font-bold text-primary" />
+        <div className="flex flex-col items-end">
+          <CountUp value={entry.xp} className="text-sm font-bold tabular-nums text-primary" />
+          <span className="text-[9px] uppercase tracking-widest text-muted-foreground">XP</span>
+        </div>
       </Link>
     </motion.div>
   );

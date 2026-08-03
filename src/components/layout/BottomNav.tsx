@@ -21,6 +21,11 @@ export function BottomNav() {
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       aria-label="Primary"
     >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 -top-px h-px"
+        style={{ background: "linear-gradient(90deg, transparent, var(--primary), var(--magenta), transparent)", opacity: 0.7 }}
+      />
       <ul className="mx-auto flex max-w-md items-stretch justify-between px-2">
         {TABS.map((t) => {
           const Icon = t.icon;
@@ -37,8 +42,8 @@ export function BottomNav() {
                 {isActive && (
                   <motion.span
                     layoutId="bottomnav-pill"
-                    className="absolute inset-x-3 top-1 h-8 rounded-2xl bg-primary/15 ring-1 ring-primary/30"
-                    style={{ boxShadow: "0 0 18px oklch(0.62 0.22 295 / 0.35)" }}
+                    className="absolute inset-x-2.5 top-1 h-9 rounded-2xl bg-primary/15 ring-1 ring-primary/40"
+                    style={{ boxShadow: "0 0 20px var(--glow-primary)" }}
                     transition={springs.snappy}
                   />
                 )}

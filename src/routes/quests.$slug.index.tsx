@@ -138,7 +138,7 @@ function QuestDetailPage() {
         transition={{ duration: 0.3 }}
         className="relative z-10 mx-auto -mt-16 max-w-md space-y-5 px-5"
       >
-        <div className="rounded-3xl border border-border/60 bg-card/80 p-5 shadow-xl backdrop-blur-xl">
+        <div className="hud-panel hud-edge rounded-3xl p-5">
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="secondary" className="rounded-full">
               {cat?.emoji} {cat?.label}
@@ -247,19 +247,19 @@ function QuestDetailPage() {
       </motion.main>
 
       <div
-        className="fixed inset-x-0 bottom-0 z-30 border-t border-border/60 bg-background/90 px-5 py-3 backdrop-blur-xl"
+        className="fixed inset-x-0 bottom-0 z-30 border-t border-primary/25 bg-background/90 px-5 py-3 backdrop-blur-xl"
         style={{ paddingBottom: `calc(env(safe-area-inset-bottom) + 12px)` }}
       >
         <div className="mx-auto flex max-w-md items-center gap-3">
           <div className="min-w-0 flex-1">
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Reward</div>
-            <div className="text-sm font-semibold text-primary">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Reward</div>
+            <div className="font-display text-base font-bold text-primary">
               {rewardSpent ? "Already earned" : `+${data.reward_xp} XP`}
             </div>
           </div>
           <Button
             size="lg"
-            className="h-12 flex-[2] rounded-2xl text-sm font-bold shadow-lg active:scale-[0.97]"
+            className="neon-primary h-12 flex-[2] rounded-2xl text-sm font-bold uppercase tracking-wide active:scale-[0.97]"
             onClick={handleStart}
             disabled={starting}
           >
@@ -274,8 +274,8 @@ function QuestDetailPage() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-3xl border border-border/60 bg-card/60 p-5 shadow-md backdrop-blur-xl">
-      <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-primary">{title}</h2>
+    <section className="hud-panel rounded-3xl p-5">
+      <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-primary">{title}</h2>
       {children}
     </section>
   );
@@ -283,9 +283,9 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function Stat({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-border/50 bg-background/40 p-2.5">
-      <div className="flex items-center justify-center gap-1 text-muted-foreground">{icon}<span>{label}</span></div>
-      <div className="mt-0.5 truncate text-sm font-semibold">{value}</div>
+    <div className="rounded-2xl border border-white/10 bg-background/40 p-2.5">
+      <div className="flex items-center justify-center gap-1 text-muted-foreground">{icon}<span className="uppercase tracking-wider">{label}</span></div>
+      <div className="mt-0.5 truncate font-display text-sm font-bold">{value}</div>
     </div>
   );
 }

@@ -59,37 +59,41 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
-  /* SideQuest — Dark-first adventure design system.
-     Brand: purple (primary), amber/yellow (accent), red (danger/pin).
-     Surfaces are layered near-black, never pure #000. */
+  /* SideQuest — Dark-first arcade design system ("Sunset Blaze").
+     Brand: blaze orange (primary), amber gold (accent), magenta + violet
+     as energy colors. Surfaces are layered near-black, never pure #000. */
   --radius: 0.875rem;
 
-  --background: oklch(0.17 0.02 275);
+  --background: oklch(0.16 0.028 300);
   --foreground: oklch(0.98 0.005 260);
 
-  --surface: oklch(0.21 0.025 275);
-  --surface-elevated: oklch(0.25 0.03 275);
+  --surface: oklch(0.2 0.033 300);
+  --surface-elevated: oklch(0.245 0.038 300);
 
-  --card: oklch(0.21 0.025 275);
+  --card: oklch(0.2 0.033 300);
   --card-foreground: oklch(0.98 0.005 260);
-  --popover: oklch(0.22 0.03 275);
+  --popover: oklch(0.215 0.036 300);
   --popover-foreground: oklch(0.98 0.005 260);
 
-  --primary: oklch(0.62 0.22 295);            /* SideQuest purple */
+  --primary: oklch(0.7 0.19 40);              /* Blaze orange */
   --primary-foreground: oklch(0.99 0.005 260);
-  --primary-glow: oklch(0.72 0.2 295);
+  --primary-glow: oklch(0.78 0.16 62);
+  --magenta: oklch(0.65 0.22 356);            /* Energy magenta */
+  --violet: oklch(0.55 0.21 285);             /* Deep violet */
 
-  --secondary: oklch(0.3 0.04 275);
+  --secondary: oklch(0.3 0.05 300);
   --secondary-foreground: oklch(0.98 0.005 260);
 
-  --accent: oklch(0.83 0.17 85);              /* Quest gold */
-  --accent-foreground: oklch(0.2 0.03 275);
+  --accent: oklch(0.79 0.16 68);              /* Quest gold */
+  --accent-foreground: oklch(0.2 0.03 300);
 
-  --muted: oklch(0.26 0.025 275);
-  --muted-foreground: oklch(0.72 0.02 265);
+  --muted: oklch(0.26 0.03 300);
+  --muted-foreground: oklch(0.74 0.025 300);
 
   --success: oklch(0.72 0.17 155);
   --warning: oklch(0.82 0.17 75);
@@ -97,28 +101,31 @@
   --destructive: oklch(0.63 0.24 27);
   --destructive-foreground: oklch(0.99 0.005 260);
 
-  --border: oklch(1 0 0 / 8%);
+  --border: oklch(1 0 0 / 9%);
   --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.62 0.22 295);
+  --ring: oklch(0.7 0.19 40);
 
-  --gradient-hero: linear-gradient(135deg, oklch(0.62 0.22 295), oklch(0.7 0.2 330));
-  --gradient-quest: linear-gradient(135deg, oklch(0.83 0.17 85), oklch(0.7 0.2 40));
-  --shadow-elevated: 0 10px 30px -10px oklch(0.1 0.05 275 / 0.6);
-  --shadow-glow: 0 0 40px oklch(0.62 0.22 295 / 0.35);
+  --gradient-hero: linear-gradient(135deg, oklch(0.7 0.19 40), oklch(0.65 0.22 356) 55%, oklch(0.55 0.21 285));
+  --gradient-quest: linear-gradient(135deg, oklch(0.79 0.16 68), oklch(0.7 0.19 40));
+  --gradient-xp: linear-gradient(90deg, oklch(0.79 0.16 68), oklch(0.7 0.19 40) 55%, oklch(0.65 0.22 356));
+  --shadow-elevated: 0 12px 34px -12px oklch(0.12 0.06 300 / 0.75);
+  --shadow-glow: 0 0 40px oklch(0.7 0.19 40 / 0.35);
+  --glow-primary: oklch(0.7 0.19 40 / 0.45);
+  --glow-magenta: oklch(0.65 0.22 356 / 0.4);
 
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.19 0.025 275);
+  --chart-1: oklch(0.7 0.19 40);
+  --chart-2: oklch(0.79 0.16 68);
+  --chart-3: oklch(0.65 0.22 356);
+  --chart-4: oklch(0.55 0.21 285);
+  --chart-5: oklch(0.72 0.17 155);
+  --sidebar: oklch(0.185 0.03 300);
   --sidebar-foreground: oklch(0.98 0.005 260);
-  --sidebar-primary: oklch(0.62 0.22 295);
+  --sidebar-primary: oklch(0.7 0.19 40);
   --sidebar-primary-foreground: oklch(0.99 0.005 260);
-  --sidebar-accent: oklch(0.26 0.03 275);
+  --sidebar-accent: oklch(0.26 0.035 300);
   --sidebar-accent-foreground: oklch(0.98 0.005 260);
   --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: oklch(0.62 0.22 295);
+  --sidebar-ring: oklch(0.7 0.19 40);
 }
 
 .dark {
@@ -164,6 +171,13 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
   }
 }
 
@@ -210,9 +224,19 @@
 }
 
 @keyframes sq-ring-pulse {
-  0% { box-shadow: 0 0 0 0 oklch(0.62 0.22 295 / 0.55); }
-  70% { box-shadow: 0 0 0 14px oklch(0.62 0.22 295 / 0); }
-  100% { box-shadow: 0 0 0 0 oklch(0.62 0.22 295 / 0); }
+  0% { box-shadow: 0 0 0 0 var(--glow-primary); }
+  70% { box-shadow: 0 0 0 14px oklch(0.7 0.19 40 / 0); }
+  100% { box-shadow: 0 0 0 0 oklch(0.7 0.19 40 / 0); }
+}
+
+@keyframes sq-hud-scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(400%); }
+}
+
+@keyframes sq-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
 }
 
 /* A slow light sweep across a card surface. */
@@ -274,6 +298,52 @@
   );
   background-size: 300% 100%;
   animation: sq-shimmer 1.8s ease-in-out infinite;
+}
+
+/* Arcade HUD panel: layered glass with a hot top edge. */
+@utility hud-panel {
+  position: relative;
+  background:
+    linear-gradient(180deg, oklch(1 0 0 / 0.05), oklch(1 0 0 / 0.01)),
+    var(--card);
+  border: 1px solid oklch(1 0 0 / 0.1);
+  box-shadow:
+    inset 0 1px 0 0 oklch(1 0 0 / 0.08),
+    0 14px 34px -20px oklch(0.1 0.05 300 / 0.9);
+  backdrop-filter: blur(10px);
+}
+
+@utility hud-edge {
+  &::before {
+    content: "";
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    top: -1px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    opacity: 0.8;
+  }
+}
+
+/* Soft neon halo used on primary CTAs and active HUD chips. */
+@utility neon-primary {
+  box-shadow: 0 0 0 1px oklch(0.7 0.19 40 / 0.35), 0 8px 26px -10px var(--glow-primary);
+}
+
+@utility neon-magenta {
+  box-shadow: 0 0 0 1px oklch(0.65 0.22 356 / 0.35), 0 8px 26px -10px var(--glow-magenta);
+}
+
+@utility text-blaze {
+  background: var(--gradient-hero);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+@utility float-soft {
+  animation: sq-float 4.5s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
