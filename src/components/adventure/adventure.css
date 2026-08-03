@@ -1,0 +1,295 @@
+/* SideQuest Adventure Mode — cinematic navigation overlay.
+   Imported by the adventure engine only, so it never ships in base CSS. */
+
+.sq-adv .leaflet-container {
+  background: transparent;
+  font-family: inherit;
+  outline: none;
+}
+.sq-adv .leaflet-tile-pane {
+  filter: var(--sq-tile-filter, none);
+  transition: filter 900ms ease;
+}
+.sq-adv .leaflet-control-attribution {
+  background: oklch(0.16 0.02 285 / 0.5);
+  color: oklch(0.72 0.02 285);
+  backdrop-filter: blur(6px);
+  border-radius: 8px 0 0 0;
+  font-size: 9px;
+  padding: 1px 6px;
+}
+.sq-adv .leaflet-control-attribution a { color: oklch(0.8 0.08 295); }
+
+/* ---------- navigation route ---------- */
+.sq-route-base {
+  stroke: oklch(0.68 0.19 285 / 0.28);
+  stroke-width: 11;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 10px oklch(0.68 0.19 285 / 0.65));
+}
+.sq-route-core {
+  stroke: oklch(0.86 0.13 290 / 0.9);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sq-route-flow {
+  stroke: oklch(0.97 0.06 95);
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  stroke-dasharray: 10 26;
+  filter: drop-shadow(0 0 8px oklch(0.9 0.14 90 / 0.9));
+  animation: sq-route-flow 1.5s linear infinite;
+}
+.sq-route-spark {
+  stroke: oklch(1 0 0);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 2 70;
+  opacity: 0.85;
+  animation: sq-route-flow 2.4s linear infinite;
+}
+.sq-route-done {
+  stroke: oklch(0.82 0.15 88 / 0.55);
+  stroke-width: 3;
+  stroke-dasharray: 4 8;
+  stroke-linecap: round;
+}
+@keyframes sq-route-flow {
+  to { stroke-dashoffset: -36; }
+}
+
+/* ---------- explorer (player) marker ---------- */
+.sq-explorer {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+}
+.sq-explorer__pulse,
+.sq-explorer__pulse2 {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 1px solid oklch(0.75 0.18 200 / 0.55);
+  background: radial-gradient(circle, oklch(0.72 0.18 200 / 0.15), transparent 68%);
+  animation: sq-exp-pulse 3s cubic-bezier(0.2, 0.7, 0.2, 1) infinite;
+}
+.sq-explorer__pulse2 { animation-delay: 1.5s; }
+.sq-explorer__shadow {
+  position: absolute;
+  bottom: 20px;
+  width: 22px;
+  height: 7px;
+  border-radius: 999px;
+  background: oklch(0.1 0.02 285 / 0.55);
+  filter: blur(3px);
+}
+.sq-explorer__ring {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1.5px solid oklch(0.88 0.14 200 / 0.85);
+  box-shadow: 0 0 18px oklch(0.75 0.18 200 / 0.7), inset 0 0 10px oklch(0.75 0.18 200 / 0.4);
+  animation: sq-exp-breathe 3.2s ease-in-out infinite;
+}
+.sq-explorer__core {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: oklch(0.9 0.15 200);
+  border: 2px solid oklch(0.99 0 0);
+  box-shadow: 0 0 18px oklch(0.8 0.18 200);
+}
+.sq-explorer__heading {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 11px solid oklch(0.93 0.14 200);
+  transform: translateY(-24px) rotate(var(--sq-heading, 0deg));
+  transform-origin: 50% 24px;
+  filter: drop-shadow(0 0 7px oklch(0.78 0.18 200 / 0.9));
+  transition: transform 380ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@keyframes sq-exp-pulse {
+  0% { opacity: 0.75; transform: scale(0.3); }
+  100% { opacity: 0; transform: scale(1); }
+}
+@keyframes sq-exp-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.95; }
+  50% { transform: scale(1.12); opacity: 0.7; }
+}
+
+/* ---------- destination checkpoints ---------- */
+.sq-cp {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.sq-cp__glow {
+  position: absolute;
+  inset: -4px;
+  border-radius: 999px;
+  background: radial-gradient(circle, var(--sq-cp, oklch(0.7 0.19 285)) 0%, transparent 66%);
+  opacity: 0.3;
+  animation: sq-cp-breathe 3.4s ease-in-out infinite;
+}
+.sq-cp__ring {
+  position: absolute;
+  inset: 8px;
+  border-radius: 999px;
+  border: 1.5px solid var(--sq-cp, oklch(0.7 0.19 285));
+  opacity: 0;
+  animation: sq-cp-ring 3.4s cubic-bezier(0.2, 0.7, 0.2, 1) infinite;
+}
+.sq-cp__pin {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 700;
+  color: oklch(0.98 0 0);
+  background: oklch(0.19 0.03 285 / 0.94);
+  border: 1.5px solid var(--sq-cp, oklch(0.7 0.19 285));
+  box-shadow: 0 8px 22px -8px var(--sq-cp, oklch(0.7 0.19 285));
+  animation: sq-cp-float 4.6s ease-in-out infinite;
+  transition: transform 240ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.sq-cp__label {
+  position: absolute;
+  top: 46px;
+  white-space: nowrap;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: oklch(0.93 0.01 285);
+  background: oklch(0.13 0.02 285 / 0.72);
+  border: 1px solid oklch(1 0 0 / 0.08);
+  padding: 2px 7px;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+}
+.sq-cp[data-state="current"] { --sq-cp: oklch(0.88 0.15 90); }
+.sq-cp[data-state="current"] .sq-cp__pin { transform: scale(1.14); }
+.sq-cp[data-state="current"] .sq-cp__glow { opacity: 0.5; }
+.sq-cp[data-state="done"] { --sq-cp: oklch(0.82 0.15 88); }
+.sq-cp[data-state="done"] .sq-cp__pin { opacity: 0.9; animation: none; }
+.sq-cp[data-state="done"] .sq-cp__ring,
+.sq-cp[data-state="done"] .sq-cp__glow { display: none; }
+.sq-cp[data-state="pending"] { --sq-cp: oklch(0.8 0.15 70); }
+.sq-cp[data-state="upcoming"] { --sq-cp: oklch(0.62 0.08 285); }
+.sq-cp[data-state="upcoming"] .sq-cp__pin { opacity: 0.8; }
+.sq-cp[data-unknown="true"] { --sq-cp: oklch(0.72 0.12 200); }
+.sq-cp[data-unknown="true"] .sq-cp__pin {
+  background: oklch(0.17 0.03 240 / 0.88);
+  border-style: dashed;
+  animation: sq-cp-signal 2.6s ease-in-out infinite;
+}
+.sq-cp[data-near="true"] .sq-cp__glow { opacity: 0.75; }
+.sq-cp[data-near="true"] .sq-cp__pin {
+  transform: scale(1.24);
+  box-shadow: 0 0 0 2px var(--sq-cp), 0 12px 30px -8px var(--sq-cp);
+}
+.sq-cp__burst {
+  position: absolute;
+  inset: -10px;
+  border-radius: 999px;
+  background: radial-gradient(circle, var(--sq-cp) 0%, transparent 62%);
+  opacity: 0;
+}
+.sq-cp[data-burst="true"] .sq-cp__burst {
+  animation: sq-cp-burst 720ms cubic-bezier(0.2, 0.7, 0.2, 1) 1;
+}
+@keyframes sq-cp-breathe {
+  0%, 100% { opacity: 0.24; transform: scale(0.94); }
+  50% { opacity: 0.46; transform: scale(1.08); }
+}
+@keyframes sq-cp-ring {
+  0% { opacity: 0.85; transform: scale(0.7); }
+  70%, 100% { opacity: 0; transform: scale(1.75); }
+}
+@keyframes sq-cp-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -4px; }
+}
+@keyframes sq-cp-signal {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+@keyframes sq-cp-burst {
+  0% { opacity: 0.95; transform: scale(0.45); }
+  100% { opacity: 0; transform: scale(2.2); }
+}
+
+/* ---------- arrival light sweep ---------- */
+.sq-arrival-sweep {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 35%, oklch(0.95 0.1 90 / 0.35) 50%, transparent 65%);
+  background-size: 260% 100%;
+  animation: sq-sweep 1100ms ease-out 1;
+}
+@keyframes sq-sweep {
+  0% { background-position: 180% 0; opacity: 0; }
+  25% { opacity: 1; }
+  100% { background-position: -60% 0; opacity: 0; }
+}
+
+/* ---------- founder pin editor ---------- */
+.sq-editpin {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  cursor: grab;
+}
+.sq-editpin__dot {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  color: oklch(0.98 0 0);
+  background: oklch(0.2 0.03 285 / 0.95);
+  border: 1.5px solid oklch(0.75 0.18 290);
+  box-shadow: 0 6px 16px -6px oklch(0.7 0.19 285);
+}
+.sq-editpin[data-active="true"] .sq-editpin__dot {
+  border-color: oklch(0.88 0.15 90);
+  box-shadow: 0 0 0 2px oklch(0.88 0.15 90 / 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sq-route-flow,
+  .sq-route-spark,
+  .sq-explorer__pulse,
+  .sq-explorer__pulse2,
+  .sq-explorer__ring,
+  .sq-cp__glow,
+  .sq-cp__ring,
+  .sq-cp__pin,
+  .sq-cp__burst,
+  .sq-arrival-sweep {
+    animation: none !important;
+  }
+  .sq-route-flow { opacity: 0.9; }
+}
