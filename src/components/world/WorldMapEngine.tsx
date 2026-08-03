@@ -150,8 +150,12 @@ export default function WorldMapEngine({
 
   // ---- tile grading follows atmosphere
   useEffect(() => {
-    hostRef.current?.style.setProperty("--sq-tile-filter", atmosphere.tileFilter);
-  }, [atmosphere]);
+    // Time-of-day grading is a night-map effect; light mode keeps tiles clean.
+    hostRef.current?.style.setProperty(
+      "--sq-tile-filter",
+      theme === "dark" ? atmosphere.tileFilter : "saturate(1.02)",
+    );
+  }, [atmosphere, theme]);
 
   // ---- render quest markers
   useEffect(() => {

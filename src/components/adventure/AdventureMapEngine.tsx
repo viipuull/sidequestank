@@ -124,8 +124,12 @@ export default function AdventureMapEngine({
   }, [world, tier]);
 
   useEffect(() => {
-    hostRef.current?.style.setProperty("--sq-tile-filter", atmosphere.tileFilter);
-  }, [atmosphere]);
+    // Time-of-day grading is a night-map effect; light mode keeps tiles clean.
+    hostRef.current?.style.setProperty(
+      "--sq-tile-filter",
+      theme === "dark" ? atmosphere.tileFilter : "saturate(1.02)",
+    );
+  }, [atmosphere, theme]);
 
   // ---- basemap follows the app theme
   useEffect(() => {
