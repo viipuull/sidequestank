@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Compass, Search, Sparkles } from "lucide-react";
+import { Compass, Map as MapIcon, Rows3, Search, Sparkles } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { QuestCard } from "@/components/quests/QuestCard";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,10 @@ import { listPublishedQuests } from "@/lib/quests.functions";
 import { QUEST_CATEGORIES, QUEST_DIFFICULTIES } from "@/lib/quests.types";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { QuestGridSkeleton } from "@/components/feedback";
+import { WorldMap } from "@/components/world/WorldMap";
+import { listMySessions } from "@/lib/gameplay.functions";
+import { useMyProgress } from "@/lib/hooks/useProgression";
+import type { WorldQuest } from "@/lib/world/types";
 
 export const Route = createFileRoute("/quests/")({
   head: () => ({
@@ -32,6 +36,7 @@ function QuestsFeedPage() {
   const [category, setCategory] = useState<string | undefined>(undefined);
   const [difficulty, setDifficulty] = useState<string | undefined>(undefined);
   const [sort, setSort] = useState<"newest" | "featured" | "quickest">("featured");
+  const [view, setView] = useState<"map" | "list">("map");
 
   const listQuests = useServerFn(listPublishedQuests);
   const key = useMemo(() => ["quests", { search, category, difficulty, sort }], [search, category, difficulty, sort]);
@@ -39,6 +44,23 @@ function QuestsFeedPage() {
     queryKey: key,
     queryFn: () => listQuests({ data: { search: search || undefined, category, difficulty, sort } }),
   });
+
+  const mySessions = useServerFn(listMySessions);
+  const { data: sessions } = useQuery({
+    queryKey: ["my-sessions", "world"],
+    enabled: !!user,
+    queryFn: () => mySessions({}),
+    staleTime: 30_000,
+  });
+  const { data: progress } = useMyProgress(!!user);
+
+  const completedIds = useMemo(
+    () =>
+      (sessions ?? [])
+        .filter((s: { status: string }) => s.status === "completed")
+        .map((s: { quest_id: string }) => s.quest_id),
+    [sessions],
+  );
 
   return (
     <AppShell>
@@ -63,6 +85,17 @@ function QuestsFeedPage() {
                 Studio
               </Link>
             )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="flex rounded-full border border-border bg-card/60 p-0.5">
+              <ViewTab active={view === "map"} onClick={() => setView("map")} icon={<MapIcon className="h-3.5 w-3.5" />}>
+                World
+              </ViewTab>
+              <ViewTab active={view === "list"} onClick={() => setView("list")} icon={<Rows3 className="h-3.5 w-3.5" />}>
+                List
+              </ViewTab>
+            </div>
           </div>
 
           <div className="relative">
@@ -107,7 +140,16 @@ function QuestsFeedPage() {
           </div>
         </header>
 
-        {isLoading ? (
+        {view === "map" ? (
+          <WorldMap
+            quests={(data ?? []) as unknown as WorldQuest[]}
+            completedIds={completedIds}
+            level={progress?.current_level ?? null}
+            xpInLevel={progress?.current_level_xp ?? null}
+            xpForLevel={progress?.xp_for_next_level ?? null}
+            className="h-[70vh] min-h-[440px]"
+          />
+        ) : isLoading ? (
           <QuestGridSkeleton count={3} />
         ) : !data || data.length === 0 ? (
           <EmptyState />
@@ -120,6 +162,30 @@ function QuestsFeedPage() {
         )}
       </div>
     </AppShell>
+  );
+}
+
+function ViewTab({
+  active,
+  onClick,
+  icon,
+  children,
+}: {
+  active?: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-semibold transition-all active:scale-95 ${
+        active ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground"
+      }`}
+    >
+      {icon}
+      {children}
+    </button>
   );
 }
 
