@@ -152,10 +152,33 @@ export const discoverPlayers = createServerFn({ method: "GET" })
   .inputValidator((raw: unknown) => discoverInput.parse(raw ?? {}))
   .handler(async ({ data }): Promise<PlayerCard[]> => {
     const sb = serverPublicClient();
-    let q = sb.from("player_stats")
-      .select(sel("*, profiles!inner(id, username, display_name, avatar_url, city), player_social_settings!inner(public_profile, moderation_hidden)"))
-      .eq("player_social_settings.public_profile", true)
-      .eq("player_social_settings.moderation_hidden", false);
+    // player_stats and player_social_settings have no direct FK between them
+    // (both reference auth.users), so PostgREST cannot embed them. Resolve the
+    // visible/matching user ids first, then query stats by id.
+    const { data: visible, error: visErr } = await sb
+      .from("player_social_settings")
+      .select("user_id")
+      .eq("public_profile", true)
+      .eq("moderation_hidden", false)
+      .limit(5000);
+    if (visErr) throw visErr;
+    let allowedIds = (visible ?? []).map((r) => r.user_id);
+
+    let pq = sb.from("profiles").select("id, username, display_name, avatar_url, city");
+    if (data.city) pq = pq.ilike("city", data.city);
+    if (data.query) {
+      const s = escapePostgrestLike(data.query);
+      pq = pq.or(`username.ilike.${s},display_name.ilike.${s}`);
+    }
+    const { data: profileRows, error: profErr } = await pq.limit(5000);
+    if (profErr) throw profErr;
+    const profileMap = new Map(
+      (profileRows ?? []).map((p) => [p.id, p as { id: string; username: string; display_name: string; avatar_url: string | null; city: string }]),
+    );
+    allowedIds = allowedIds.filter((id) => profileMap.has(id));
+    if (!allowedIds.length) return [];
+
+    let q = sb.from("player_stats").select("*").in("user_id", allowedIds);
     switch (data.sort) {
       case "top_level": q = q.order("level", { ascending: false }).order("total_xp", { ascending: false }); break;
       case "most_collections": q = q.order("collections_completed", { ascending: false }); break;
@@ -163,11 +186,6 @@ export const discoverPlayers = createServerFn({ method: "GET" })
       case "most_active": q = q.order("last_active_at", { ascending: false, nullsFirst: false }); break;
       case "newest": q = q.order("join_date", { ascending: false }); break;
       default: q = q.order("total_xp", { ascending: false }).order("level", { ascending: false });
-    }
-    if (data.city) q = q.ilike("profiles.city", data.city);
-    if (data.query) {
-      const s = escapePostgrestLike(data.query);
-      q = q.or(`username.ilike.${s},display_name.ilike.${s}`, { referencedTable: "profiles" });
     }
     q = q.range(data.offset, data.offset + data.limit - 1);
     const { data: rows, error } = await q;
@@ -183,13 +201,14 @@ export const discoverPlayers = createServerFn({ method: "GET" })
       }
     }
     return (rows ?? []).map((r) => {
-      const row = r as unknown as PlayerStatsRow & { profiles: { id: string; username: string; display_name: string; avatar_url: string | null; city: string } };
+      const row = r as unknown as PlayerStatsRow;
+      const prof = profileMap.get(row.user_id)!;
       return {
         user_id: row.user_id,
-        username: row.profiles.username,
-        display_name: row.profiles.display_name,
-        avatar_url: row.profiles.avatar_url,
-        city: row.profiles.city,
+        username: prof.username,
+        display_name: prof.display_name,
+        avatar_url: prof.avatar_url,
+        city: prof.city,
         level: row.level,
         total_xp: row.total_xp,
         quests_completed: row.quests_completed,
