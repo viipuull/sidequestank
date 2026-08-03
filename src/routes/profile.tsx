@@ -70,7 +70,7 @@ function ProfileInner() {
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mt-6 rounded-3xl border border-border bg-card/70 p-6 text-center backdrop-blur"
+        className="mt-6 hud-panel hud-edge rounded-3xl p-6 text-center"
         style={{ boxShadow: "var(--shadow-elevated)" }}
       >
         <Avatar className="mx-auto h-24 w-24 border-2 border-primary/40">
@@ -118,7 +118,7 @@ function ProfileInner() {
       <motion.section
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mt-5 rounded-3xl border border-border bg-card/70 p-5 backdrop-blur"
+        className="mt-5 hud-panel rounded-3xl p-5"
         style={{ boxShadow: "var(--shadow-elevated)" }}
       >
         <div className="flex items-center justify-between">
@@ -138,7 +138,7 @@ function ProfileInner() {
         </p>
       </motion.section>
 
-      <section className="mt-5 rounded-3xl border border-border bg-card/70 p-5 backdrop-blur">
+      <section className="mt-5 hud-panel rounded-3xl p-5">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold">Badges</h3>
           <Link to="/achievements" className="text-xs font-semibold text-primary">Gallery →</Link>
@@ -173,7 +173,7 @@ function ProfileInner() {
         )}
       </section>
 
-      <section className="mt-5 rounded-3xl border border-border bg-card/70 p-5 backdrop-blur">
+      <section className="mt-5 hud-panel rounded-3xl p-5">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-semibold">Titles</h3>
           <Link to="/titles" className="text-xs font-semibold text-primary">Manage →</Link>
@@ -201,7 +201,7 @@ function ProfileInner() {
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Recent activity</h3>
           <div className="space-y-2">
             {recentXp.map((e) => (
-              <div key={e.id} className="flex items-center justify-between rounded-2xl border border-border bg-card/60 p-3">
+              <div key={e.id} className="flex items-center justify-between hud-panel rounded-2xl p-3">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold">{e.quests?.title ?? "Bonus XP"}</p>
                   <p className="text-[11px] text-muted-foreground">
@@ -222,7 +222,7 @@ function ProfileInner() {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-border bg-card/60 p-3">
+    <div className="hud-panel rounded-2xl p-3">
       <p className="text-lg font-bold">{value}</p>
       <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
     </div>
