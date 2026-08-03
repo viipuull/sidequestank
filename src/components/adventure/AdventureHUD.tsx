@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
-import { Compass, Timer, X, Zap } from "lucide-react";
+import { Compass, Timer, Volume2, VolumeX, X, Zap } from "lucide-react";
 import { formatDistance } from "@/lib/world/geo";
+import { useAdventureSound } from "@/lib/world/sound";
 import type { Waypoint } from "@/lib/world/adventure";
 
 type Props = {
@@ -34,6 +35,7 @@ export function AdventureHUD({
   onExit,
 }: Props) {
   const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+  const { soundOn, toggleSound } = useAdventureSound();
 
   return (
     <>
@@ -66,14 +68,28 @@ export function AdventureHUD({
               ) : null}
             </div>
           </div>
-          <button
-            type="button"
-            onClick={onExit}
-            aria-label="Exit adventure mode"
-            className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-border/60 bg-card/70 transition-transform active:scale-90"
-          >
-            <X className="h-4 w-4" />
-          </button>
+          <div className="flex shrink-0 items-center gap-1.5">
+            <button
+              type="button"
+              onClick={toggleSound}
+              aria-label={soundOn ? "Turn adventure sound off" : "Turn adventure sound on"}
+              aria-pressed={soundOn}
+              title={soundOn ? "Sound on" : "Sound off"}
+              className={`grid h-8 w-8 place-items-center rounded-full border transition-transform active:scale-90 ${
+                soundOn ? "border-primary/50 bg-primary/15 text-primary" : "border-border/60 bg-card/70 text-muted-foreground"
+              }`}
+            >
+              {soundOn ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+            </button>
+            <button
+              type="button"
+              onClick={onExit}
+              aria-label="Exit adventure mode"
+              className="grid h-8 w-8 place-items-center rounded-full border border-border/60 bg-card/70 transition-transform active:scale-90"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         <div className="mt-2 flex items-center gap-1.5 px-1">
