@@ -178,6 +178,22 @@
   --dur-fast: 140ms;
   --dur-base: 220ms;
   --dur-slow: 420ms;
+
+  /* Cinematic accent lights (used by ambience, glass and glow utilities). */
+  --glow-cyan: oklch(0.78 0.14 205);
+  --glow-gold: oklch(0.83 0.17 85);
+  --glow-violet: oklch(0.62 0.22 295);
+  --midnight: oklch(0.14 0.035 275);
+  --glass-bg: oklch(0.24 0.03 275 / 0.55);
+  --glass-border: oklch(1 0 0 / 0.1);
+  --glass-highlight: oklch(1 0 0 / 0.14);
+  --shadow-depth: 0 24px 60px -28px oklch(0.08 0.04 275 / 0.85);
+}
+
+@theme inline {
+  --color-glow-cyan: var(--glow-cyan);
+  --color-glow-gold: var(--glow-gold);
+  --color-glow-violet: var(--glow-violet);
 }
 
 @keyframes sq-shine-sweep {
@@ -213,6 +229,133 @@
   0% { box-shadow: 0 0 0 0 oklch(0.62 0.22 295 / 0.55); }
   70% { box-shadow: 0 0 0 14px oklch(0.62 0.22 295 / 0); }
   100% { box-shadow: 0 0 0 0 oklch(0.62 0.22 295 / 0); }
+}
+
+/* Slow drifting light beam used for headers and ambience. */
+@keyframes sq-beam-drift {
+  0%   { transform: translate3d(-25%, 0, 0) rotate(8deg); opacity: 0.16; }
+  50%  { transform: translate3d(25%, 0, 0) rotate(8deg); opacity: 0.34; }
+  100% { transform: translate3d(-25%, 0, 0) rotate(8deg); opacity: 0.16; }
+}
+
+/* Gentle vertical float for glowing dust motes / illustrated empty states. */
+@keyframes sq-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -8px, 0); }
+}
+
+/* Hue-shifting ambient gradient — extremely slow so it reads as "living". */
+@keyframes sq-gradient-pan {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes sq-glow-breathe {
+  0%, 100% { box-shadow: 0 0 18px -6px var(--glow-violet); }
+  50% { box-shadow: 0 0 34px -4px var(--glow-violet); }
+}
+
+@keyframes sq-burst {
+  0% { transform: scale(0.6); opacity: 0.85; }
+  100% { transform: scale(2.1); opacity: 0; }
+}
+
+/* Premium glass surface: layered blur, inner highlight and depth shadow. */
+@utility glass-panel {
+  position: relative;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(22px) saturate(150%);
+  box-shadow: var(--shadow-depth), inset 0 1px 0 var(--glass-highlight);
+}
+
+/* A soft light bar that slides across a header or hero band. */
+@utility header-sheen {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -60%;
+    left: 0;
+    width: 55%;
+    height: 220%;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      oklch(0.78 0.14 205 / 0.14),
+      transparent
+    );
+    filter: blur(18px);
+    animation: sq-beam-drift 14s ease-in-out infinite;
+    will-change: transform, opacity;
+  }
+}
+
+/* Ambient glow that breathes — for selected / active surfaces. */
+@utility glow-breathe {
+  animation: sq-glow-breathe 4.5s ease-in-out infinite;
+}
+
+@utility float-soft {
+  animation: sq-float 5s ease-in-out infinite;
+}
+
+/* Animated border light for collectible cards. */
+@utility border-light {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    background: linear-gradient(
+      120deg,
+      transparent 20%,
+      oklch(0.78 0.14 205 / 0.5) 45%,
+      oklch(0.83 0.17 85 / 0.45) 55%,
+      transparent 80%
+    );
+    background-size: 260% 100%;
+    animation: sq-gradient-pan 7s linear infinite;
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity var(--dur-base) var(--ease-premium);
+  }
+
+  &:hover::before,
+  &[data-selected="true"]::before {
+    opacity: 1;
+  }
+}
+
+/* Cinematic vignette overlay. */
+@utility vignette {
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      120% 90% at 50% 40%,
+      transparent 45%,
+      oklch(0.08 0.03 275 / 0.55) 100%
+    );
+  }
+}
+
+/* One-shot success burst ring (micro-interaction feedback). */
+@utility success-burst {
+  animation: sq-burst 620ms var(--ease-premium) 1 forwards;
 }
 
 /* A slow light sweep across a card surface. */
