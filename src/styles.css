@@ -62,11 +62,69 @@
 }
 
 :root {
-  /* SideQuest — Dark-first adventure design system.
-     Brand: purple (primary), amber/yellow (accent), red (danger/pin).
-     Surfaces are layered near-black, never pure #000. */
-  --radius: 0.875rem;
+  /* SideQuest — dual-theme design system.
+     :root holds the LIGHT surface set, .dark holds the cinematic dark set.
+     Brand hues stay identical across themes: purple (primary), gold (accent). */
+  --radius: 1rem;
 
+  --background: oklch(0.98 0.005 285);
+  --foreground: oklch(0.24 0.03 280);
+
+  --surface: oklch(1 0 0);
+  --surface-elevated: oklch(0.995 0.003 285);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.24 0.03 280);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.24 0.03 280);
+
+  --primary: oklch(0.55 0.23 295);            /* SideQuest purple */
+  --primary-foreground: oklch(0.99 0.005 260);
+  --primary-glow: oklch(0.68 0.2 295);
+
+  --secondary: oklch(0.955 0.01 285);
+  --secondary-foreground: oklch(0.3 0.03 280);
+
+  --accent: oklch(0.88 0.13 85);              /* Quest gold */
+  --accent-foreground: oklch(0.28 0.05 65);
+
+  --muted: oklch(0.955 0.008 285);
+  --muted-foreground: oklch(0.52 0.02 280);
+
+  --success: oklch(0.62 0.16 155);
+  --warning: oklch(0.72 0.16 75);
+  --info: oklch(0.6 0.15 230);
+  --destructive: oklch(0.58 0.23 27);
+  --destructive-foreground: oklch(0.99 0.005 260);
+
+  --border: oklch(0.24 0.03 280 / 10%);
+  --input: oklch(0.24 0.03 280 / 14%);
+  --ring: oklch(0.55 0.23 295);
+
+  --gradient-hero: linear-gradient(135deg, oklch(0.55 0.23 295), oklch(0.66 0.2 330));
+  --gradient-quest: linear-gradient(135deg, oklch(0.83 0.17 85), oklch(0.7 0.2 40));
+  --gradient-mesh:
+    radial-gradient(60% 55% at 12% 4%, oklch(0.55 0.23 295 / 0.14), transparent 70%),
+    radial-gradient(50% 45% at 92% 8%, oklch(0.78 0.14 205 / 0.12), transparent 72%);
+  --shadow-elevated: 0 10px 30px -12px oklch(0.35 0.06 280 / 0.28);
+  --shadow-glow: 0 0 40px oklch(0.55 0.23 295 / 0.22);
+
+  --chart-1: oklch(0.55 0.23 295);
+  --chart-2: oklch(0.66 0.15 205);
+  --chart-3: oklch(0.78 0.16 85);
+  --chart-4: oklch(0.62 0.16 155);
+  --chart-5: oklch(0.62 0.2 20);
+  --sidebar: oklch(0.99 0.004 285);
+  --sidebar-foreground: oklch(0.24 0.03 280);
+  --sidebar-primary: oklch(0.55 0.23 295);
+  --sidebar-primary-foreground: oklch(0.99 0.005 260);
+  --sidebar-accent: oklch(0.955 0.01 285);
+  --sidebar-accent-foreground: oklch(0.3 0.03 280);
+  --sidebar-border: oklch(0.24 0.03 280 / 8%);
+  --sidebar-ring: oklch(0.55 0.23 295);
+}
+
+.dark {
   --background: oklch(0.17 0.02 275);
   --foreground: oklch(0.98 0.005 260);
 
@@ -78,14 +136,14 @@
   --popover: oklch(0.22 0.03 275);
   --popover-foreground: oklch(0.98 0.005 260);
 
-  --primary: oklch(0.62 0.22 295);            /* SideQuest purple */
+  --primary: oklch(0.62 0.22 295);
   --primary-foreground: oklch(0.99 0.005 260);
   --primary-glow: oklch(0.72 0.2 295);
 
   --secondary: oklch(0.3 0.04 275);
   --secondary-foreground: oklch(0.98 0.005 260);
 
-  --accent: oklch(0.83 0.17 85);              /* Quest gold */
+  --accent: oklch(0.83 0.17 85);
   --accent-foreground: oklch(0.2 0.03 275);
 
   --muted: oklch(0.26 0.025 275);
@@ -102,15 +160,17 @@
   --ring: oklch(0.62 0.22 295);
 
   --gradient-hero: linear-gradient(135deg, oklch(0.62 0.22 295), oklch(0.7 0.2 330));
-  --gradient-quest: linear-gradient(135deg, oklch(0.83 0.17 85), oklch(0.7 0.2 40));
+  --gradient-mesh:
+    radial-gradient(60% 55% at 12% 4%, oklch(0.62 0.22 295 / 0.18), transparent 70%),
+    radial-gradient(50% 45% at 92% 8%, oklch(0.78 0.14 205 / 0.12), transparent 72%);
   --shadow-elevated: 0 10px 30px -10px oklch(0.1 0.05 275 / 0.6);
   --shadow-glow: 0 0 40px oklch(0.62 0.22 295 / 0.35);
 
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  --chart-1: oklch(0.7 0.2 295);
+  --chart-2: oklch(0.78 0.14 205);
+  --chart-3: oklch(0.83 0.17 85);
+  --chart-4: oklch(0.72 0.17 155);
+  --chart-5: oklch(0.68 0.22 20);
   --sidebar: oklch(0.19 0.025 275);
   --sidebar-foreground: oklch(0.98 0.005 260);
   --sidebar-primary: oklch(0.62 0.22 295);
@@ -121,41 +181,6 @@
   --sidebar-ring: oklch(0.62 0.22 295);
 }
 
-.dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
-}
-
 @layer base {
   * {
     border-color: var(--color-border);
@@ -164,6 +189,17 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    transition:
+      background-color 320ms var(--ease-premium),
+      color 320ms var(--ease-premium);
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font-display);
+    letter-spacing: -0.018em;
   }
 }
 
@@ -184,6 +220,13 @@
   --glow-gold: oklch(0.83 0.17 85);
   --glow-violet: oklch(0.62 0.22 295);
   --midnight: oklch(0.14 0.035 275);
+  --glass-bg: oklch(1 0 0 / 0.68);
+  --glass-border: oklch(0.24 0.03 280 / 0.09);
+  --glass-highlight: oklch(1 0 0 / 0.9);
+  --shadow-depth: 0 24px 60px -30px oklch(0.35 0.06 280 / 0.32);
+}
+
+.dark {
   --glass-bg: oklch(0.24 0.03 275 / 0.55);
   --glass-border: oklch(1 0 0 / 0.1);
   --glass-highlight: oklch(1 0 0 / 0.14);
@@ -194,6 +237,13 @@
   --color-glow-cyan: var(--glow-cyan);
   --color-glow-gold: var(--glow-gold);
   --color-glow-violet: var(--glow-violet);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --font-sans: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Sora", ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
 @keyframes sq-shine-sweep {
@@ -411,12 +461,90 @@
 @utility skeleton-shimmer {
   background-image: linear-gradient(
     90deg,
-    oklch(1 0 0 / 0.03) 25%,
-    oklch(1 0 0 / 0.09) 37%,
-    oklch(1 0 0 / 0.03) 63%
+    color-mix(in oklab, var(--foreground) 3%, transparent) 25%,
+    color-mix(in oklab, var(--foreground) 10%, transparent) 37%,
+    color-mix(in oklab, var(--foreground) 3%, transparent) 63%
   );
   background-size: 300% 100%;
   animation: sq-shimmer 1.8s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------------
+   Modern dashboard layer — surfaces, mesh, focus and scroll polish.
+---------------------------------------------------------------- */
+
+/* Hide scrollbars on horizontal chip rails. */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* The default content surface: soft border, subtle depth, hover lift. */
+@utility surface-card {
+  background: color-mix(in oklab, var(--card) 88%, transparent);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-elevated);
+  backdrop-filter: blur(12px);
+  transition:
+    transform var(--dur-base) var(--ease-premium),
+    box-shadow var(--dur-base) var(--ease-premium),
+    border-color var(--dur-base) var(--ease-premium);
+}
+
+@utility lift-hover {
+  transition:
+    transform var(--dur-base) var(--ease-premium),
+    box-shadow var(--dur-base) var(--ease-premium),
+    border-color var(--dur-base) var(--ease-premium);
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in oklab, var(--primary) 40%, transparent);
+    box-shadow: var(--shadow-depth);
+  }
+}
+
+/* Ambient mesh wash for page/app backgrounds. */
+@utility mesh-bg {
+  background-image: var(--gradient-mesh);
+}
+
+@utility text-gradient {
+  background: var(--gradient-hero);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Floating overlay panel used above the interactive map. */
+@utility map-overlay {
+  position: relative;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(20px) saturate(160%);
+  box-shadow: var(--shadow-depth), inset 0 1px 0 var(--glass-highlight);
+}
+
+/* Slim, themed scrollbars for dashboard panes. */
+@utility sq-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--foreground) 22%, transparent) transparent;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--foreground) 18%, transparent);
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

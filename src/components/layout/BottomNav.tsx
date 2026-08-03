@@ -17,7 +17,7 @@ export function BottomNav() {
   const haptic = useHaptic();
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/70 backdrop-blur-2xl backdrop-saturate-150"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/70 backdrop-blur-2xl backdrop-saturate-150 lg:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       aria-label="Primary"
     >

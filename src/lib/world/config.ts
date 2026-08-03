@@ -105,4 +105,6 @@ export const DEFAULT_LAYERS: WorldLayerFlags = {
 
 /** CARTO basemap - key-free, dark-native, retina aware. */
 export const TILE_URL = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+/** Light counterpart, used when the app runs in light mode. */
+export const TILE_URL_LIGHT = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
 export const TILE_ATTRIBUTION = "&copy; OpenStreetMap contributors &copy; CARTO";

@@ -2,7 +2,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./adventure.css";
-import { DEFAULT_LAYERS, TILE_ATTRIBUTION, TILE_URL, worldForCity } from "@/lib/world/config";
+import {
+  DEFAULT_LAYERS,
+  TILE_ATTRIBUTION,
+  TILE_URL,
+  TILE_URL_LIGHT,
+  worldForCity,
+} from "@/lib/world/config";
+import { useTheme } from "@/lib/theme";
 import { atmosphereNow, type Atmosphere } from "@/lib/world/atmosphere";
 import { detectTier, TIER_BUDGET } from "@/lib/world/perf";
 import { distanceM } from "@/lib/world/geo";
@@ -46,6 +53,7 @@ export default function AdventureMapEngine({
   const mapRef = useRef<L.Map | null>(null);
   const routeLayerRef = useRef<L.LayerGroup | null>(null);
   const pinLayerRef = useRef<L.LayerGroup | null>(null);
+  const tileLayerRef = useRef<L.TileLayer | null>(null);
   const playerMarkerRef = useRef<L.Marker | null>(null);
   const smoothRef = useRef<LatLng | null>(null);
   const rafRef = useRef<number | null>(null);
@@ -59,6 +67,7 @@ export default function AdventureMapEngine({
   const [sweep, setSweep] = useState(0);
   const [atmosphere, setAtmosphere] = useState<Atmosphere>(() => atmosphereNow());
   const { soundOn } = useAdventureSound();
+  const { theme } = useTheme();
   const pulseRef = useRef(0);
 
   const current = waypoints.find((w) => w.state === "current") ?? null;
@@ -85,13 +94,16 @@ export default function AdventureMapEngine({
       wheelPxPerZoomLevel: 140,
     });
 
-    L.tileLayer(TILE_URL, {
-      attribution: TILE_ATTRIBUTION,
-      detectRetina: true,
-      maxZoom: world.maxZoom,
-      updateWhenIdle: tier === "low",
-      keepBuffer: tier === "high" ? 3 : 1,
-    }).addTo(map);
+    tileLayerRef.current = L.tileLayer(
+      document.documentElement.classList.contains("dark") ? TILE_URL : TILE_URL_LIGHT,
+      {
+        attribution: TILE_ATTRIBUTION,
+        detectRetina: true,
+        maxZoom: world.maxZoom,
+        updateWhenIdle: tier === "low",
+        keepBuffer: tier === "high" ? 3 : 1,
+      },
+    ).addTo(map);
 
     routeLayerRef.current = L.layerGroup().addTo(map);
     pinLayerRef.current = L.layerGroup().addTo(map);
@@ -103,6 +115,7 @@ export default function AdventureMapEngine({
       mapRef.current = null;
       routeLayerRef.current = null;
       pinLayerRef.current = null;
+      tileLayerRef.current = null;
       playerMarkerRef.current = null;
       setReady(false);
     };
@@ -111,8 +124,17 @@ export default function AdventureMapEngine({
   }, [world, tier]);
 
   useEffect(() => {
-    hostRef.current?.style.setProperty("--sq-tile-filter", atmosphere.tileFilter);
-  }, [atmosphere]);
+    // Time-of-day grading is a night-map effect; light mode keeps tiles clean.
+    hostRef.current?.style.setProperty(
+      "--sq-tile-filter",
+      theme === "dark" ? atmosphere.tileFilter : "saturate(1.02)",
+    );
+  }, [atmosphere, theme]);
+
+  // ---- basemap follows the app theme
+  useEffect(() => {
+    tileLayerRef.current?.setUrl(theme === "dark" ? TILE_URL : TILE_URL_LIGHT);
+  }, [theme, ready]);
 
   // ---- route trail: player -> current -> remaining checkpoints
   useEffect(() => {

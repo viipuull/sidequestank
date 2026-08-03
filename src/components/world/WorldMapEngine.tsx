@@ -9,6 +9,7 @@ import {
   LANDMARK_ICON,
   TILE_ATTRIBUTION,
   TILE_URL,
+  TILE_URL_LIGHT,
   type WorldConfig,
 } from "@/lib/world/config";
 import { atmosphereNow, type Atmosphere } from "@/lib/world/atmosphere";
@@ -17,6 +18,7 @@ import { distanceM } from "@/lib/world/geo";
 import { placeQuest } from "@/lib/world/placement";
 import type { MarkerState, WorldMarker, WorldQuest } from "@/lib/world/types";
 import { usePlayerPosition } from "@/hooks/usePlayerPosition";
+import { useTheme } from "@/lib/theme";
 import { AmbientLayer } from "./AmbientLayer";
 import { WorldHUD } from "./WorldHUD";
 import { QuestPeek } from "./QuestPeek";
@@ -52,6 +54,7 @@ export default function WorldMapEngine({
   const hostRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markerLayerRef = useRef<L.LayerGroup | null>(null);
+  const tileLayerRef = useRef<L.TileLayer | null>(null);
   const playerMarkerRef = useRef<L.Marker | null>(null);
   const flewToPlayer = useRef(false);
 
@@ -60,6 +63,7 @@ export default function WorldMapEngine({
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
   const [atmosphere, setAtmosphere] = useState<Atmosphere>(() => atmosphereNow());
   const tier = useMemo(() => detectTier(), []);
+  const { theme } = useTheme();
   const { position, status } = usePlayerPosition(true);
 
   // Atmosphere follows the player's local clock.
@@ -104,13 +108,16 @@ export default function WorldMapEngine({
       preferCanvas: true,
     });
 
-    L.tileLayer(TILE_URL, {
+    tileLayerRef.current = L.tileLayer(
+      document.documentElement.classList.contains("dark") ? TILE_URL : TILE_URL_LIGHT,
+      {
       attribution: TILE_ATTRIBUTION,
       detectRetina: true,
       maxZoom: world.maxZoom,
       updateWhenIdle: tier === "low",
       keepBuffer: tier === "high" ? 3 : 1,
-    }).addTo(map);
+      },
+    ).addTo(map);
 
     markerLayerRef.current = L.layerGroup().addTo(map);
     mapRef.current = map;
@@ -131,14 +138,24 @@ export default function WorldMapEngine({
       map.remove();
       mapRef.current = null;
       markerLayerRef.current = null;
+      tileLayerRef.current = null;
       setReady(false);
     };
   }, [world, tier]);
 
+  // ---- basemap follows the app theme
+  useEffect(() => {
+    tileLayerRef.current?.setUrl(theme === "dark" ? TILE_URL : TILE_URL_LIGHT);
+  }, [theme, ready]);
+
   // ---- tile grading follows atmosphere
   useEffect(() => {
-    hostRef.current?.style.setProperty("--sq-tile-filter", atmosphere.tileFilter);
-  }, [atmosphere]);
+    // Time-of-day grading is a night-map effect; light mode keeps tiles clean.
+    hostRef.current?.style.setProperty(
+      "--sq-tile-filter",
+      theme === "dark" ? atmosphere.tileFilter : "saturate(1.02)",
+    );
+  }, [atmosphere, theme]);
 
   // ---- render quest markers
   useEffect(() => {

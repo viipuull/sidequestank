@@ -340,3 +340,12 @@
   .sq-bird-a, .sq-bird-b, .sq-bird-c { animation: none !important; }
   .sq-mote { opacity: 0.4; }
 }
+
+/* ---------- light-mode chrome ---------- */
+:root:not(.dark) .sq-world .leaflet-control-attribution {
+  background: oklch(1 0 0 / 0.7);
+  color: oklch(0.45 0.02 285);
+}
+:root:not(.dark) .sq-world .leaflet-control-attribution a {
+  color: oklch(0.5 0.16 295);
+}
