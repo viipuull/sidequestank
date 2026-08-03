@@ -50,7 +50,7 @@ function QuestsFeedPage() {
                 <Compass className="h-5 w-5" />
                 <span className="text-xs font-semibold uppercase tracking-widest">Discover</span>
               </div>
-              <h1 className="text-blaze mt-1 text-3xl font-bold tracking-tight">Quests</h1>
+              <h1 className="mt-1 text-2xl font-bold tracking-tight">Quests</h1>
               <p className="text-xs text-muted-foreground">
                 Real adventures across your city.
               </p>
@@ -137,7 +137,7 @@ function FilterChip({
       onClick={onClick}
       className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-[11px] font-medium transition-all active:scale-95 ${
         active
-          ? "neon-primary border-primary bg-primary font-bold text-primary-foreground"
+          ? "border-primary bg-primary text-primary-foreground shadow"
           : "border-border bg-card/60 text-muted-foreground hover:text-foreground"
       }`}
     >

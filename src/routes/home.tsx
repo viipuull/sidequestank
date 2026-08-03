@@ -74,8 +74,8 @@ function HomeInner() {
       <PushPrompt userId={user?.id} />
       <header className="flex items-start justify-between">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Welcome back</p>
-          <h1 className="text-blaze text-3xl font-bold tracking-tight">{p.display_name}</h1>
+          <p className="text-xs text-muted-foreground">Welcome back,</p>
+          <h1 className="text-2xl font-bold tracking-tight">{p.display_name}</h1>
           <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3 text-primary" /> {p.city}</span>
             {equipped?.titles && (
@@ -100,14 +100,14 @@ function HomeInner() {
       </header>
 
       <div className="mt-3 flex items-center gap-2">
-        <Link to="/notifications" className="relative inline-flex items-center gap-1.5 rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs font-semibold text-muted-foreground backdrop-blur transition-colors hover:border-primary/40 hover:text-foreground active:scale-95">
+        <Link to="/notifications" className="relative inline-flex items-center gap-1.5 rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs font-semibold text-muted-foreground backdrop-blur">
           <Bell className="h-3.5 w-3.5" /> Inbox
           {unread && unread.count > 0 && (
-            <span className="neon-primary absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground">{unread.count}</span>
+            <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground">{unread.count}</span>
           )}
         </Link>
-        <Link to="/events" className="rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs font-semibold text-muted-foreground backdrop-blur transition-colors hover:border-primary/40 hover:text-foreground active:scale-95">Events</Link>
-        <Link to="/challenges" className="rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs font-semibold text-muted-foreground backdrop-blur transition-colors hover:border-primary/40 hover:text-foreground active:scale-95">Challenges</Link>
+        <Link to="/events" className="rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs font-semibold text-muted-foreground backdrop-blur">Events</Link>
+        <Link to="/challenges" className="rounded-full border border-border bg-card/60 px-3 py-1.5 text-xs font-semibold text-muted-foreground backdrop-blur">Challenges</Link>
       </div>
 
       <AnnouncementBanner />
@@ -124,40 +124,27 @@ function HomeInner() {
       </motion.div>
 
       <motion.section
-        className="relative mt-5 overflow-hidden rounded-3xl border border-white/10 p-5"
+        className="mt-5 overflow-hidden rounded-3xl border border-border p-5"
         style={{ background: "var(--gradient-hero)", boxShadow: "var(--shadow-elevated)" }}
         variants={heroReveal}
         initial="hidden"
         animate="show"
       >
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-25"
-          style={{
-            backgroundImage:
-              "linear-gradient(oklch(0 0 0 / 0.25) 1px, transparent 1px), linear-gradient(90deg, oklch(0 0 0 / 0.25) 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-          }}
-        />
-        <div className="relative flex items-center justify-between text-primary-foreground">
+        <div className="flex items-center justify-between text-primary-foreground">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] opacity-80">Explorer rank</p>
-            <p className="font-display text-3xl font-bold leading-none">Lv {p.level}</p>
+            <p className="text-xs uppercase tracking-wider opacity-80">Explorer</p>
+            <p className="text-lg font-bold">Level {p.level}</p>
           </div>
-          <div className="rounded-2xl bg-black/25 px-3 py-2 text-right backdrop-blur">
-            <CountUp value={lifetimeXp} className="block text-xl font-bold tabular-nums" />
-            <span className="text-[9px] uppercase tracking-[0.2em] opacity-80">total xp</span>
-          </div>
+          <p className="text-sm opacity-90">
+            <CountUp value={lifetimeXp} /> total XP
+          </p>
         </div>
         <XpBar
           level={p.level}
           currentLevelXp={currentLevelXp}
           xpForNextLevel={xpForNext}
-          className="relative mt-4"
+          className="mt-3"
         />
-        <p className="relative mt-2 text-[11px] font-medium text-primary-foreground/85">
-          {Math.max(0, xpForNext - currentLevelXp)} XP to level {p.level + 1}
-        </p>
       </motion.section>
 
       <LiveOpsRail />
@@ -274,13 +261,13 @@ function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string
       whileHover={{ y: -3 }}
       whileTap={{ scale: 0.97 }}
       transition={{ type: "spring", stiffness: 400, damping: 26 }}
-      className="hud-panel hud-edge rounded-2xl p-3.5 transition-colors duration-200 hover:border-primary/40"
+      className="rounded-2xl border border-border bg-card/70 p-3.5 backdrop-blur transition-colors duration-200 hover:border-primary/40"
     >
       <div className="flex items-center justify-between">
-        <div className="grid h-9 w-9 place-items-center rounded-xl bg-primary/12 ring-1 ring-primary/20">{icon}</div>
+        <div className="grid h-9 w-9 place-items-center rounded-xl bg-primary/10">{icon}</div>
       </div>
-      <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">{label}</p>
-      <CountUp value={value} className="font-display text-2xl font-bold tabular-nums" />
+      <p className="mt-3 text-[11px] uppercase tracking-wider text-muted-foreground">{label}</p>
+      <CountUp value={value} className="text-xl font-bold" />
     </motion.div>
   );
 }
@@ -289,11 +276,11 @@ function QuickLink({ to, icon, title, desc }: { to: string; icon: React.ReactNod
   return (
     <Link
       to={to}
-      className="hud-panel hud-edge group flex flex-col gap-2 rounded-2xl p-3.5 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 active:scale-[0.98]"
+      className="group flex flex-col gap-2 rounded-2xl border border-border bg-card/70 p-3.5 backdrop-blur transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 active:scale-[0.98]"
     >
-      <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/15 text-primary ring-1 ring-primary/25 transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3">{icon}</div>
+      <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary/15 text-primary transition-transform duration-200 group-hover:scale-110">{icon}</div>
       <div>
-        <p className="font-display text-sm font-bold">{title}</p>
+        <p className="text-sm font-semibold">{title}</p>
         <p className="mt-0.5 text-xs text-muted-foreground">{desc}</p>
       </div>
     </Link>

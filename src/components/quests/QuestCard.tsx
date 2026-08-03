@@ -61,7 +61,7 @@ export function QuestCard({ quest, index = 0 }: Props) {
         to="/quests/$slug"
         params={{ slug: quest.slug }}
         onClick={() => haptic.tap()}
-        className="card-shine hud-panel hud-edge group relative block overflow-hidden rounded-2xl transition-[border-color,box-shadow] duration-300 hover:border-primary/50 hover:shadow-[0_18px_50px_-18px_var(--glow-primary)]"
+        className="card-shine group relative block overflow-hidden rounded-2xl border border-border/60 bg-card/70 shadow-lg backdrop-blur-xl transition-[border-color,box-shadow] duration-300 hover:border-primary/50 hover:shadow-[0_18px_50px_-18px_oklch(0.62_0.22_295/0.55)]"
       >
         <div className="relative h-40 overflow-hidden bg-muted">
           {quest.cover_image_url ? (
@@ -73,32 +73,26 @@ export function QuestCard({ quest, index = 0 }: Props) {
               loading="lazy"
             />
           ) : (
-            <div
-              className="flex h-full w-full items-center justify-center text-5xl"
-              style={{ background: "radial-gradient(80% 80% at 30% 20%, oklch(0.7 0.19 40 / 0.35), transparent 70%), radial-gradient(70% 70% at 80% 90%, oklch(0.55 0.21 285 / 0.35), transparent 70%)" }}
-            >
-              <span className="float-soft drop-shadow-[0_6px_18px_var(--glow-primary)]">{cat?.emoji ?? "🧭"}</span>
+            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/30 via-fuchsia-500/20 to-transparent text-5xl">
+              {cat?.emoji ?? "🧭"}
             </div>
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/20 to-transparent" />
           {quest.featured && (
-            <div className="neon-primary absolute left-3 top-3 flex items-center gap-1 rounded-full bg-primary/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground">
+            <div className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-primary/90 px-2.5 py-1 text-[10px] font-semibold text-primary-foreground shadow">
               <Sparkles className="h-3 w-3" /> Featured
             </div>
           )}
-          <div className="absolute right-3 top-3 rounded-full border border-white/10 bg-background/70 px-2.5 py-1 text-[10px] font-semibold backdrop-blur">
+          <div className="absolute right-3 top-3 rounded-full bg-background/80 px-2.5 py-1 text-[10px] font-semibold backdrop-blur">
             {cat?.emoji} {cat?.label ?? quest.category}
-          </div>
-          <div className="neon-magenta absolute bottom-3 right-3 rounded-lg bg-background/80 px-2 py-1 text-[11px] font-bold tabular-nums text-accent backdrop-blur">
-            +{quest.reward_xp} XP
           </div>
         </div>
         <div className="space-y-2 p-4">
-          <h3 className="line-clamp-1 text-base font-bold text-foreground">{quest.title}</h3>
+          <h3 className="line-clamp-1 text-base font-semibold text-foreground">{quest.title}</h3>
           {quest.short_description && (
             <p className="line-clamp-2 text-xs text-muted-foreground">{quest.short_description}</p>
           )}
-          <div className="flex items-center justify-between border-t border-white/5 pt-2.5 text-[11px] text-muted-foreground">
+          <div className="flex items-center justify-between pt-1 text-[11px] text-muted-foreground">
             <span className="flex items-center gap-1">
               <MapPin className="h-3 w-3" /> {quest.city}
             </span>
@@ -106,7 +100,7 @@ export function QuestCard({ quest, index = 0 }: Props) {
               <Clock className="h-3 w-3" /> {quest.estimated_minutes}m
             </span>
             <span
-              className="flex items-center gap-1 font-semibold uppercase tracking-wide"
+              className="flex items-center gap-1 font-semibold"
               style={{ color: diff?.color }}
             >
               <Star className="h-3 w-3" /> {diff?.label ?? quest.difficulty}

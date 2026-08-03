@@ -78,7 +78,7 @@ function LeaderboardPage() {
     <AppShell>
       <header className="flex items-center gap-2">
         <Trophy className="h-6 w-6 text-primary" />
-        <h1 className="text-blaze text-3xl font-bold">Leaderboard</h1>
+        <h1 className="text-2xl font-bold">Leaderboard</h1>
       </header>
 
       <div className="mt-4 flex flex-wrap gap-2">
@@ -108,10 +108,10 @@ function LeaderboardPage() {
       </div>
 
       {myQ.data && (
-        <div className="neon-primary mt-4 rounded-2xl border border-primary/40 bg-primary/10 p-3">
+        <div className="mt-4 rounded-2xl border border-primary/40 bg-primary/10 p-3">
           <p className="text-xs uppercase tracking-widest text-primary">Your position</p>
           <div className="mt-1 flex items-baseline gap-3">
-            <p className="font-display text-3xl font-black text-foreground">#{myQ.data.rank}</p>
+            <p className="text-2xl font-black text-foreground">#{myQ.data.rank}</p>
             <p className="text-sm text-muted-foreground">Lv {myQ.data.level} • {myQ.data.xp.toLocaleString()} XP</p>
           </div>
         </div>

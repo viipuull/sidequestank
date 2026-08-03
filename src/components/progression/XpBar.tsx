@@ -14,7 +14,8 @@ export function XpBar({ level, currentLevelXp, xpForNextLevel, compact, classNam
   const denom = Math.max(1, xpForNextLevel);
   const pct = Math.max(0, Math.min(100, (currentLevelXp / denom) * 100));
   const label = variant === "onDark" ? "text-primary-foreground/90" : "text-muted-foreground";
-  const track = variant === "onDark" ? "bg-black/30" : "bg-muted";
+  const track = variant === "onDark" ? "bg-white/20" : "bg-muted";
+  const fill = variant === "onDark" ? "bg-white/90" : "bg-primary";
 
   // Pulse the bar whenever the player gains a level.
   const prevLevel = useRef(level);
@@ -37,25 +38,21 @@ export function XpBar({ level, currentLevelXp, xpForNextLevel, compact, classNam
           initial={{ scale: 1 }}
           animate={pulse ? { scale: [1, 1.18, 1] } : { scale: 1 }}
           transition={{ duration: 0.6 }}
-          className="font-semibold uppercase tracking-wider"
+          className="font-semibold"
         >
           Level {level}
         </motion.span>
-        <span className="font-semibold tabular-nums">{currentLevelXp} / {xpForNextLevel} XP</span>
+        <span>{currentLevelXp} / {xpForNextLevel} XP</span>
       </div>
       <div
-        className={`mt-1.5 w-full overflow-hidden rounded-full border border-white/10 ${track} ${compact ? "h-2" : "h-3"} ${pulse ? "ring-pulse" : ""}`}
+        className={`mt-1 w-full overflow-hidden rounded-full ${track} ${compact ? "h-1.5" : "h-2"} ${pulse ? "ring-pulse" : ""}`}
       >
         <motion.div
           key={`${level}-${currentLevelXp}`}
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}
           transition={{ duration: 1, ease: [0.2, 0.7, 0.2, 1] }}
-          className="card-shine h-full rounded-full"
-          style={{
-            background: variant === "onDark" ? "linear-gradient(90deg, oklch(1 0 0 / 0.95), oklch(0.95 0.06 68))" : "var(--gradient-xp)",
-            boxShadow: variant === "onDark" ? "0 0 14px oklch(1 0 0 / 0.45)" : "0 0 14px var(--glow-primary)",
-          }}
+          className={`card-shine h-full rounded-full ${fill}`}
         />
       </div>
     </div>
