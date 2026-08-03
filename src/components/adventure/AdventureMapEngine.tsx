@@ -8,6 +8,7 @@ import { detectTier, TIER_BUDGET } from "@/lib/world/perf";
 import { distanceM } from "@/lib/world/geo";
 import { isRevealed, lerpLatLng, type LatLng, type Waypoint } from "@/lib/world/adventure";
 import { AmbientLayer } from "@/components/world/AmbientLayer";
+import { playArrival, playCheckpointReveal, playNavPulse, useAdventureSound } from "@/lib/world/sound";
 
 export type AdventureMapEngineProps = {
   waypoints: Waypoint[];
@@ -57,6 +58,8 @@ export default function AdventureMapEngine({
   const [ready, setReady] = useState(false);
   const [sweep, setSweep] = useState(0);
   const [atmosphere, setAtmosphere] = useState<Atmosphere>(() => atmosphereNow());
+  const { soundOn } = useAdventureSound();
+  const pulseRef = useRef(0);
 
   const current = waypoints.find((w) => w.state === "current") ?? null;
 
@@ -247,8 +250,24 @@ export default function AdventureMapEngine({
     } else {
       map.flyTo([current.lat, current.lng], 16.5, { duration: 1.4 });
     }
+    playCheckpointReveal();
     setSweep((n) => n + 1);
   }, [ready, current, player]);
+
+  // ---- navigation pulses: tempo rises as the player closes in (audio is
+  // gated by the shared Adventure sound toggle).
+  useEffect(() => {
+    if (!soundOn || !player || !current) return;
+    const d = distanceM(player, current);
+    if (!Number.isFinite(d) || d > 600) return;
+
+    const now = Date.now();
+    // 3.2s far out, tightening to ~0.7s on approach.
+    const interval = Math.max(700, Math.min(3200, d * 6));
+    if (now - pulseRef.current < interval) return;
+    pulseRef.current = now;
+    playNavPulse(1 - Math.min(1, d / 600));
+  }, [soundOn, player, current]);
 
   // ---- arrival detection
   useEffect(() => {
@@ -257,6 +276,7 @@ export default function AdventureMapEngine({
     if (d <= Math.max(current.radiusM, 25) && !arrivedRef.current.has(current.id)) {
       arrivedRef.current.add(current.id);
       if (navigator.vibrate) navigator.vibrate([18, 50, 30]);
+      playArrival();
       setSweep((n) => n + 1);
       onArrive?.(current.id);
     }
