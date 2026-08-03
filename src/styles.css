@@ -171,6 +171,13 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
   }
 }
 
@@ -217,9 +224,19 @@
 }
 
 @keyframes sq-ring-pulse {
-  0% { box-shadow: 0 0 0 0 oklch(0.62 0.22 295 / 0.55); }
-  70% { box-shadow: 0 0 0 14px oklch(0.62 0.22 295 / 0); }
-  100% { box-shadow: 0 0 0 0 oklch(0.62 0.22 295 / 0); }
+  0% { box-shadow: 0 0 0 0 var(--glow-primary); }
+  70% { box-shadow: 0 0 0 14px oklch(0.7 0.19 40 / 0); }
+  100% { box-shadow: 0 0 0 0 oklch(0.7 0.19 40 / 0); }
+}
+
+@keyframes sq-hud-scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(400%); }
+}
+
+@keyframes sq-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
 }
 
 /* A slow light sweep across a card surface. */
@@ -281,6 +298,52 @@
   );
   background-size: 300% 100%;
   animation: sq-shimmer 1.8s ease-in-out infinite;
+}
+
+/* Arcade HUD panel: layered glass with a hot top edge. */
+@utility hud-panel {
+  position: relative;
+  background:
+    linear-gradient(180deg, oklch(1 0 0 / 0.05), oklch(1 0 0 / 0.01)),
+    var(--card);
+  border: 1px solid oklch(1 0 0 / 0.1);
+  box-shadow:
+    inset 0 1px 0 0 oklch(1 0 0 / 0.08),
+    0 14px 34px -20px oklch(0.1 0.05 300 / 0.9);
+  backdrop-filter: blur(10px);
+}
+
+@utility hud-edge {
+  &::before {
+    content: "";
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    top: -1px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    opacity: 0.8;
+  }
+}
+
+/* Soft neon halo used on primary CTAs and active HUD chips. */
+@utility neon-primary {
+  box-shadow: 0 0 0 1px oklch(0.7 0.19 40 / 0.35), 0 8px 26px -10px var(--glow-primary);
+}
+
+@utility neon-magenta {
+  box-shadow: 0 0 0 1px oklch(0.65 0.22 356 / 0.35), 0 8px 26px -10px var(--glow-magenta);
+}
+
+@utility text-blaze {
+  background: var(--gradient-hero);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+@utility float-soft {
+  animation: sq-float 4.5s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
