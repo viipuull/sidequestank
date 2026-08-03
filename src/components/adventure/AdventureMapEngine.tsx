@@ -2,7 +2,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./adventure.css";
-import { DEFAULT_LAYERS, TILE_ATTRIBUTION, TILE_URL, worldForCity } from "@/lib/world/config";
+import {
+  DEFAULT_LAYERS,
+  TILE_ATTRIBUTION,
+  TILE_URL,
+  TILE_URL_LIGHT,
+  worldForCity,
+} from "@/lib/world/config";
+import { useTheme } from "@/lib/theme";
 import { atmosphereNow, type Atmosphere } from "@/lib/world/atmosphere";
 import { detectTier, TIER_BUDGET } from "@/lib/world/perf";
 import { distanceM } from "@/lib/world/geo";
@@ -46,6 +53,7 @@ export default function AdventureMapEngine({
   const mapRef = useRef<L.Map | null>(null);
   const routeLayerRef = useRef<L.LayerGroup | null>(null);
   const pinLayerRef = useRef<L.LayerGroup | null>(null);
+  const tileLayerRef = useRef<L.TileLayer | null>(null);
   const playerMarkerRef = useRef<L.Marker | null>(null);
   const smoothRef = useRef<LatLng | null>(null);
   const rafRef = useRef<number | null>(null);
@@ -85,13 +93,16 @@ export default function AdventureMapEngine({
       wheelPxPerZoomLevel: 140,
     });
 
-    L.tileLayer(TILE_URL, {
-      attribution: TILE_ATTRIBUTION,
-      detectRetina: true,
-      maxZoom: world.maxZoom,
-      updateWhenIdle: tier === "low",
-      keepBuffer: tier === "high" ? 3 : 1,
-    }).addTo(map);
+    tileLayerRef.current = L.tileLayer(
+      document.documentElement.classList.contains("dark") ? TILE_URL : TILE_URL_LIGHT,
+      {
+        attribution: TILE_ATTRIBUTION,
+        detectRetina: true,
+        maxZoom: world.maxZoom,
+        updateWhenIdle: tier === "low",
+        keepBuffer: tier === "high" ? 3 : 1,
+      },
+    ).addTo(map);
 
     routeLayerRef.current = L.layerGroup().addTo(map);
     pinLayerRef.current = L.layerGroup().addTo(map);
@@ -103,6 +114,7 @@ export default function AdventureMapEngine({
       mapRef.current = null;
       routeLayerRef.current = null;
       pinLayerRef.current = null;
+      tileLayerRef.current = null;
       playerMarkerRef.current = null;
       setReady(false);
     };
