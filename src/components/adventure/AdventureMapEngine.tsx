@@ -67,6 +67,7 @@ export default function AdventureMapEngine({
   const [sweep, setSweep] = useState(0);
   const [atmosphere, setAtmosphere] = useState<Atmosphere>(() => atmosphereNow());
   const { soundOn } = useAdventureSound();
+  const { theme } = useTheme();
   const pulseRef = useRef(0);
 
   const current = waypoints.find((w) => w.state === "current") ?? null;
@@ -125,6 +126,11 @@ export default function AdventureMapEngine({
   useEffect(() => {
     hostRef.current?.style.setProperty("--sq-tile-filter", atmosphere.tileFilter);
   }, [atmosphere]);
+
+  // ---- basemap follows the app theme
+  useEffect(() => {
+    tileLayerRef.current?.setUrl(theme === "dark" ? TILE_URL : TILE_URL_LIGHT);
+  }, [theme, ready]);
 
   // ---- route trail: player -> current -> remaining checkpoints
   useEffect(() => {
