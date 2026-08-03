@@ -1,33 +1,56 @@
 import type { ReactNode } from "react";
 import { motion } from "framer-motion";
 import { BottomNav } from "./BottomNav";
+import { SideNav } from "./SideNav";
+import { TopBar } from "./TopBar";
 import { AmbientBackground } from "@/components/motion/AmbientBackground";
 
-export function AppShell({ children }: { children: ReactNode }) {
+/**
+ * Responsive app frame.
+ * Mobile: slim glass top bar + bottom tab bar (unchanged navigation model).
+ * Desktop (lg+): fixed sidebar + utility top bar + wide content canvas.
+ */
+export function AppShell({
+  children,
+  wide = false,
+}: {
+  children: ReactNode;
+  /** Opt into the full-bleed dashboard canvas (map/dense views). */
+  wide?: boolean;
+}) {
   return (
     <div
-      className="relative min-h-[100dvh] bg-background text-foreground"
+      className="mesh-bg relative min-h-[100dvh] bg-background text-foreground"
       style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
       <AmbientBackground />
+      <SideNav />
+
       {/* Dynamic top lighting — a slow highlight instead of a static bar. */}
       <div
         aria-hidden
-        className="header-sheen pointer-events-none fixed inset-x-0 top-0 z-30 h-24"
+        className="header-sheen pointer-events-none fixed inset-x-0 top-0 z-20 h-24"
         style={{
           background:
-            "linear-gradient(180deg, oklch(0.62 0.22 295 / 0.10), transparent 85%)",
+            "linear-gradient(180deg, color-mix(in oklab, var(--primary) 10%, transparent), transparent 85%)",
           maskImage: "linear-gradient(180deg, #000, transparent)",
         }}
       />
-      <motion.main
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25 }}
-        className="mx-auto max-w-md px-5 pb-28 pt-4"
-      >
-        {children}
-      </motion.main>
+
+      <div className="lg:pl-64">
+        <div className="mx-auto w-full px-5 lg:px-8">
+          <TopBar />
+          <motion.main
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25 }}
+            className={`mx-auto w-full pb-28 lg:pb-12 ${wide ? "max-w-[1400px]" : "max-w-md lg:max-w-5xl"}`}
+          >
+            {children}
+          </motion.main>
+        </div>
+      </div>
+
       <BottomNav />
     </div>
   );
