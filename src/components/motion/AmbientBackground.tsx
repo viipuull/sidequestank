@@ -13,14 +13,25 @@ export function AmbientBackground({ intensity = 1 }: { intensity?: number }) {
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(90% 60% at 50% -10%, oklch(0.3 0.12 295 / 0.35), transparent 70%)",
+            "radial-gradient(90% 60% at 50% -10%, oklch(0.4 0.16 40 / 0.28), transparent 70%)",
+        }}
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 opacity-[0.5]"
+        style={{
+          backgroundImage:
+            "linear-gradient(oklch(1 0 0 / 0.035) 1px, transparent 1px), linear-gradient(90deg, oklch(1 0 0 / 0.035) 1px, transparent 1px)",
+          backgroundSize: "44px 44px",
+          maskImage: "radial-gradient(120% 80% at 50% 0%, black, transparent 72%)",
+          WebkitMaskImage: "radial-gradient(120% 80% at 50% 0%, black, transparent 72%)",
         }}
       />
       <motion.div
         className="absolute -left-1/4 top-[-10%] h-[70vh] w-[70vh] rounded-full"
         style={{
           background:
-            "radial-gradient(circle, oklch(0.62 0.22 295 / 0.22), transparent 65%)",
+            "radial-gradient(circle, oklch(0.7 0.19 40 / 0.22), transparent 65%)",
           filter: "blur(40px)",
           opacity: 0.9 * intensity,
           willChange: "transform",
@@ -32,7 +43,7 @@ export function AmbientBackground({ intensity = 1 }: { intensity?: number }) {
         className="absolute -right-1/4 bottom-[-15%] h-[60vh] w-[60vh] rounded-full"
         style={{
           background:
-            "radial-gradient(circle, oklch(0.83 0.17 85 / 0.14), transparent 65%)",
+            "radial-gradient(circle, oklch(0.65 0.22 356 / 0.18), transparent 65%)",
           filter: "blur(50px)",
           opacity: 0.9 * intensity,
           willChange: "transform",
