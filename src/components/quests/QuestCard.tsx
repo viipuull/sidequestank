@@ -61,7 +61,8 @@ export function QuestCard({ quest, index = 0 }: Props) {
         to="/quests/$slug"
         params={{ slug: quest.slug }}
         onClick={() => haptic.tap()}
-        className="card-shine group relative block overflow-hidden rounded-2xl border border-border/60 bg-card/70 shadow-lg backdrop-blur-xl transition-[border-color,box-shadow] duration-300 hover:border-primary/50 hover:shadow-[0_18px_50px_-18px_oklch(0.62_0.22_295/0.55)]"
+        className="card-shine border-light group relative block overflow-hidden rounded-2xl border border-border/60 bg-card/70 shadow-lg backdrop-blur-xl transition-[border-color,box-shadow] duration-300 hover:border-primary/50 hover:shadow-[0_18px_50px_-18px_oklch(0.62_0.22_295/0.55)]"
+        data-selected={quest.featured ? "true" : undefined}
       >
         <div className="relative h-40 overflow-hidden bg-muted">
           {quest.cover_image_url ? (

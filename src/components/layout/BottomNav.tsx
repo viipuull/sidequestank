@@ -17,10 +17,19 @@ export function BottomNav() {
   const haptic = useHaptic();
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/85 backdrop-blur-xl"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/70 backdrop-blur-2xl backdrop-saturate-150"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       aria-label="Primary"
     >
+      {/* Thin light rail above the nav for depth. */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 -top-px h-px"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, oklch(0.78 0.14 205 / 0.5), oklch(0.62 0.22 295 / 0.5), transparent)",
+        }}
+      />
       <ul className="mx-auto flex max-w-md items-stretch justify-between px-2">
         {TABS.map((t) => {
           const Icon = t.icon;

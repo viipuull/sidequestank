@@ -1,4 +1,4 @@
-import { Loader2 } from "lucide-react";
+import { Compass } from "lucide-react";
 
 export function LoadingScreen({
   label = "Loading",
@@ -18,7 +18,11 @@ export function LoadingScreen({
       }
     >
       <div className="flex flex-col items-center gap-3 text-center">
-        <Loader2 className="h-7 w-7 animate-spin text-primary motion-reduce:animate-none" aria-hidden="true" />
+        <div className="relative grid h-14 w-14 place-items-center" aria-hidden="true">
+          <span className="absolute inset-0 animate-spin rounded-full border-2 border-primary/20 border-t-primary motion-reduce:animate-none" />
+          <span className="glow-breathe absolute inset-2 rounded-full bg-primary/10" />
+          <Compass className="relative h-6 w-6 text-primary" />
+        </div>
         <span className="text-sm text-muted-foreground">{label}…</span>
       </div>
     </div>
