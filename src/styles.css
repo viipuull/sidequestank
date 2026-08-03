@@ -285,3 +285,17 @@
     transition-duration: 0.001ms !important;
   }
 }
+
+/* Hide the "Edit/Made with Lovable" badge without affecting layout flow. */
+#lovable-badge,
+#lovable-badge-container,
+a[href*="lovable.dev/projects"],
+a[href*="lovable.dev?utm"],
+a[href*="lovable.app/?utm"],
+[data-lovable-badge],
+[class*="lovable-badge"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
