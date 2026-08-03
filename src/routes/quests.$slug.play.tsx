@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, CheckCircle2, Loader2, MapPin, QrCode, Camera, HelpCircle, Sparkles, Trophy, X, Pause } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Loader2, MapPin, QrCode, Camera, HelpCircle, Sparkles, Trophy, X, Pause, Navigation } from "lucide-react";
 import confetti from "canvas-confetti";
 import { AuthGate } from "@/components/layout/AuthGate";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,11 @@ import { TitleUnlockOverlay, type UnlockedTitle } from "@/components/titles/Titl
 import { AchievementUnlockOverlay } from "@/components/achievements/AchievementUnlockOverlay";
 import { CollectionCompletionOverlay, type CompletedCollectionData } from "@/components/collections/CollectionCompletionOverlay";
 import type { UnlockedAchievement } from "@/lib/achievements.functions";
+import { AdventureMap } from "@/components/adventure/AdventureMap";
+import { AdventureHUD } from "@/components/adventure/AdventureHUD";
+import { buildWaypoints, currentWaypoint } from "@/lib/world/adventure";
+import { usePlayerPosition } from "@/hooks/usePlayerPosition";
+import { bearingDeg, distanceM } from "@/lib/world/geo";
 
 export const Route = createFileRoute("/quests/$slug/play")({
   head: ({ params }) => ({
@@ -86,6 +91,9 @@ function PlayPage() {
   const [completedCollections, setCompletedCollections] = useState<CompletedCollectionData[]>([]);
   const firedRef = useRef(false);
   const autoOpenedRef = useRef(false);
+  const [adventure, setAdventure] = useState(true);
+  const [arrivedAt, setArrivedAt] = useState<string | null>(null);
+  const { position } = usePlayerPosition(true);
 
   useEffect(() => {
     if (!state) return;
@@ -122,6 +130,25 @@ function PlayPage() {
 
   const completedCount = objectives.filter((o) => progressById.get(o.id)?.status === "completed").length;
   const pct = objectives.length ? Math.round((completedCount / objectives.length) * 100) : 0;
+
+  // Navigable checkpoints derived from objective GPS config (quest anchor as fallback).
+  const questAnchor = useMemo(() => {
+    const lat = quest?.latitude != null ? Number(quest.latitude) : null;
+    const lng = quest?.longitude != null ? Number(quest.longitude) : null;
+    return lat != null && lng != null && Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+  }, [quest]);
+
+  const waypoints = useMemo(
+    () => buildWaypoints(objectives, (id) => progressById.get(id)?.status, questAnchor),
+    [objectives, progressById, questAnchor],
+  );
+  const activeWaypoint = currentWaypoint(waypoints);
+  const navDistance =
+    position && activeWaypoint ? distanceM(position, activeWaypoint) : null;
+  const navBearing =
+    position && activeWaypoint
+      ? bearingDeg(position, activeWaypoint) - (position.heading ?? 0)
+      : null;
 
   async function pause() {
     if (!sessionId) return;
@@ -171,6 +198,51 @@ function PlayPage() {
           <Progress value={pct} className="mt-1 h-1.5" />
         </div>
       </header>
+
+      {adventure && waypoints.length > 0 && (
+        <section className="relative mx-auto max-w-md px-5 pt-4">
+          <div className="relative h-[52vh] min-h-[340px] overflow-hidden rounded-3xl border border-border/60">
+            <AdventureMap
+              waypoints={waypoints}
+              player={position ? { lat: position.lat, lng: position.lng } : null}
+              heading={position?.heading ?? null}
+              city={quest.city}
+              className="absolute inset-0"
+              onSelect={(id) => setActiveObjectiveId(id)}
+              onArrive={(id) => {
+                setArrivedAt(id);
+                setActiveObjectiveId(id);
+              }}
+            />
+            <AdventureHUD
+              questTitle={quest.title}
+              difficulty={quest.difficulty}
+              estimatedMinutes={quest.estimated_minutes}
+              rewardXp={quest.reward_xp}
+              waypoints={waypoints}
+              current={activeWaypoint}
+              distanceM={navDistance}
+              bearingDelta={navBearing}
+              completed={completedCount}
+              total={objectives.length}
+              arrived={!!activeWaypoint && arrivedAt === activeWaypoint.id}
+              onExit={() => setAdventure(false)}
+            />
+          </div>
+        </section>
+      )}
+
+      {!adventure && waypoints.length > 0 && (
+        <div className="mx-auto max-w-md px-5 pt-4">
+          <Button
+            variant="outline"
+            className="w-full rounded-2xl"
+            onClick={() => setAdventure(true)}
+          >
+            <Navigation className="mr-2 h-4 w-4" /> Enter adventure mode
+          </Button>
+        </div>
+      )}
 
       <main className="mx-auto max-w-md space-y-3 px-5 py-4">
         {objectives.map((o, i) => {
