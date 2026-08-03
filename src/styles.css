@@ -189,6 +189,17 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    transition:
+      background-color 320ms var(--ease-premium),
+      color 320ms var(--ease-premium);
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font-display);
+    letter-spacing: -0.018em;
   }
 }
 
@@ -209,6 +220,13 @@
   --glow-gold: oklch(0.83 0.17 85);
   --glow-violet: oklch(0.62 0.22 295);
   --midnight: oklch(0.14 0.035 275);
+  --glass-bg: oklch(1 0 0 / 0.68);
+  --glass-border: oklch(0.24 0.03 280 / 0.09);
+  --glass-highlight: oklch(1 0 0 / 0.9);
+  --shadow-depth: 0 24px 60px -30px oklch(0.35 0.06 280 / 0.32);
+}
+
+.dark {
   --glass-bg: oklch(0.24 0.03 275 / 0.55);
   --glass-border: oklch(1 0 0 / 0.1);
   --glass-highlight: oklch(1 0 0 / 0.14);
@@ -219,6 +237,13 @@
   --color-glow-cyan: var(--glow-cyan);
   --color-glow-gold: var(--glow-gold);
   --color-glow-violet: var(--glow-violet);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --font-sans: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Sora", ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
 @keyframes sq-shine-sweep {
