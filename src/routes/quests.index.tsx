@@ -105,7 +105,18 @@ function QuestsFeedPage() {
             </div>
           </div>
 
-          {view === "list" && <Controls />}
+          {view === "list" && (
+            <ControlsBar
+              search={search}
+              setSearch={setSearch}
+              category={category}
+              setCategory={setCategory}
+              difficulty={difficulty}
+              setDifficulty={setDifficulty}
+              sort={sort}
+              setSort={setSort}
+            />
+          )}
         </header>
 
         {view === "map" ? (
@@ -120,8 +131,18 @@ function QuestsFeedPage() {
             />
             {/* Floating glass control deck over the live map. */}
             <div className="pointer-events-none absolute inset-x-0 top-0 z-[700] p-3">
-              <div className="pointer-events-auto mx-auto w-full max-w-xl space-y-2 rounded-2xl map-overlay p-2.5">
-                <Controls compact />
+              <div className="map-overlay pointer-events-auto mx-auto w-full max-w-xl rounded-2xl p-2.5">
+                <ControlsBar
+                  compact
+                  search={search}
+                  setSearch={setSearch}
+                  category={category}
+                  setCategory={setCategory}
+                  difficulty={difficulty}
+                  setDifficulty={setDifficulty}
+                  sort={sort}
+                  setSort={setSort}
+                />
               </div>
             </div>
           </div>
@@ -139,10 +160,33 @@ function QuestsFeedPage() {
       </div>
     </AppShell>
   );
+}
 
-  /** Search + category/sort chips. Shared by the list header and map overlay. */
-  function Controls({ compact = false }: { compact?: boolean }) {
-    return (
+type ControlsProps = {
+  compact?: boolean;
+  search: string;
+  setSearch: (v: string) => void;
+  category: string | undefined;
+  setCategory: (v: string | undefined) => void;
+  difficulty: string | undefined;
+  setDifficulty: (v: string | undefined) => void;
+  sort: "newest" | "featured" | "quickest";
+  setSort: (v: "newest" | "featured" | "quickest") => void;
+};
+
+/** Search + category/sort chips. Shared by the list header and map overlay. */
+function ControlsBar({
+  compact = false,
+  search,
+  setSearch,
+  category,
+  setCategory,
+  difficulty,
+  setDifficulty,
+  sort,
+  setSort,
+}: ControlsProps) {
+  return (
       <div className={compact ? "space-y-2" : "space-y-2.5"}>
         <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -187,8 +231,7 @@ function QuestsFeedPage() {
           ))}
         </div>
       </div>
-    );
-  }
+  );
 }
 
 function ViewTab({
