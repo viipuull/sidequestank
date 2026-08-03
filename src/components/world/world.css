@@ -263,3 +263,80 @@
     animation: none !important;
   }
 }
+
+/* ---------- ambience ---------- */
+.sq-star { animation: sq-twinkle 4.5s ease-in-out infinite; opacity: 0.6; }
+@keyframes sq-twinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.9; }
+}
+
+.sq-fog {
+  background: radial-gradient(60% 100% at 30% 50%, oklch(0.8 0.03 285 / 0.10), transparent 70%),
+    radial-gradient(50% 100% at 70% 50%, oklch(0.75 0.06 265 / 0.08), transparent 72%);
+  filter: blur(14px);
+  will-change: transform;
+}
+.sq-fog--a { animation: sq-fog-drift 46s linear infinite; }
+.sq-fog--b { animation: sq-fog-drift 68s linear infinite reverse; }
+@keyframes sq-fog-drift {
+  0% { transform: translate3d(-12%, 0, 0); }
+  50% { transform: translate3d(12%, -8px, 0); }
+  100% { transform: translate3d(-12%, 0, 0); }
+}
+
+.sq-rays {
+  background: conic-gradient(
+    from 200deg at 50% -10%,
+    transparent 0deg,
+    var(--sq-ray, oklch(0.68 0.19 285)) 12deg,
+    transparent 24deg,
+    transparent 40deg,
+    var(--sq-ray, oklch(0.68 0.19 285)) 52deg,
+    transparent 64deg
+  );
+  opacity: 0.06;
+  filter: blur(6px);
+  will-change: transform, opacity;
+  animation: sq-ray-sweep 24s ease-in-out infinite;
+}
+@keyframes sq-ray-sweep {
+  0%, 100% { transform: rotate(-4deg) scale(1.1); opacity: 0.04; }
+  50% { transform: rotate(4deg) scale(1.15); opacity: 0.09; }
+}
+
+.sq-mote {
+  opacity: 0;
+  will-change: transform, opacity;
+  animation-name: sq-mote-drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  box-shadow: 0 0 6px currentColor;
+}
+@keyframes sq-mote-drift {
+  0% { opacity: 0; transform: translate3d(0, 8px, 0); }
+  25% { opacity: 0.7; }
+  75% { opacity: 0.5; }
+  100% { opacity: 0; transform: translate3d(10px, -26px, 0); }
+}
+
+.sq-birds { will-change: transform; animation: sq-bird-cross 42s linear infinite; }
+@keyframes sq-bird-cross {
+  0% { transform: translate3d(-20%, 0, 0); opacity: 0; }
+  8% { opacity: 0.6; }
+  85% { opacity: 0.5; }
+  100% { transform: translate3d(120vw, -40px, 0); opacity: 0; }
+}
+.sq-bird-a { animation: sq-flap 1.1s ease-in-out infinite; }
+.sq-bird-b { animation: sq-flap 1.3s ease-in-out infinite 0.2s; }
+.sq-bird-c { animation: sq-flap 0.95s ease-in-out infinite 0.4s; }
+@keyframes sq-flap {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.45); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sq-star, .sq-fog, .sq-rays, .sq-mote, .sq-birds,
+  .sq-bird-a, .sq-bird-b, .sq-bird-c { animation: none !important; }
+  .sq-mote { opacity: 0.4; }
+}
