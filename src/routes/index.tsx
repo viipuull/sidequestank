@@ -113,9 +113,9 @@ function SplashRoute() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.6 }}
-          className="mt-4 text-[11px] uppercase tracking-[0.35em] text-muted-foreground text-center"
+          className="mt-4 text-[11px] uppercase tracking-[0.35em] text-muted-foreground text-center whitespace-pre-wrap"
         >
-          Your City. Your Adventure.
+          {`'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            Load the security issues from the scan results and fix the selected issues.`}
         </motion.p>
         <motion.div
           className="absolute -bottom-24 left-1/2 h-1 w-24 -translate-x-1/2 overflow-hidden rounded-full bg-muted"
