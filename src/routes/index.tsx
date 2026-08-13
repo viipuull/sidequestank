@@ -113,9 +113,9 @@ function SplashRoute() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.6 }}
-          className="mt-4 text-[11px] uppercase tracking-[0.35em] text-muted-foreground whitespace-pre-wrap text-center max-w-[80vw]"
+          className="mt-4 text-[11px] uppercase tracking-[0.35em] text-muted-foreground text-center"
         >
-          {"'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            Copy the animation style and UI layout from the example site into our app, keeping our branding and routes intact."}
+          Your City. Your Adventure.
         </motion.p>
         <motion.div
           className="absolute -bottom-24 left-1/2 h-1 w-24 -translate-x-1/2 overflow-hidden rounded-full bg-muted"
