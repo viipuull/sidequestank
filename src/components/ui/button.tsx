@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { useHaptic } from "@/hooks/useHaptic";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold tracking-[-0.01em] cursor-pointer transition-all duration-200 ease-[cubic-bezier(0.2,0.7,0.2,1)] active:scale-[0.96] hover:-translate-y-[1px] active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:transition-transform [&_svg]:duration-200 hover:[&_svg]:scale-110",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold tracking-[-0.01em] cursor-pointer transition-all duration-200 ease-[cubic-bezier(0.2,0.7,0.2,1)] active:scale-[0.96] hover:-translate-y-[1px] active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:transition-transform [&_svg]:duration-200 hover:[&_svg]:scale-110",
   {
     variants: {
       variant: {
@@ -25,9 +25,9 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-10 px-4 py-2",
-        sm: "h-8 rounded-lg px-3 text-xs",
-        lg: "h-11 rounded-2xl px-8",
-        xl: "h-12 rounded-2xl px-9 text-base",
+        sm: "h-8 rounded-full px-3.5 text-xs",
+        lg: "h-11 rounded-full px-8",
+        xl: "h-12 rounded-full px-9 text-base",
         icon: "h-10 w-10",
       },
     },

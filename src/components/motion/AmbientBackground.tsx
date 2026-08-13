@@ -62,6 +62,18 @@ export function AmbientBackground({ intensity = 1 }: { intensity?: number }) {
         animate={reduce ? undefined : { x: ["5%", "-7%", "5%"], y: ["6%", "-4%", "6%"], scale: [1.08, 0.95, 1.08] }}
         transition={{ duration: 42, repeat: Infinity, ease: "easeInOut" }}
       />
+      {/* Teal aurora in the upper-right, matching the cinematic dashboard look. */}
+      <motion.div
+        className="absolute right-[-15%] top-[-20%] h-[65vh] w-[65vh] rounded-full"
+        style={{
+          background: "radial-gradient(circle, oklch(0.7 0.13 195 / 0.20), transparent 66%)",
+          filter: "blur(60px)",
+          opacity: 0.9 * intensity,
+          willChange: "transform",
+        }}
+        animate={reduce ? undefined : { x: ["3%", "-6%", "3%"], y: ["-2%", "6%", "-2%"], scale: [1, 1.1, 1] }}
+        transition={{ duration: 38, repeat: Infinity, ease: "easeInOut" }}
+      />
       <div
         className="absolute inset-0 opacity-[0.035] mix-blend-overlay"
         style={{

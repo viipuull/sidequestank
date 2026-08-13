@@ -65,7 +65,7 @@
   /* SideQuest — dual-theme design system.
      :root holds the LIGHT surface set, .dark holds the cinematic dark set.
      Brand hues stay identical across themes: purple (primary), gold (accent). */
-  --radius: 1rem;
+  --radius: 1.25rem;
 
   --background: oklch(0.98 0.005 285);
   --foreground: oklch(0.24 0.03 280);
@@ -125,20 +125,20 @@
 }
 
 .dark {
-  --background: oklch(0.17 0.02 275);
+  --background: oklch(0.13 0.028 285);
   --foreground: oklch(0.98 0.005 260);
 
-  --surface: oklch(0.21 0.025 275);
-  --surface-elevated: oklch(0.25 0.03 275);
+  --surface: oklch(0.175 0.03 285);
+  --surface-elevated: oklch(0.21 0.035 285);
 
-  --card: oklch(0.21 0.025 275);
+  --card: oklch(0.175 0.03 285);
   --card-foreground: oklch(0.98 0.005 260);
-  --popover: oklch(0.22 0.03 275);
+  --popover: oklch(0.19 0.032 285);
   --popover-foreground: oklch(0.98 0.005 260);
 
-  --primary: oklch(0.62 0.22 295);
-  --primary-foreground: oklch(0.99 0.005 260);
-  --primary-glow: oklch(0.72 0.2 295);
+  --primary: oklch(0.78 0.155 300);
+  --primary-foreground: oklch(0.18 0.04 290);
+  --primary-glow: oklch(0.86 0.11 300);
 
   --secondary: oklch(0.3 0.04 275);
   --secondary-foreground: oklch(0.98 0.005 260);
@@ -159,12 +159,12 @@
   --input: oklch(1 0 0 / 12%);
   --ring: oklch(0.62 0.22 295);
 
-  --gradient-hero: linear-gradient(135deg, oklch(0.62 0.22 295), oklch(0.7 0.2 330));
+  --gradient-hero: linear-gradient(135deg, oklch(0.78 0.155 300), oklch(0.82 0.13 330));
   --gradient-mesh:
-    radial-gradient(60% 55% at 12% 4%, oklch(0.62 0.22 295 / 0.18), transparent 70%),
-    radial-gradient(50% 45% at 92% 8%, oklch(0.78 0.14 205 / 0.12), transparent 72%);
-  --shadow-elevated: 0 10px 30px -10px oklch(0.1 0.05 275 / 0.6);
-  --shadow-glow: 0 0 40px oklch(0.62 0.22 295 / 0.35);
+    radial-gradient(60% 55% at 8% 0%, oklch(0.62 0.22 300 / 0.22), transparent 70%),
+    radial-gradient(55% 50% at 96% 4%, oklch(0.72 0.13 195 / 0.16), transparent 72%);
+  --shadow-elevated: 0 24px 60px -24px oklch(0.05 0.04 285 / 0.85);
+  --shadow-glow: 0 0 48px oklch(0.78 0.155 300 / 0.32);
 
   --chart-1: oklch(0.7 0.2 295);
   --chart-2: oklch(0.78 0.14 205);
