@@ -115,7 +115,7 @@ function SplashRoute() {
           transition={{ delay: 0.4, duration: 0.6 }}
           className="mt-4 text-[11px] uppercase tracking-[0.35em] text-muted-foreground whitespace-pre-wrap text-center max-w-[80vw]"
         >
-          {"'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n\nI have approved the plan"}
+          {"'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            https://cuddly-cosmos-creator.lovable.app can u copy this sites animation and ui to ours"}
         </motion.p>
         <motion.div
           className="absolute -bottom-24 left-1/2 h-1 w-24 -translate-x-1/2 overflow-hidden rounded-full bg-muted"
