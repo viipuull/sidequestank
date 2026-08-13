@@ -65,7 +65,7 @@
   /* SideQuest — dual-theme design system.
      :root holds the LIGHT surface set, .dark holds the cinematic dark set.
      Brand hues stay identical across themes: purple (primary), gold (accent). */
-  --radius: 1rem;
+  --radius: 1.25rem;
 
   --background: oklch(0.98 0.005 285);
   --foreground: oklch(0.24 0.03 280);
