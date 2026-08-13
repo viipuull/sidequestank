@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { PageTransition } from "../components/motion/PageTransition";
 import { Toaster } from "../components/ui/sonner";
 import { PushOpenTracker } from "../components/push/PushOpenTracker";
+import { TapFeedback } from "../components/motion/TapFeedback";
 import { ThemeProvider, THEME_INIT_SCRIPT } from "../lib/theme";
 
 function NotFoundComponent() {
@@ -154,6 +155,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <PushOpenTracker />
+        <TapFeedback />
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <PageTransition>
           <Outlet />
